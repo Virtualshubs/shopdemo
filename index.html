@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<title>OX — Collection</title>
+
+<script src="https://cdn.3dtwins.tech/sdk.js"></script>
+
+<style>
+
+/* =========================
+   GLOBAL
+========================= */
+
+body {
+  margin: 0;
+  font-family: Inter, sans-serif;
+  background: #0b0f14;
+  color: #e6e2d6;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: rgba(11,15,20,0.85);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 30px;
+  border-bottom: 1px solid rgba(230,226,214,0.1);
+}
+
+.logo {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-weight: 700;
+  letter-spacing: 6px;
+  font-size: 18px;
+}
+
+.logo span {
+  opacity: 0.5;
+  font-weight: 400;
+}
+
+.search input {
+  background: #11161d;
+  border: 1px solid rgba(230,226,214,0.2);
+  border-radius: 999px;
+  padding: 8px 14px;
+  color: #e6e2d6;
+  outline: none;
+  width: 180px;
+}
+
+/* =========================
+   HERO
+========================= */
+
+.hero {
+  padding: 100px 60px 60px;
+  text-align: center;
+  background: radial-gradient(circle at top, #1a1f2a, #0b0f14);
+}
+
+.hero h1 {
+  font-size: 64px;
+  letter-spacing: 12px;
+  margin: 0;
+}
+
+.hero p {
+  max-width: 720px;
+  margin: 20px auto 0;
+  color: #bfc5cc;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* =========================
+   COLLECTION GRID
+========================= */
+
+.collection {
+  padding: 60px;
+}
+
+.collection h2 {
+  font-size: 18px;
+  letter-spacing: 2px;
+  margin-bottom: 24px;
+  color: #bfc5cc;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.card {
+  background: #11161d;
+  border-radius: 18px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: 0.2s;
+  border: 1px solid transparent;
+}
+
+.card:hover {
+  border-color: #e6e2d6;
+  transform: translateY(-4px);
+}
+
+.card img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+}
+
+.card-info {
+  padding: 16px;
+}
+
+.card-title {
+  font-weight: 600;
+}
+
+.card-price {
+  font-size: 13px;
+  color: #bfc5cc;
+  margin-top: 6px;
+}
+
+/* =========================
+   EXPERIENCE
+========================= */
+
+.experience {
+  padding: 60px;
+}
+
+.vh-layout {
+  display: flex;
+  gap: 16px;
+}
+
+.vh-sidebar {
+  width: 180px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.vh-card {
+  background: #11161d;
+  border-radius: 14px;
+  overflow: hidden;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.vh-card.active {
+  border-color: #e6e2d6;
+}
+
+.vh-card img {
+  width: 100%;
+  height: 90px;
+  object-fit: cover;
+}
+
+.vh-card-info {
+  padding: 10px;
+  font-size: 12px;
+}
+
+.viewer {
+  flex: 1;
+  height: 650px;
+  border-radius: 18px;
+  overflow: hidden;
+  background: #0f141b;
+}
+
+#vh-main-container {
+  width: 100%;
+  height: 100%;
+}
+
+/* =========================
+   PDP
+========================= */
+
+.pdp {
+  padding: 60px;
+  display: flex;
+  gap: 40px;
+  align-items: center;
+}
+
+.pdp-info h2 {
+  font-size: 32px;
+}
+
+.pdp-info p {
+  color: #bfc5cc;
+  line-height: 1.6;
+}
+
+.pdp button {
+  margin-top: 20px;
+  padding: 14px 28px;
+  border-radius: 999px;
+  background: #e6e2d6;
+  color: #0b0f14;
+  border: none;
+  cursor: pointer;
+}
+
+/* =========================
+   FOOTER
+========================= */
+
+.footer {
+  padding: 60px;
+  border-top: 1px solid rgba(230,226,214,0.1);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+  color: #bfc5cc;
+}
+
+.footer h4 {
+  color: #e6e2d6;
+  margin-bottom: 12px;
+}
+
+/* =========================
+   HEADER FIX
+========================= */
+
+.header-left,
+.header-right {
+  width: 180px;
+}
+
+.header {
+  position: sticky;
+}
+
+/* =========================
+   SEARCH WRAP
+========================= */
+
+.search {
+  margin-left: auto;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- =========================
+     HEADER
+========================= -->
+
+<header class="header">
+
+  <div class="header-left"></div>
+
+  <div class="logo">
+    OX <span>COLLECTION</span>
+  </div>
+
+  <div class="search">
+    <input type="text" placeholder="Search products..." />
+  </div>
+
+</header>
+
+<!-- =========================
+     HERO
+========================= -->
+
+<section class="hero">
+  <h1>OX</h1>
+  <p>
+    A new generation of objects designed for interactive commerce.
+  </p>
+</section>
+
+<!-- =========================
+     COLLECTION
+========================= -->
+
+<section class="collection">
+
+  <h2>COLLECTION</h2>
+
+  <div class="grid">
+
+    <div class="card">
+      <img src="https://via.placeholder.com/600x400" />
+      <div class="card-info">
+        <div class="card-title">OX LAMP 01</div>
+        <div class="card-price">129€</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <img src="https://via.placeholder.com/600x400" />
+      <div class="card-info">
+        <div class="card-title">OX LAMP 02</div>
+        <div class="card-price">149€</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <img src="https://via.placeholder.com/600x400" />
+      <div class="card-info">
+        <div class="card-title">OX OBJECT 03</div>
+        <div class="card-price">119€</div>
+      </div>
+    </div>
+
+  </div>
+
+</section>
+
+<!-- =========================
+     EXPERIENCE (CON ESCENAS RESTAURADAS)
+========================= -->
+
+<section class="experience">
+
+  <div class="vh-layout">
+
+    <div class="vh-sidebar">
+
+      <div class="vh-card active"
+        data-scene="aHR0cHM6Ly9wcm9kdWN0LjNkdHdpbnMudGVjaC8%2FbmFtZT1Cb2xzbyZjb25maWc9Y2FtYmlhcl9jb2xvciUzQSUyM2FkMDAwMCZxdWFudGl0eT0xJnRva2VuPTFjMGJhNTVhLTZiYjUtNDhhMi1iNDRjLWIyYzFmN2JkNjFlNyZtb2RlbFVybD1odHRwcyUzQSUyRiUyRnZpZXdlci4zZHR3aW5zLnRlY2glMkZib2xzb3BpZWwuZ2xiJmJ1eVVSTD1odHRwcyUzQSUyRiUyRjNkdHdpbnMuZXMlMkY%3D">
+        <img src="https://via.placeholder.com/200x120/1a1f2a/ffffff" />
+        <div class="vh-card-info">Lunar White</div>
+      </div>
+
+      <div class="vh-card"
+        data-scene="aHR0cHM6Ly9wcm9kdWN0LjNkdHdpbnMudGVjaC8/bmFtZT1Tb2YlQzMlQTEmY29uZmlnPUJhc2VfbWV0JUMzJUExbGljYSUzQSUyMzAzMDQyYiU3Q0VzdHJ1Y3R1cmFfYmFzZSUzQSUyMzE3MTcxNyU3Q0VzdHJ1Y3R1cmFfaW50ZXJuYSUzQSUyMzFmMWYxZiU3Q0VzdHJ1Y3R1cmFfZXh0ZXJuYSUzQSUyMzEyMTIxMiU3Q0NvamluZXNfYXV4aWxpYXJlcyUzQSUyMzE0MTQxNCU3Q0FzaWVudG9zJTNBJTIzMDgwODA4JnF1YW50aXR5PTEmdG9rZW49MDk4ZDM1ZmUtNDBkZC00MzZlLWIyNDUtNWMzZjA4NWJhYWIxJm1vZGVsVXJsPWh0dHBzJTNBJTJGJTJGdmlld2VyLjNkdHdpbnMudGVjaCUyRlNvZmElQ0MlODEuZ2xiJmJ1eVVSTD1odHRwcyUzQSUyRiUyRjNkdHdpbnMuZXM=">
+        <img src="https://via.placeholder.com/200x120/11161d/ffffff" />
+        <div class="vh-card-info">Orbit Grey</div>
+      </div>
+
+      <div class="vh-card"
+        data-scene="aHR0cHM6Ly9wcm9kdWN0LjNkdHdpbnMudGVjaC8/bmFtZT1Tb2YlQzMlQTEmY29uZmlnPUJhc2VfbWV0JUMzJUExbGljYSUzQSUyMzAzMDQyYiU3Q0VzdHJ1Y3R1cmFfYmFzZSUzQSUyMzE3MTcxNyU3Q0VzdHJ1Y3R1cmFfaW50ZXJuYSUzQSUyMzFmMWYxZiU3Q0VzdHJ1Y3R1cmFfZXh0ZXJuYSUzQSUyMzEyMTIxMiU3Q0NvamluZXNfYXV4aWxpYXJlcyUzQSUyMzE0MTQxNCU3Q0FzaWVudG9zJTNBJTIzMDgwODA4JnF1YW50aXR5PTEmdG9rZW49MDk4ZDM1ZmUtNDBkZC00MzZlLWIyNDUtNWMzZjA4NWJhYWIxJm1vZGVsVXJsPWh0dHBzJTNBJTJGJTJGdmlld2VyLjNkdHdpbnMudGVjaCUyRlNvZmElQ0MlODEuZ2xiJmJ1eVVSTD1odHRwcyUzQSUyRiUyRjNkdHdpbnMuZXM=">
+        <img src="https://via.placeholder.com/200x120/0f141b/ffffff" />
+        <div class="vh-card-info">Artemis Sand</div>
+      </div>
+
+    </div>
+
+    <div class="viewer">
+      <div id="vh-main-container"></div>
+    </div>
+
+  </div>
+
+</section>
+
+<!-- =========================
+     PDP
+========================= -->
+
+<section class="pdp">
+
+  <div class="pdp-info">
+    <h2>OX LAMP 01</h2>
+    <p>
+      Designed as a modular object inspired by lunar materials and orbital geometry.
+    </p>
+
+    <button id="buyBtn">Add to cart</button>
+  </div>
+
+</section>
+
+<!-- =========================
+     FOOTER
+========================= -->
+
+<footer class="footer">
+
+  <div>
+    <h4>OX</h4>
+    <p>Interactive objects for modern commerce.</p>
+  </div>
+
+  <div>
+    <h4>COLLECTION</h4>
+    <p>Lamps<br>Objects<br>Systems</p>
+  </div>
+
+  <div>
+    <h4>CONTACT</h4>
+    <p>info@ox.design</p>
+  </div>
+
+</footer>
+
+<!-- =========================
+     SCRIPT
+========================= -->
+
+<script>
+
+let cards = document.querySelectorAll(".vh-card");
+let container = document.getElementById("vh-main-container");
+
+function load(scene){
+  container.innerHTML = "";
+  container.setAttribute("data-scene", scene);
+  VH.init({ containerId: "vh-main-container" });
+}
+
+cards.forEach(card=>{
+  card.addEventListener("click", ()=>{
+    cards.forEach(c=>c.classList.remove("active"));
+    card.classList.add("active");
+    load(card.dataset.scene);
+  });
+});
+
+load(cards[0].dataset.scene);
+
+</script>
+
+</body>
+</html>
