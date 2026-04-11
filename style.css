@@ -1,1 +1,258 @@
 
+
+
+/* =========================
+   GLOBAL
+========================= */
+
+body {
+  margin: 0;
+  font-family: Inter, sans-serif;
+  background: #0b0f14;
+  color: #e6e2d6;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: rgba(11,15,20,0.85);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 30px;
+  border-bottom: 1px solid rgba(230,226,214,0.1);
+}
+
+.logo {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-weight: 700;
+  letter-spacing: 6px;
+  font-size: 18px;
+}
+
+.logo span {
+  opacity: 0.5;
+  font-weight: 400;
+}
+
+.search input {
+  background: #11161d;
+  border: 1px solid rgba(230,226,214,0.2);
+  border-radius: 999px;
+  padding: 8px 14px;
+  color: #e6e2d6;
+  outline: none;
+  width: 180px;
+}
+
+/* =========================
+   HERO
+========================= */
+
+.hero {
+  padding: 100px 60px 60px;
+  text-align: center;
+  background: radial-gradient(circle at top, #1a1f2a, #0b0f14);
+}
+
+.hero h1 {
+  font-size: 64px;
+  letter-spacing: 12px;
+  margin: 0;
+}
+
+.hero p {
+  max-width: 720px;
+  margin: 20px auto 0;
+  color: #bfc5cc;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* =========================
+   COLLECTION GRID
+========================= */
+
+.collection {
+  padding: 60px;
+}
+
+.collection h2 {
+  font-size: 18px;
+  letter-spacing: 2px;
+  margin-bottom: 24px;
+  color: #bfc5cc;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.card {
+  background: #11161d;
+  border-radius: 18px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: 0.2s;
+  border: 1px solid transparent;
+}
+
+.card:hover {
+  border-color: #e6e2d6;
+  transform: translateY(-4px);
+}
+
+.card img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+}
+
+.card-info {
+  padding: 16px;
+}
+
+.card-title {
+  font-weight: 600;
+}
+
+.card-price {
+  font-size: 13px;
+  color: #bfc5cc;
+  margin-top: 6px;
+}
+
+/* =========================
+   EXPERIENCE
+========================= */
+
+.experience {
+  padding: 60px;
+}
+
+.vh-layout {
+  display: flex;
+  gap: 16px;
+}
+
+.vh-sidebar {
+  width: 180px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.vh-card {
+  background: #11161d;
+  border-radius: 14px;
+  overflow: hidden;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.vh-card.active {
+  border-color: #e6e2d6;
+}
+
+.vh-card img {
+  width: 100%;
+  height: 90px;
+  object-fit: cover;
+}
+
+.vh-card-info {
+  padding: 10px;
+  font-size: 12px;
+}
+
+.viewer {
+  flex: 1;
+  height: 650px;
+  border-radius: 18px;
+  overflow: hidden;
+  background: #0f141b;
+}
+
+#vh-main-container {
+  width: 100%;
+  height: 100%;
+}
+
+/* =========================
+   PDP
+========================= */
+
+.pdp {
+  padding: 60px;
+  display: flex;
+  gap: 40px;
+  align-items: center;
+}
+
+.pdp-info h2 {
+  font-size: 32px;
+}
+
+.pdp-info p {
+  color: #bfc5cc;
+  line-height: 1.6;
+}
+
+.pdp button {
+  margin-top: 20px;
+  padding: 14px 28px;
+  border-radius: 999px;
+  background: #e6e2d6;
+  color: #0b0f14;
+  border: none;
+  cursor: pointer;
+}
+
+/* =========================
+   FOOTER
+========================= */
+
+.footer {
+  padding: 60px;
+  border-top: 1px solid rgba(230,226,214,0.1);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+  color: #bfc5cc;
+}
+
+.footer h4 {
+  color: #e6e2d6;
+  margin-bottom: 12px;
+}
+
+/* =========================
+   HEADER FIX
+========================= */
+
+.header-left,
+.header-right {
+  width: 180px;
+}
+
+.header {
+  position: sticky;
+}
+
+/* =========================
+   SEARCH WRAP
+========================= */
+
+.search {
+  margin-left: auto;
+}
