@@ -38,7 +38,8 @@
       <div class="vh-card active"
         data-scene="aHR0cHM6Ly9wcm9kdWN0LjNkdHdpbnMudGVjaC8%2FbmFtZT1Cb2xzbyZjb25maWc9Y2FtYmlhcl9jb2xvciUzQSUyM2FkMDAwMCZxdWFudGl0eT0xJnRva2VuPTFjMGJhNTVhLTZiYjUtNDhhMi1iNDRjLWIyYzFmN2JkNjFlNyZtb2RlbFVybD1odHRwcyUzQSUyRiUyRnZpZXdlci4zZHR3aW5zLnRlY2glMkZib2xzb3BpZWwuZ2xiJmJ1eVVSTD1odHRwcyUzQSUyRiUyRjNkdHdpbnMuZXMlMkY%3D">
         <img src="https://cdn.shopify.com/s/files/1/0948/5366/1017/files/CapturadePantalla2026-03-24alas14.25.40.png?v=1774358754" />
-        <div class="vh-card-info">Lunar White</div>
+         <div class="card-title">Lunar White</div>
+        <div class="vh-card-info">On demand</div>
           <div class="card-price">129€</div>
          <button class="vh-add-to-cart">Add to cart ↗</button>
       </div>
@@ -245,6 +246,32 @@ load(cards[0].dataset.scene);
   });
 });
 
+  const searchInput = document.querySelector(".search input");
+const allCards = document.querySelectorAll(".card, .vh-card");
+
+searchInput.addEventListener("input", (e) => {
+  const query = e.target.value.toLowerCase();
+
+  let visibleCards = [];
+
+  allCards.forEach(card => {
+    const titleEl = card.querySelector(".card-title, .vh-card-info");
+    const name = titleEl ? titleEl.textContent.toLowerCase() : "";
+
+    if (name.includes(query)) {
+      card.style.display = "";
+      visibleCards.push(card);
+    } else {
+      card.style.display = "none";
+    }
+  });
+
+  // 🔥 AUTO LOAD si solo hay uno
+  if (visibleCards.length === 1) {
+    const scene = visibleCards[0].dataset.scene;
+    if (scene) load(scene);
+  }
+});
 </script>
 
 </body>
