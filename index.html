@@ -17,9 +17,10 @@
     <div class="logo-sub">Designed with low-impact digital technology</div>
   </div>
 
-  <div class="search">
-    <input type="text" placeholder="Search products..." />
-  </div>
+<div class="search-box">
+  <input type="text" placeholder="Search products..." />
+  <div id="search-results"></div>
+</div>
 </header>
   
 <section class="hero">
@@ -246,30 +247,86 @@ load(cards[0].dataset.scene);
   });
 });
 
-  const searchInput = document.querySelector(".search input");
+ const searchInput = document.querySelector(".search input");
+const dropdown = document.createElement("div");
+
+dropdown.id = "search-results";
+searchInput.parentElement.appendChild(dropdown);
+
 const allCards = document.querySelectorAll(".card, .vh-card");
 
+let timeout;
+
 searchInput.addEventListener("input", (e) => {
-  const query = e.target.value.toLowerCase();
+  clearTimeout(timeout);
 
-  let visibleCards = [];
+  timeout = setTimeout(() => {
 
-  allCards.forEach(card => {
-    const titleEl = card.querySelector(".card-title, .vh-card-info");
-    const name = titleEl ? titleEl.textContent.toLowerCase() : "";
+    const query = e.target.value.toLowerCase();
 
-    if (name.includes(query)) {
-      card.style.display = "";
-      visibleCards.push(card);
-    } else {
-      card.style.display = "none";
+    let visibleCards = [];
+
+    allCards.forEach(card => {
+      const titleEl = card.querySelector(".card-title, .vh-card-info");
+      const name = titleEl ? titleEl.textContent.toLowerCase() : "";
+
+      if (name.includes(query)) {
+        card.style.display = "";
+        visibleCards.push(card);
+      } else {
+        card.style.display = "none";
+      }
+    });
+
+    if (visibleCards.length === 1) {
+      const scene = visibleCards[0].dataset.scene;
+      if (scene) load(scene);
     }
-  });
 
-  // 🔥 AUTO LOAD si solo hay uno
-  if (visibleCards.length === 1) {
-    const scene = visibleCards[0].dataset.scene;
-    if (scene) load(scene);
+    // 🔽 DROPDOWN
+    renderDropdown(visibleCards, query);
+
+  }, 120);
+});
+
+
+function renderDropdown(results, query) {
+
+  dropdown.innerHTML = "";
+
+  if (!query || results.length === 0) {
+    dropdown.style.display = "none";
+    return;
+  }
+
+  dropdown.style.display = "block";
+
+  results.slice(0, 6).forEach(card => {
+
+    const titleEl = card.querySelector(".card-title, .vh-card-info");
+    const name = titleEl ? titleEl.textContent : "";
+
+    const item = document.createElement("div");
+    item.className = "search-item";
+    item.textContent = name;
+
+    item.addEventListener("click", (e) => {
+      e.stopPropagation();
+
+
+      card.click();
+
+      dropdown.style.display = "none";
+    });
+
+    dropdown.appendChild(item);
+
+  });
+}
+
+document.addEventListener("click", (e) => {
+  if (!e.target.closest(".search")) {
+    dropdown.style.display = "none";
   }
 });
 </script>
