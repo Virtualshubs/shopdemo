@@ -250,13 +250,14 @@ load(cards[0].dataset.scene);
 document.querySelectorAll(".vh-add-to-cart").forEach(btn => {
   btn.addEventListener("click", (e) => {
 
-    e.stopPropagation(); // 🔥 evita que cambie la escena al clicar el botón
+    e.stopPropagation();
 
     const card = btn.closest(".vh-card");
     const scene = card.dataset.scene;
 
     const baseUrl = "https://3dtwins.es/products/personalizado";
-    const finalUrl = `${baseUrl}?scene=${encodeURIComponent(scene)}`;
+
+    const finalUrl = `${baseUrl}?scene=${scene}`;
 
     window.open(finalUrl, "_blank");
 
