@@ -4,18 +4,13 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>OX — Collection</title>
-
 <script src="https://cdn.3dtwins.tech/sdk.js"></script>
 <link rel="stylesheet" href="style.css">
-
 </head>
-
 <body>
-
+  
 <header class="header">
-
   <div class="header-left"></div>
-
   <div class="logo">
     OX 
     <span>3D PRINTING COLLECTION</span>
@@ -25,10 +20,8 @@
   <div class="search">
     <input type="text" placeholder="Search products..." />
   </div>
-
 </header>
   
-
 <section class="hero">
   <h1>OX</h1>
   <p>
@@ -183,10 +176,6 @@
 
 </section>
 
-<!-- =========================
-     FOOTER
-========================= -->
-
 <footer class="footer">
 
   <div>
@@ -201,14 +190,10 @@
 
   <div>
     <h4>CONTACT</h4>
-    <p>info@ox.design</p>
+    <p>info@3dtwins.es</p>
   </div>
 
 </footer>
-
-<!-- =========================
-     SCRIPT
-========================= -->
 
 <script>
 
@@ -222,7 +207,7 @@ function load(scene){
   VH.init({ containerId: "vh-main-container" });
 }
 
-/* SIDEBAR INTERACTION */
+
 cards.forEach(card=>{
   card.addEventListener("click", ()=>{
     cards.forEach(c=>c.classList.remove("active"));
@@ -231,28 +216,25 @@ cards.forEach(card=>{
   });
 });
 
-/* GRID → VISOR INTERACTION */
+
 gridCards.forEach(card=>{
   card.addEventListener("click", ()=>{
     load(card.dataset.scene);
 
-    // opcional: scroll automático al visor
     document.querySelector(".experience")
       .scrollIntoView({ behavior: "smooth" });
   });
 });
 
-/* INIT */
+
 load(cards[0].dataset.scene);
 
-</script>
-<script>
-document.querySelectorAll(".vh-trigger .vh-add-to-cart").forEach(btn => {
+  document.querySelectorAll(".vh-add-to-cart").forEach(btn => {
   btn.addEventListener("click", (e) => {
 
-    e.stopPropagation();
+    e.stopPropagation(); 
 
-    const card = btn.closest(".vh-trigger");
+    const card = btn.closest("[data-scene]");
     const scene = card.dataset.scene;
 
     const baseUrl = "https://3dtwins.es/products/personalizado";
@@ -262,6 +244,8 @@ document.querySelectorAll(".vh-trigger .vh-add-to-cart").forEach(btn => {
 
   });
 });
+
 </script>
+
 </body>
 </html>
