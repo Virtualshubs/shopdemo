@@ -247,16 +247,15 @@ load(cards[0].dataset.scene);
 
 </script>
 <script>
-document.querySelectorAll(".vh-add-to-cart").forEach(btn => {
+document.querySelectorAll(".vh-trigger .vh-add-to-cart").forEach(btn => {
   btn.addEventListener("click", (e) => {
 
     e.stopPropagation();
 
-    const card = btn.closest(".vh-card");
+    const card = btn.closest(".vh-trigger");
     const scene = card.dataset.scene;
 
     const baseUrl = "https://3dtwins.es/products/personalizado";
-
     const finalUrl = `${baseUrl}?scene=${scene}`;
 
     window.open(finalUrl, "_blank");
