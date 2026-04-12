@@ -251,6 +251,12 @@ h1, h2, h3 {
 #vh-main-container {
   width: 100%;
   height: 800px;
+overflow: auto;
+  scrollbar-width: none; 
+}
+
+#vh-main-container::-webkit-scrollbar {
+  display: none; 
 }
 
 /* =========================
