@@ -39,6 +39,23 @@ h1, h2, h3 {
   width: 180px;
 }
 
+.header-btn {
+  background: transparent;
+  border: 1px solid rgba(230,226,214,0.2);
+  color: #e6e2d6;
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.header-btn:hover {
+  border-color: #e6e2d6;
+  background: rgba(255,255,255,0.05);
+}
+
 .logo {
   position: absolute;
   left: 50%;
