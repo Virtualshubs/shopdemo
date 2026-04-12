@@ -34,7 +34,6 @@
   <p>
     A new generation of objects designed for interactive commerce.
   </p>
-     <button id="buyBtn">Add to cart</button>
 </section>
 
 <section class="experience">
@@ -48,6 +47,7 @@
         <img src="https://cdn.shopify.com/s/files/1/0948/5366/1017/files/CapturadePantalla2026-03-24alas14.25.40.png?v=1774358754" />
         <div class="vh-card-info">Lunar White</div>
           <div class="card-price">129€</div>
+         <button class="vh-add-to-cart">Add to cart ↗</button>
       </div>
 
       <div class="vh-card"
@@ -55,6 +55,7 @@
         <img src="https://cdn.shopify.com/s/files/1/0948/5366/1017/files/20260115_0053_Image_Generation_remix_01kezestsbfs4avdn5p9enm423.png?v=1774642016" />
         <div class="vh-card-info">Orbit Grey</div>
               <div class="card-price">129€</div>
+         <button class="vh-add-to-cart">Add to cart ↗</button>
       </div>
 
       <div class="vh-card"
@@ -62,6 +63,7 @@
         <img src="https://cdn.shopify.com/s/files/1/0948/5366/1017/files/CapturadePantalla2026-03-24alas14.25.40.png?v=1774358754" />
         <div class="vh-card-info">Plutó Sand</div>
               <div class="card-price">129€</div>
+         <button class="vh-add-to-cart">Add to cart ↗</button>
       </div>
 
             <div class="vh-card"
@@ -69,6 +71,7 @@
         <img src="https://cdn.shopify.com/s/files/1/0948/5366/1017/files/CapturadePantalla2026-03-24alas14.25.40.png?v=1774358754" />
         <div class="vh-card-info">Plutó Sand</div>
                     <div class="card-price">129€</div>
+               <button class="vh-add-to-cart">Add to cart ↗</button>
       </div>
 
     </div>
@@ -92,6 +95,7 @@
       <div class="card-info">
         <div class="card-title">Júpiter</div>
         <div class="card-price">129€</div>
+         <button class="vh-add-to-cart">Add to cart ↗</button>
       </div>
     </div>
 
@@ -101,6 +105,7 @@
       <div class="card-info">
         <div class="card-title">Apollo</div>
         <div class="card-price">149€</div>
+         <button class="vh-add-to-cart">Add to cart ↗</button>
       </div>
     </div>
 
@@ -110,6 +115,7 @@
       <div class="card-info">
         <div class="card-title">Nitrilo</div>
         <div class="card-price">119€</div>
+         <button class="vh-add-to-cart">Add to cart ↗</button>
       </div>
     </div>
 
@@ -119,6 +125,7 @@
       <div class="card-info">
         <div class="card-title">Júpiter</div>
         <div class="card-price">129€</div>
+         <button class="vh-add-to-cart">Add to cart ↗</button>
       </div>
     </div>
 
@@ -128,6 +135,7 @@
       <div class="card-info">
         <div class="card-title">Apollo</div>
         <div class="card-price">149€</div>
+         <button class="vh-add-to-cart">Add to cart ↗</button>
       </div>
     </div>
 
@@ -137,6 +145,7 @@
       <div class="card-info">
         <div class="card-title">Nitrilo</div>
         <div class="card-price">119€</div>
+         <button class="vh-add-to-cart">Add to cart ↗</button>
       </div>
     </div>
 
@@ -146,6 +155,7 @@
       <div class="card-info">
         <div class="card-title">Júpiter</div>
         <div class="card-price">129€</div>
+         <button class="vh-add-to-cart">Add to cart ↗</button>
       </div>
     </div>
 
@@ -155,6 +165,7 @@
       <div class="card-info">
         <div class="card-title">Apollo</div>
         <div class="card-price">149€</div>
+         <button class="vh-add-to-cart">Add to cart ↗</button>
       </div>
     </div>
 
@@ -164,6 +175,7 @@
       <div class="card-info">
         <div class="card-title">Nitrilo</div>
         <div class="card-price">119€</div>
+         <button class="vh-add-to-cart">Add to cart ↗</button>
       </div>
     </div>
 
@@ -234,6 +246,22 @@ gridCards.forEach(card=>{
 load(cards[0].dataset.scene);
 
 </script>
+<script>
+document.querySelectorAll(".vh-add-to-cart").forEach(btn => {
+  btn.addEventListener("click", (e) => {
 
+    e.stopPropagation(); // 🔥 evita que cambie la escena al clicar el botón
+
+    const card = btn.closest(".vh-card");
+    const scene = card.dataset.scene;
+
+    const baseUrl = "https://3dtwins.es/products/personalizado";
+    const finalUrl = `${baseUrl}?scene=${encodeURIComponent(scene)}`;
+
+    window.open(finalUrl, "_blank");
+
+  });
+});
+</script>
 </body>
 </html>
