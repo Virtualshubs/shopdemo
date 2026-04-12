@@ -56,6 +56,27 @@ h1, h2, h3 {
   background: rgba(255,255,255,0.05);
 }
 
+.vh-wishlist {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: transparent;
+  border: 1px solid rgba(230,226,214,0.2);
+  color: #e6e2d6;
+  border-radius: 999px;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.vh-wishlist.active {
+  background: #e6e2d6;
+  color: #0b0f14;
+}
 .logo {
   position: absolute;
   left: 50%;
