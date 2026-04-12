@@ -177,7 +177,7 @@ body {
 
 .viewer {
   flex: 1;
-  height: 650px;
+  height: 800px;
   border-radius: 18px;
   overflow: hidden;
   background: #0f141b;
