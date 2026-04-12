@@ -25,7 +25,6 @@
 
 <div class="search"> <input type="text" placeholder="Search products..." /> </div>
 
-  <button class="wishlist-btn">♡ <span id="wishlist-count">0</span></button>
   
 </header>
   
@@ -55,7 +54,7 @@
          <div class="card-title">Lunar White</div>
         <div class="vh-card-info">On demand</div>
           <div class="card-price">129€</div>
-        <button class="vh-wishlist">guardar</button>
+    
          <button class="vh-add-to-cart">Add to cart ↗</button>
       </div>
 
@@ -65,7 +64,7 @@
                  <div class="card-title">Orbit Grey</div>
         <div class="vh-card-info">On demand</div>
               <div class="card-price">129€</div>
-          <button class="vh-wishlist">guardar</button>
+        
          <button class="vh-add-to-cart">Add to cart ↗</button>
       </div>
 
@@ -75,7 +74,7 @@
                  <div class="card-title">Plutó Sand</div>
         <div class="vh-card-info">On demand</div>
               <div class="card-price">129€</div>
-        <button class="vh-wishlist">guardar</button>
+    
          <button class="vh-add-to-cart">Add to cart ↗</button>
       </div>
 
@@ -98,7 +97,7 @@
       <div class="card-info">
         <div class="card-title">Júpiter</div>
         <div class="card-price">129€</div>
-          <button class="vh-wishlist">guardar</button>
+  
          <button class="vh-add-to-cart">Add to cart ↗</button>
       </div>
     </div>
@@ -109,7 +108,7 @@
       <div class="card-info">
         <div class="card-title">Apollo</div>
         <div class="card-price">149€</div>
-     <button class="vh-wishlist">guardar</button>
+ 
          <button class="vh-add-to-cart">Add to cart ↗</button>
       </div>
     </div>
@@ -120,7 +119,7 @@
       <div class="card-info">
         <div class="card-title">Nitrilo</div>
         <div class="card-price">119€</div>
-           <button class="vh-wishlist">guardar</button>
+
          <button class="vh-add-to-cart">Add to cart ↗</button>
       </div>
     </div>
@@ -131,7 +130,7 @@
       <div class="card-info">
         <div class="card-title">Júpiter</div>
         <div class="card-price">129€</div>
-       <button class="vh-wishlist">guardar</button>
+ 
          <button class="vh-add-to-cart">Add to cart ↗</button>
       </div>
     </div>
@@ -142,7 +141,7 @@
       <div class="card-info">
         <div class="card-title">Apollo</div>
         <div class="card-price">149€</div>
-       <button class="vh-wishlist">guardar</button>
+  
          <button class="vh-add-to-cart">Add to cart ↗</button>
       </div>
     </div>
@@ -153,7 +152,7 @@
       <div class="card-info">
         <div class="card-title">Nitrilo</div>
         <div class="card-price">119€</div>
-     <button class="vh-wishlist">guardar</button>
+    
          <button class="vh-add-to-cart">Add to cart ↗</button>
       </div>
     </div>
@@ -164,7 +163,7 @@
       <div class="card-info">
         <div class="card-title">Júpiter</div>
         <div class="card-price">129€</div>
-     <button class="vh-wishlist">guardar</button>
+
          <button class="vh-add-to-cart">Add to cart ↗</button>
       </div>
     </div>
@@ -175,7 +174,7 @@
       <div class="card-info">
         <div class="card-title">Apollo</div>
         <div class="card-price">149€</div>
-     <button class="vh-wishlist">guardar</button>
+  
          <button class="vh-add-to-cart">Add to cart ↗</button>
       </div>
     </div>
@@ -186,7 +185,7 @@
       <div class="card-info">
         <div class="card-title">Nitrilo</div>
         <div class="card-price">119€</div>
-      <button class="vh-wishlist">guardar</button>
+    
          <button class="vh-add-to-cart">Add to cart ↗</button>
       </div>
     </div>
@@ -291,54 +290,7 @@ searchInput.addEventListener("input", (e) => {
   }
 });
 
-  let wishlist = [];
-
-
-
-
-let wishlist = JSON.parse(localStorage.getItem("wishlist") || "[]");
-
-const wishlistBtns = document.querySelectorAll(".vh-wishlist");
-const wishlistCount = document.getElementById("wishlist-count");
-const wishlistHeaderBtn = document.querySelector(".wishlist-btn");
-
-function saveWishlist() {
-  localStorage.setItem("wishlist", JSON.stringify(wishlist));
-  wishlistCount.textContent = wishlist.length;
-}
-
-function getCardData(card) {
-  return {
-    title: card.querySelector(".card-title, .vh-card-info")?.textContent || "",
-    scene: card.dataset.scene,
-    img: card.querySelector("img")?.src || ""
-  };
-}
-
-/* TOGGLE WISHLIST */
-wishlistBtns.forEach(btn => {
-  btn.addEventListener("click", (e) => {
-    e.stopPropagation();
-
-    const card = btn.closest(".card, .vh-card");
-    const data = getCardData(card);
-
-    const exists = wishlist.find(p => p.scene === data.scene);
-
-    if (exists) {
-      wishlist = wishlist.filter(p => p.scene !== data.scene);
-      btn.classList.remove("active");
-    } else {
-      wishlist.push(data);
-      btn.classList.add("active");
-    }
-
-    saveWishlist();
-  });
-});
-
-/* INIT COUNT */
-saveWishlist();
+ 
 </script>
 
 </body>
