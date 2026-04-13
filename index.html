@@ -256,9 +256,10 @@ function saveCurrentDesign(scene) {
   if (!scene) return;
   if (savedDesigns.has(scene)) return;
 
+  // 🔥 SIEMPRE buscar en DOM actual (no arrays cacheados)
   const sourceCard =
-    [...cards].find(c => c.dataset.scene === scene) ||
-    [...gridCards].find(c => c.dataset.scene === scene);
+    document.querySelector(`.vh-card[data-scene="${scene}"]`) ||
+    document.querySelector(`.card[data-scene="${scene}"]`);
 
   if (!sourceCard) return;
 
@@ -282,9 +283,7 @@ function saveCurrentDesign(scene) {
     </div>
   `;
 
-  card.addEventListener("click", () => {
-    load(scene);
-  });
+  card.addEventListener("click", () => load(scene));
 
   designsRow.appendChild(card);
 
