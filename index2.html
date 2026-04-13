@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>3DTWINS — 3D demo store</title>
+
+<script src="https://cdn.3dtwins.tech/sdk.js"></script>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header class="header">
+  <button class="header-btn" onclick="document.getElementById('collection').scrollIntoView({ behavior: 'smooth' })">
+    Collection
+  </button>
+
+  <div class="logo">
+    3DTWINS
+    <span style="color: orange;">DEMO 3D STORE</span>
+    <div class="logo-sub">Designed with low-impact digital technology. By 3dTwins</div>
+  </div>
+
+  <div class="search">
+    <input type="text" placeholder="Search products..." />
+  </div>
+</header>
+
+<!-- ================= HERO ================= -->
+<section class="hero">
+  <h1>Black Coral</h1>
+  <p>A new generation of catalogs designed for interactive commerce.</p>
+</section>
+
+<!-- ================= EXPERIENCE ================= -->
+<section class="experience">
+
+  <div class="vh-layout">
+
+    <!-- PRODUCT PANEL -->
+    <div class="vh-product-panel">
+      <div class="vh-product-title"></div>
+      <div class="vh-product-meta"></div>
+      <div class="vh-product-price"></div>
+    </div>
+
+    <!-- VIEWER -->
+    <div class="viewer">
+      <div id="vh-main-container"></div>
+    </div>
+
+    <!-- SIDEBAR (JS RENDER) -->
+    <div class="vh-sidebar">
+      <h2>NEW ARRIVALS</h2>
+      <div id="vh-sidebar-list"></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ================= YOUR DESIGNS ================= -->
+<section class="my-designs" id="my-designs" style="display:none;">
+  <h2>YOUR DESIGNS</h2>
+  <div class="my-designs-row"></div>
+</section>
+
+<!-- ================= COLLECTION ================= -->
+<section class="collection" id="collection">
+
+  <h2>COLLECTION</h2>
+
+  <div class="grid">
+    <div id="vh-grid-list"></div>
+  </div>
+
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer class="footer">
+
+  <div>
+    <h4>Blackcrab is a demo store by www.3dtwins.es</h4>
+    <p>All rights reserved.</p>
+  </div>
+
+  <div>
+    <h4>CONTACT</h4>
+    <p>info@3dtwins.es</p>
+  </div>
+
+</footer>
+
+<!-- ================= SCRIPTS ================= -->
+<script src="products.js"></script>
+
+<script>
+/* =========================
+   INIT CORE
+========================= */
+
+let container = document.getElementById("vh-main-container");
+
+const sidebarList = document.getElementById("vh-sidebar-list");
+const gridList = document.getElementById("vh-grid-list");
+
+/* =========================
+   RENDER FROM JSON
+========================= */
+
+function renderProducts() {
+
+  PRODUCTS.forEach(p => {
+
+    const card = document.createElement("div");
+    card.dataset.scene = p.scene;
+
+    card.innerHTML = `
+      <img src="${p.image}" />
+      <div class="card-title">${p.title}</div>
+      <div class="card-price">${p.price || ""}</div>
+      <div class="vh-card-info">${p.meta || ""}</div>
+      <button class="vh-add-to-cart">Add to cart ↗</button>
+    `;
+
+    /* SIDEBAR */
+    if (p.type === "vh") {
+      card.className = "vh-card";
+      sidebarList.appendChild(card);
+    }
+
+    /* GRID */
+    if (p.type === "grid") {
+      card.className = "card vh-trigger";
+      gridList.appendChild(card);
+    }
+  });
+}
+
+/* =========================
+   LOAD VIEWER
+========================= */
+
+function load(scene, sourceCard = null) {
+  if (!scene) return;
+
+  container.innerHTML = "";
+  container.setAttribute("data-scene", scene);
+
+  VH.init({ containerId: "vh-main-container" });
+
+  updateProductPanel(sourceCard);
+}
+
+/* =========================
+   PRODUCT PANEL
+========================= */
+
+function updateProductPanel(card) {
+  if (!card) return;
+
+  const title = card.querySelector(".card-title")?.textContent || "";
+  const price = card.querySelector(".card-price")?.textContent || "";
+  const meta = card.querySelector(".vh-card-info")?.textContent || "";
+
+  document.querySelector(".vh-product-title").textContent = title;
+  document.querySelector(".vh-product-price").textContent = price;
+  document.querySelector(".vh-product-meta").textContent = meta;
+}
+
+/* =========================
+   EVENTS (DELEGATION FIX)
+========================= */
+
+document.addEventListener("click", (e) => {
+
+  const card = e.target.closest("[data-scene]");
+  if (!card) return;
+
+  if (e.target.classList.contains("vh-add-to-cart")) {
+    e.stopPropagation();
+
+    const scene = card.dataset.scene;
+    const baseUrl = "https://3dtwins.es/products/personalizado";
+    window.open(`${baseUrl}?scene=${scene}`, "_blank");
+
+    return;
+  }
+
+  const scene = card.dataset.scene;
+
+  load(scene, card);
+
+  document.querySelectorAll(".vh-card, .card")
+    .forEach(c => c.classList.remove("active"));
+
+  card.classList.add("active");
+});
+
+/* =========================
+   SEARCH
+========================= */
+
+const searchInput = document.querySelector(".search input");
+
+searchInput.addEventListener("input", (e) => {
+
+  const query = e.target.value.toLowerCase();
+
+  document.querySelectorAll(".vh-card, .card").forEach(card => {
+
+    const title = card.querySelector(".card-title")?.textContent.toLowerCase() || "";
+
+    card.style.display = title.includes(query) ? "" : "none";
+  });
+});
+
+/* =========================
+   INIT
+========================= */
+
+renderProducts();
+
+const first = PRODUCTS[0];
+if (first) load(first.scene, document.querySelector("[data-scene]"));
+</script>
+
+</body>
+</html>
