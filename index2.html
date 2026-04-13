@@ -91,13 +91,15 @@
 
 <script src="products.js"></script>
 
-<script>let container = document.getElementById("vh-main-container");
+<script>
+  /* =========================
+   INIT CORE
+========================= */
+
+let container = document.getElementById("vh-main-container");
 
 const sidebarList = document.getElementById("vh-sidebar-list");
 const gridList = document.getElementById("vh-grid-list");
-const designsRow = document.querySelector(".my-designs-row");
-const designsSection = document.getElementById("my-designs");
-const searchInput = document.querySelector(".search input");
 
 let currentScene = null;
 let savedDesigns = new Map();
@@ -111,26 +113,24 @@ function renderProducts() {
   PRODUCTS.forEach(p => {
 
     const card = document.createElement("div");
-
     card.dataset.scene = p.scene;
-    card.dataset.id = p.id;
 
     card.innerHTML = `
       <img src="${p.image}" />
       <div class="card-title">${p.title}</div>
-      <div class="card-price">${p.price}</div>
+      <div class="card-price">${p.price || ""}</div>
       <div class="vh-card-info">${p.meta || ""}</div>
-      <button class="vh-add-to-cart">${p.button || "Add to cart ↗"}</button>
+      <button class="vh-add-to-cart">Add to cart ↗</button>
     `;
 
     /* SIDEBAR */
-    if (p.collection === "vh") {
+    if (p.type === "vh") {
       card.className = "vh-card";
       sidebarList.appendChild(card);
     }
 
     /* GRID */
-    if (p.collection === "grid") {
+    if (p.type === "grid") {
       card.className = "card vh-trigger";
       gridList.appendChild(card);
     }
@@ -138,13 +138,13 @@ function renderProducts() {
 }
 
 /* =========================
-   LOAD VIEWER (CORE ENGINE)
+   LOAD VIEWER (CORE FIX)
 ========================= */
 
-function load(scene) {
+function load(scene, sourceCard = null) {
   if (!scene) return;
 
-  // guardar anterior antes de cambiar
+  // 🔥 guardar escena anterior antes de cambiar
   if (currentScene && currentScene !== scene) {
     saveCurrentDesign(currentScene);
   }
@@ -156,44 +156,62 @@ function load(scene) {
 
   VH.init({ containerId: "vh-main-container" });
 
-  updateProductPanel(scene);
+  updateProductPanel(sourceCard);
 }
 
 /* =========================
-   PRODUCT PANEL (FROM JSON)
+   PRODUCT PANEL
 ========================= */
 
-function updateProductPanel(scene) {
+function updateProductPanel(card) {
+  if (!card) return;
 
-  const product = PRODUCTS.find(p => p.scene === scene);
-  if (!product) return;
+  const title = card.querySelector(".card-title")?.textContent || "";
+  const price = card.querySelector(".card-price")?.textContent || "";
+  const meta = card.querySelector(".vh-card-info")?.textContent || "";
 
-  document.querySelector(".vh-product-title").textContent = product.title;
-  document.querySelector(".vh-product-price").textContent = product.price;
-  document.querySelector(".vh-product-meta").textContent = product.meta || "";
+  document.querySelector(".vh-product-title").textContent = title;
+  document.querySelector(".vh-product-price").textContent = price;
+  document.querySelector(".vh-product-meta").textContent = meta;
 }
 
+/* =========================
+   YOUR DESIGNS (HISTORY FIXED)
+========================= */
+
+const designsRow = document.querySelector(".my-designs-row");
+const designsSection = document.getElementById("my-designs");
 
 function saveCurrentDesign(scene) {
 
-  if (!scene || savedDesigns.has(scene)) return;
+  if (!scene) return;
+  if (savedDesigns.has(scene)) return;
 
-  const product = PRODUCTS.find(p => p.scene === scene);
-  if (!product) return;
+  const sourceCard =
+    document.querySelector(`[data-scene="${scene}"]`);
+
+  if (!sourceCard) return;
+
+  const img = sourceCard.querySelector("img");
+  const title = sourceCard.querySelector(".card-title")?.textContent || "";
+  const price = sourceCard.querySelector(".card-price")?.textContent || "";
 
   const card = document.createElement("div");
   card.className = "my-design-card";
   card.dataset.scene = scene;
 
   card.innerHTML = `
-    <img src="${product.image}" />
+    <img src="${img?.src || ""}" />
     <div class="card-info">
-      <div class="card-title">${product.title}</div>
-      <div class="card-price">${product.price}</div>
+      <div class="card-title">${title}</div>
+      <div class="card-price">${price}</div>
     </div>
   `;
 
-  card.addEventListener("click", () => load(scene));
+  card.addEventListener("click", () => {
+    const source = document.querySelector(`[data-scene="${scene}"]`);
+    load(scene, source);
+  });
 
   designsRow.appendChild(card);
 
@@ -202,7 +220,7 @@ function saveCurrentDesign(scene) {
 }
 
 /* =========================
-   GLOBAL CLICK HANDLER
+   EVENTS (DELEGATION FIX)
 ========================= */
 
 document.addEventListener("click", (e) => {
@@ -210,7 +228,7 @@ document.addEventListener("click", (e) => {
   const card = e.target.closest("[data-scene]");
   if (!card) return;
 
-  // ADD TO CART
+  /* ADD TO CART */
   if (e.target.classList.contains("vh-add-to-cart")) {
     e.stopPropagation();
 
@@ -221,7 +239,10 @@ document.addEventListener("click", (e) => {
     return;
   }
 
-  load(card.dataset.scene);
+  /* LOAD SCENE */
+  const scene = card.dataset.scene;
+
+  load(scene, card);
 
   document.querySelectorAll(".vh-card, .card")
     .forEach(c => c.classList.remove("active"));
@@ -229,7 +250,11 @@ document.addEventListener("click", (e) => {
   card.classList.add("active");
 });
 
+/* =========================
+   SEARCH
+========================= */
 
+const searchInput = document.querySelector(".search input");
 
 searchInput.addEventListener("input", (e) => {
 
@@ -237,19 +262,21 @@ searchInput.addEventListener("input", (e) => {
 
   document.querySelectorAll(".vh-card, .card").forEach(card => {
 
-    const title = card.querySelector(".card-title")?.textContent.toLowerCase() || "";
+    const title =
+      card.querySelector(".card-title")?.textContent.toLowerCase() || "";
 
     card.style.display = title.includes(query) ? "" : "none";
   });
 });
 
-
+/* =========================
+   INIT
+========================= */
 
 renderProducts();
 
-if (PRODUCTS.length > 0) {
-  load(PRODUCTS[0].scene);
-}
+const first = PRODUCTS[0];
+if (first) load(first.scene, document.querySelector("[data-scene]"));
 </script>
 
 </body>
