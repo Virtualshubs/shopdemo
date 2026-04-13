@@ -27,7 +27,6 @@
   </div>
 </header>
 
-<!-- ================= HERO ================= -->
 <section class="hero">
   <h1>Black Coral</h1>
   <p>A new generation of catalogs designed for interactive commerce.</p>
@@ -37,24 +36,21 @@
 </section>
 </section>
 
-<!-- ================= EXPERIENCE ================= -->
+
 <section class="experience">
 
   <div class="vh-layout">
 
-    <!-- PRODUCT PANEL -->
     <div class="vh-product-panel">
       <div class="vh-product-title"></div>
       <div class="vh-product-meta"></div>
       <div class="vh-product-price"></div>
     </div>
 
-    <!-- VIEWER -->
     <div class="viewer">
       <div id="vh-main-container"></div>
     </div>
 
-    <!-- SIDEBAR (JS RENDER) -->
     <div class="vh-sidebar">
       <h2>NEW ARRIVALS</h2>
       <div id="vh-sidebar-list"></div>
@@ -63,13 +59,11 @@
   </div>
 </section>
 
-<!-- ================= YOUR DESIGNS ================= -->
 <section class="my-designs" id="my-designs" style="display:none;">
   <h2>YOUR DESIGNS</h2>
   <div class="my-designs-row"></div>
 </section>
 
-<!-- ================= COLLECTION ================= -->
 <section class="collection" id="collection">
 
   <h2>COLLECTION</h2>
@@ -80,7 +74,7 @@
 
 </section>
 
-<!-- ================= FOOTER ================= -->
+
 <footer class="footer">
 
   <div>
@@ -95,18 +89,15 @@
 
 </footer>
 
-<!-- ================= SCRIPTS ================= -->
 <script src="products.js"></script>
 
-<script>
-/* =========================
-   INIT CORE
-========================= */
-
-let container = document.getElementById("vh-main-container");
+<script>let container = document.getElementById("vh-main-container");
 
 const sidebarList = document.getElementById("vh-sidebar-list");
 const gridList = document.getElementById("vh-grid-list");
+const designsRow = document.querySelector(".my-designs-row");
+const designsSection = document.getElementById("my-designs");
+const searchInput = document.querySelector(".search input");
 
 let currentScene = null;
 let savedDesigns = new Map();
@@ -120,24 +111,26 @@ function renderProducts() {
   PRODUCTS.forEach(p => {
 
     const card = document.createElement("div");
+
     card.dataset.scene = p.scene;
+    card.dataset.id = p.id;
 
     card.innerHTML = `
       <img src="${p.image}" />
       <div class="card-title">${p.title}</div>
-      <div class="card-price">${p.price || ""}</div>
+      <div class="card-price">${p.price}</div>
       <div class="vh-card-info">${p.meta || ""}</div>
-      <button class="vh-add-to-cart">Add to cart ↗</button>
+      <button class="vh-add-to-cart">${p.button || "Add to cart ↗"}</button>
     `;
 
     /* SIDEBAR */
-    if (p.type === "vh") {
+    if (p.collection === "vh") {
       card.className = "vh-card";
       sidebarList.appendChild(card);
     }
 
     /* GRID */
-    if (p.type === "grid") {
+    if (p.collection === "grid") {
       card.className = "card vh-trigger";
       gridList.appendChild(card);
     }
@@ -145,13 +138,13 @@ function renderProducts() {
 }
 
 /* =========================
-   LOAD VIEWER (CORE FIX)
+   LOAD VIEWER (CORE ENGINE)
 ========================= */
 
-function load(scene, sourceCard = null) {
+function load(scene) {
   if (!scene) return;
 
-  // 🔥 guardar escena anterior antes de cambiar
+  // guardar anterior antes de cambiar
   if (currentScene && currentScene !== scene) {
     saveCurrentDesign(currentScene);
   }
@@ -163,62 +156,44 @@ function load(scene, sourceCard = null) {
 
   VH.init({ containerId: "vh-main-container" });
 
-  updateProductPanel(sourceCard);
+  updateProductPanel(scene);
 }
 
 /* =========================
-   PRODUCT PANEL
+   PRODUCT PANEL (FROM JSON)
 ========================= */
 
-function updateProductPanel(card) {
-  if (!card) return;
+function updateProductPanel(scene) {
 
-  const title = card.querySelector(".card-title")?.textContent || "";
-  const price = card.querySelector(".card-price")?.textContent || "";
-  const meta = card.querySelector(".vh-card-info")?.textContent || "";
+  const product = PRODUCTS.find(p => p.scene === scene);
+  if (!product) return;
 
-  document.querySelector(".vh-product-title").textContent = title;
-  document.querySelector(".vh-product-price").textContent = price;
-  document.querySelector(".vh-product-meta").textContent = meta;
+  document.querySelector(".vh-product-title").textContent = product.title;
+  document.querySelector(".vh-product-price").textContent = product.price;
+  document.querySelector(".vh-product-meta").textContent = product.meta || "";
 }
 
-/* =========================
-   YOUR DESIGNS (HISTORY FIXED)
-========================= */
-
-const designsRow = document.querySelector(".my-designs-row");
-const designsSection = document.getElementById("my-designs");
 
 function saveCurrentDesign(scene) {
 
-  if (!scene) return;
-  if (savedDesigns.has(scene)) return;
+  if (!scene || savedDesigns.has(scene)) return;
 
-  const sourceCard =
-    document.querySelector(`[data-scene="${scene}"]`);
-
-  if (!sourceCard) return;
-
-  const img = sourceCard.querySelector("img");
-  const title = sourceCard.querySelector(".card-title")?.textContent || "";
-  const price = sourceCard.querySelector(".card-price")?.textContent || "";
+  const product = PRODUCTS.find(p => p.scene === scene);
+  if (!product) return;
 
   const card = document.createElement("div");
   card.className = "my-design-card";
   card.dataset.scene = scene;
 
   card.innerHTML = `
-    <img src="${img?.src || ""}" />
+    <img src="${product.image}" />
     <div class="card-info">
-      <div class="card-title">${title}</div>
-      <div class="card-price">${price}</div>
+      <div class="card-title">${product.title}</div>
+      <div class="card-price">${product.price}</div>
     </div>
   `;
 
-  card.addEventListener("click", () => {
-    const source = document.querySelector(`[data-scene="${scene}"]`);
-    load(scene, source);
-  });
+  card.addEventListener("click", () => load(scene));
 
   designsRow.appendChild(card);
 
@@ -227,7 +202,7 @@ function saveCurrentDesign(scene) {
 }
 
 /* =========================
-   EVENTS (DELEGATION FIX)
+   GLOBAL CLICK HANDLER
 ========================= */
 
 document.addEventListener("click", (e) => {
@@ -235,7 +210,7 @@ document.addEventListener("click", (e) => {
   const card = e.target.closest("[data-scene]");
   if (!card) return;
 
-  /* ADD TO CART */
+  // ADD TO CART
   if (e.target.classList.contains("vh-add-to-cart")) {
     e.stopPropagation();
 
@@ -246,10 +221,7 @@ document.addEventListener("click", (e) => {
     return;
   }
 
-  /* LOAD SCENE */
-  const scene = card.dataset.scene;
-
-  load(scene, card);
+  load(card.dataset.scene);
 
   document.querySelectorAll(".vh-card, .card")
     .forEach(c => c.classList.remove("active"));
@@ -257,11 +229,7 @@ document.addEventListener("click", (e) => {
   card.classList.add("active");
 });
 
-/* =========================
-   SEARCH
-========================= */
 
-const searchInput = document.querySelector(".search input");
 
 searchInput.addEventListener("input", (e) => {
 
@@ -269,21 +237,19 @@ searchInput.addEventListener("input", (e) => {
 
   document.querySelectorAll(".vh-card, .card").forEach(card => {
 
-    const title =
-      card.querySelector(".card-title")?.textContent.toLowerCase() || "";
+    const title = card.querySelector(".card-title")?.textContent.toLowerCase() || "";
 
     card.style.display = title.includes(query) ? "" : "none";
   });
 });
 
-/* =========================
-   INIT
-========================= */
+
 
 renderProducts();
 
-const first = PRODUCTS[0];
-if (first) load(first.scene, document.querySelector("[data-scene]"));
+if (PRODUCTS.length > 0) {
+  load(PRODUCTS[0].scene);
+}
 </script>
 
 </body>
