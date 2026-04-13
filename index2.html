@@ -31,6 +31,10 @@
 <section class="hero">
   <h1>Black Coral</h1>
   <p>A new generation of catalogs designed for interactive commerce.</p>
+  <section class="my-designs" id="my-designs">
+  <h2>YOUR DESIGNS</h2>
+  <div class="my-designs-row"></div>
+</section>
 </section>
 
 <!-- ================= EXPERIENCE ================= -->
@@ -104,6 +108,9 @@ let container = document.getElementById("vh-main-container");
 const sidebarList = document.getElementById("vh-sidebar-list");
 const gridList = document.getElementById("vh-grid-list");
 
+let currentScene = null;
+let savedDesigns = new Map();
+
 /* =========================
    RENDER FROM JSON
 ========================= */
@@ -138,11 +145,18 @@ function renderProducts() {
 }
 
 /* =========================
-   LOAD VIEWER
+   LOAD VIEWER (CORE FIX)
 ========================= */
 
 function load(scene, sourceCard = null) {
   if (!scene) return;
+
+  // 🔥 guardar escena anterior antes de cambiar
+  if (currentScene && currentScene !== scene) {
+    saveCurrentDesign(currentScene);
+  }
+
+  currentScene = scene;
 
   container.innerHTML = "";
   container.setAttribute("data-scene", scene);
@@ -169,6 +183,50 @@ function updateProductPanel(card) {
 }
 
 /* =========================
+   YOUR DESIGNS (HISTORY FIXED)
+========================= */
+
+const designsRow = document.querySelector(".my-designs-row");
+const designsSection = document.getElementById("my-designs");
+
+function saveCurrentDesign(scene) {
+
+  if (!scene) return;
+  if (savedDesigns.has(scene)) return;
+
+  const sourceCard =
+    document.querySelector(`[data-scene="${scene}"]`);
+
+  if (!sourceCard) return;
+
+  const img = sourceCard.querySelector("img");
+  const title = sourceCard.querySelector(".card-title")?.textContent || "";
+  const price = sourceCard.querySelector(".card-price")?.textContent || "";
+
+  const card = document.createElement("div");
+  card.className = "my-design-card";
+  card.dataset.scene = scene;
+
+  card.innerHTML = `
+    <img src="${img?.src || ""}" />
+    <div class="card-info">
+      <div class="card-title">${title}</div>
+      <div class="card-price">${price}</div>
+    </div>
+  `;
+
+  card.addEventListener("click", () => {
+    const source = document.querySelector(`[data-scene="${scene}"]`);
+    load(scene, source);
+  });
+
+  designsRow.appendChild(card);
+
+  savedDesigns.set(scene, true);
+  designsSection.style.display = "block";
+}
+
+/* =========================
    EVENTS (DELEGATION FIX)
 ========================= */
 
@@ -177,16 +235,18 @@ document.addEventListener("click", (e) => {
   const card = e.target.closest("[data-scene]");
   if (!card) return;
 
+  /* ADD TO CART */
   if (e.target.classList.contains("vh-add-to-cart")) {
     e.stopPropagation();
 
     const scene = card.dataset.scene;
     const baseUrl = "https://3dtwins.es/products/personalizado";
-    window.open(`${baseUrl}?scene=${scene}`, "_blank");
 
+    window.open(`${baseUrl}?scene=${scene}`, "_blank");
     return;
   }
 
+  /* LOAD SCENE */
   const scene = card.dataset.scene;
 
   load(scene, card);
@@ -209,7 +269,8 @@ searchInput.addEventListener("input", (e) => {
 
   document.querySelectorAll(".vh-card, .card").forEach(card => {
 
-    const title = card.querySelector(".card-title")?.textContent.toLowerCase() || "";
+    const title =
+      card.querySelector(".card-title")?.textContent.toLowerCase() || "";
 
     card.style.display = title.includes(query) ? "" : "none";
   });
