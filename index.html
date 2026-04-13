@@ -82,6 +82,10 @@ A new generation of catalogs designed for interactive commerce.
 
 </section>
 
+  <section class="my-designs" id="my-designs" style="display:none;">
+  <h2>YOUR DESIGNS</h2>
+  <div class="my-designs-row"></div>
+</section>
   
   <section class="collection" id="collection">
 
@@ -207,10 +211,54 @@ A new generation of catalogs designed for interactive commerce.
 </footer>
 
 <script>
-
 let cards = document.querySelectorAll(".vh-card");
 let gridCards = document.querySelectorAll(".vh-trigger");
 let container = document.getElementById("vh-main-container");
+
+/* =========================
+   MY DESIGNS
+========================= */
+
+const designsRow = document.querySelector(".my-designs-row");
+const designsSection = document.getElementById("my-designs");
+
+let savedDesigns = new Map(); // evita duplicados
+
+function saveCurrentDesign(scene) {
+
+  if (!scene) return;
+
+  // evitar duplicados
+  if (savedDesigns.has(scene)) return;
+
+  const activeCard = document.querySelector(".vh-card.active img");
+  if (!activeCard) return;
+
+  const imgSrc = activeCard.src;
+
+  const card = document.createElement("div");
+  card.className = "my-design-card";
+  card.dataset.scene = scene;
+
+  card.innerHTML = `
+    <img src="${imgSrc}" />
+    <p>Saved design</p>
+  `;
+
+  card.addEventListener("click", () => {
+    load(scene);
+  });
+
+  designsRow.appendChild(card);
+
+  savedDesigns.set(scene, true);
+
+  designsSection.style.display = "block";
+}
+
+/* =========================
+   LOAD VIEWER
+========================= */
 
 function load(scene){
   container.innerHTML = "";
@@ -218,18 +266,35 @@ function load(scene){
   VH.init({ containerId: "vh-main-container" });
 }
 
+/* =========================
+   SIDEBAR INTERACTION
+========================= */
 
 cards.forEach(card=>{
   card.addEventListener("click", ()=>{
+
+    // 🔥 guardar diseño actual antes de cambiar
+    const currentScene = container.getAttribute("data-scene");
+    saveCurrentDesign(currentScene);
+
     cards.forEach(c=>c.classList.remove("active"));
     card.classList.add("active");
+
     load(card.dataset.scene);
   });
 });
 
+/* =========================
+   GRID INTERACTION
+========================= */
 
 gridCards.forEach(card=>{
   card.addEventListener("click", ()=>{
+
+    // 🔥 guardar diseño actual antes de cambiar
+    const currentScene = container.getAttribute("data-scene");
+    saveCurrentDesign(currentScene);
+
     load(card.dataset.scene);
 
     document.querySelector(".experience")
@@ -237,10 +302,17 @@ gridCards.forEach(card=>{
   });
 });
 
+/* =========================
+   INIT
+========================= */
 
 load(cards[0].dataset.scene);
 
-  document.querySelectorAll(".vh-add-to-cart").forEach(btn => {
+/* =========================
+   ADD TO CART
+========================= */
+
+document.querySelectorAll(".vh-add-to-cart").forEach(btn => {
   btn.addEventListener("click", (e) => {
 
     e.stopPropagation(); 
@@ -256,7 +328,11 @@ load(cards[0].dataset.scene);
   });
 });
 
-  const searchInput = document.querySelector(".search input");
+/* =========================
+   SEARCH
+========================= */
+
+const searchInput = document.querySelector(".search input");
 const allCards = document.querySelectorAll(".card, .vh-card");
 
 searchInput.addEventListener("input", (e) => {
@@ -276,14 +352,11 @@ searchInput.addEventListener("input", (e) => {
     }
   });
 
-
   if (visibleCards.length === 1) {
     const scene = visibleCards[0].dataset.scene;
     if (scene) load(scene);
   }
 });
-
- 
 </script>
 
 </body>
