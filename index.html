@@ -283,7 +283,13 @@ function saveCurrentDesign(scene) {
     </div>
   `;
 
-  card.addEventListener("click", () => load(scene));
+ card.addEventListener("click", () => {
+  const sourceCard =
+    document.querySelector(`.vh-card[data-scene="${scene}"]`) ||
+    document.querySelector(`.card[data-scene="${scene}"]`);
+
+  load(scene, sourceCard);
+});
 
   designsRow.appendChild(card);
 
