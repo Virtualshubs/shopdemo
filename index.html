@@ -240,9 +240,32 @@ function saveCurrentDesign(scene) {
   card.className = "my-design-card";
   card.dataset.scene = scene;
 
+function saveCurrentDesign(scene) {
+
+  if (!scene) return;
+  if (savedDesigns.has(scene)) return;
+
+  const activeCard = document.querySelector(".vh-card.active");
+  if (!activeCard) return;
+
+  const img = activeCard.querySelector("img");
+  const titleEl = activeCard.querySelector(".card-title");
+  const priceEl = activeCard.querySelector(".card-price");
+
+  const imgSrc = img ? img.src : "";
+  const title = titleEl ? titleEl.textContent : "Custom design";
+  const price = priceEl ? priceEl.textContent : "";
+
+  const card = document.createElement("div");
+  card.className = "my-design-card";
+  card.dataset.scene = scene;
+
   card.innerHTML = `
     <img src="${imgSrc}" />
-    <p>Saved design</p>
+    <div class="card-info">
+      <div class="card-title">${title}</div>
+      <div class="card-price">${price}</div>
+    </div>
   `;
 
   card.addEventListener("click", () => {
@@ -252,7 +275,6 @@ function saveCurrentDesign(scene) {
   designsRow.appendChild(card);
 
   savedDesigns.set(scene, true);
-
   designsSection.style.display = "block";
 }
 
