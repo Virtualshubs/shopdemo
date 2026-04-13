@@ -227,22 +227,6 @@ let savedDesigns = new Map(); // evita duplicados
 function saveCurrentDesign(scene) {
 
   if (!scene) return;
-
-  // evitar duplicados
-  if (savedDesigns.has(scene)) return;
-
-  const activeCard = document.querySelector(".vh-card.active img");
-  if (!activeCard) return;
-
-  const imgSrc = activeCard.src;
-
-  const card = document.createElement("div");
-  card.className = "my-design-card";
-  card.dataset.scene = scene;
-
-function saveCurrentDesign(scene) {
-
-  if (!scene) return;
   if (savedDesigns.has(scene)) return;
 
   const activeCard = document.querySelector(".vh-card.active");
