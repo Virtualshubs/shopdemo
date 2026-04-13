@@ -27,15 +27,18 @@
   </div>
 </header>
 
+  
+</section>
+  
 <section class="hero">
   <h1>Black Coral</h1>
   <p>A new generation of catalogs designed for interactive commerce.</p>
-  <section class="my-designs" id="my-designs">
+  
+<section class="my-designs" id="my-designs" style="display:none;">
   <h2>YOUR DESIGNS</h2>
-  <div class="my-designs-row"></div>
+  <div class="my-designs-row">
+  </div>
 </section>
-</section>
-
 
 <section class="experience">
 
@@ -176,7 +179,7 @@ function updateProductPanel(card) {
 }
 
 /* =========================
-   YOUR DESIGNS (HISTORY FIXED)
+   YOUR DESIGNS (FINAL FIXED)
 ========================= */
 
 const designsRow = document.querySelector(".my-designs-row");
@@ -184,33 +187,27 @@ const designsSection = document.getElementById("my-designs");
 
 function saveCurrentDesign(scene) {
 
-  if (!scene) return;
-  if (savedDesigns.has(scene)) return;
+  if (!scene || savedDesigns.has(scene)) return;
 
-  const sourceCard =
-    document.querySelector(`[data-scene="${scene}"]`);
-
-  if (!sourceCard) return;
-
-  const img = sourceCard.querySelector("img");
-  const title = sourceCard.querySelector(".card-title")?.textContent || "";
-  const price = sourceCard.querySelector(".card-price")?.textContent || "";
+  // 🔥 SOURCE OF TRUTH = JSON
+  const product = PRODUCTS.find(p => p.scene === scene);
+  if (!product) return;
 
   const card = document.createElement("div");
   card.className = "my-design-card";
   card.dataset.scene = scene;
 
   card.innerHTML = `
-    <img src="${img?.src || ""}" />
+    <img src="${product.image}" />
     <div class="card-info">
-      <div class="card-title">${title}</div>
-      <div class="card-price">${price}</div>
+      <div class="card-title">${product.title}</div>
+      <div class="card-meta">${product.meta || ""}</div>
+      <div class="card-price">${product.price || ""}</div>
     </div>
   `;
 
   card.addEventListener("click", () => {
-    const source = document.querySelector(`[data-scene="${scene}"]`);
-    load(scene, source);
+    load(scene);
   });
 
   designsRow.appendChild(card);
