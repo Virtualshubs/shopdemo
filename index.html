@@ -39,6 +39,12 @@ A new generation of catalogs designed for interactive commerce.
 
   <div class="vh-layout">
 
+    <div class="vh-product-panel">
+  <div class="vh-product-title"></div>
+  <div class="vh-product-meta"></div>
+  <div class="vh-product-price"></div>
+</div>
+
           <div class="viewer">
       <div id="vh-main-container"></div>
     </div>
@@ -210,10 +216,29 @@ A new generation of catalogs designed for interactive commerce.
 
 </footer>
 
-<script>
-let cards = document.querySelectorAll(".vh-card");
+<script>let cards = document.querySelectorAll(".vh-card");
 let gridCards = document.querySelectorAll(".vh-trigger");
 let container = document.getElementById("vh-main-container");
+
+/* =========================
+   PRODUCT PANEL (NEW)
+========================= */
+
+function updateProductPanel(card) {
+  if (!card) return;
+
+  const title = card.querySelector(".card-title, .vh-card-info")?.textContent || "";
+  const price = card.querySelector(".card-price")?.textContent || "";
+  const meta = card.querySelector(".vh-card-info")?.textContent || "";
+
+  const titleEl = document.querySelector(".vh-product-title");
+  const priceEl = document.querySelector(".vh-product-price");
+  const metaEl = document.querySelector(".vh-product-meta");
+
+  if (titleEl) titleEl.textContent = title;
+  if (priceEl) priceEl.textContent = price;
+  if (metaEl) metaEl.textContent = meta;
+}
 
 /* =========================
    MY DESIGNS
@@ -266,27 +291,29 @@ function saveCurrentDesign(scene) {
    LOAD VIEWER
 ========================= */
 
-function load(scene){
+function load(scene, sourceCard = null) {
   container.innerHTML = "";
   container.setAttribute("data-scene", scene);
   VH.init({ containerId: "vh-main-container" });
+
+  // 🔥 sync product panel
+  updateProductPanel(sourceCard);
 }
 
 /* =========================
    SIDEBAR INTERACTION
 ========================= */
 
-cards.forEach(card=>{
-  card.addEventListener("click", ()=>{
+cards.forEach(card => {
+  card.addEventListener("click", () => {
 
-    // 🔥 guardar diseño actual antes de cambiar
     const currentScene = container.getAttribute("data-scene");
     saveCurrentDesign(currentScene);
 
-    cards.forEach(c=>c.classList.remove("active"));
+    cards.forEach(c => c.classList.remove("active"));
     card.classList.add("active");
 
-    load(card.dataset.scene);
+    load(card.dataset.scene, card);
   });
 });
 
@@ -294,14 +321,13 @@ cards.forEach(card=>{
    GRID INTERACTION
 ========================= */
 
-gridCards.forEach(card=>{
-  card.addEventListener("click", ()=>{
+gridCards.forEach(card => {
+  card.addEventListener("click", () => {
 
-    // 🔥 guardar diseño actual antes de cambiar
     const currentScene = container.getAttribute("data-scene");
     saveCurrentDesign(currentScene);
 
-    load(card.dataset.scene);
+    load(card.dataset.scene, card);
 
     document.querySelector(".experience")
       .scrollIntoView({ behavior: "smooth" });
@@ -312,7 +338,7 @@ gridCards.forEach(card=>{
    INIT
 ========================= */
 
-load(cards[0].dataset.scene);
+load(cards[0].dataset.scene, cards[0]);
 
 /* =========================
    ADD TO CART
@@ -321,7 +347,7 @@ load(cards[0].dataset.scene);
 document.querySelectorAll(".vh-add-to-cart").forEach(btn => {
   btn.addEventListener("click", (e) => {
 
-    e.stopPropagation(); 
+    e.stopPropagation();
 
     const card = btn.closest("[data-scene]");
     const scene = card.dataset.scene;
@@ -360,7 +386,7 @@ searchInput.addEventListener("input", (e) => {
 
   if (visibleCards.length === 1) {
     const scene = visibleCards[0].dataset.scene;
-    if (scene) load(scene);
+    if (scene) load(scene, visibleCards[0]);
   }
 });
 </script>
