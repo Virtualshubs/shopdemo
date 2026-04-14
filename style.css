@@ -343,6 +343,15 @@ h1, h2, h3 {
   opacity: 0.7;
 }
 
+.vh-product-panel{
+     min-width: 160px;
+  background: #11161d;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(230,226,214,0.1);
+   
+}
+
 /* =========================
    PDP (PRODUCT SYSTEM DETAIL)
 ========================= */
