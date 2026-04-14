@@ -2,7 +2,7 @@ const PRODUCTS = [
   {
     id: "lunar-white",
     scene: "aHR0cHM6Ly9wcm9kdWN0LjNkdHdpbnMudGVjaC8/bmFtZT0mY29uZmlnPU9iamVjdF8yJTNBJTIzZmZmYmI5JTdDQ3VlcnBvJTNBJTIzYWE3OTQyJTdDQyVDMyVCQXB1bGElM0ElMjNmZmZmZmYlN0NPYmplY3RfNSUzQSUyM2ZmNjI1MSU3Q1RhbGxvX21ldCVDMyVBMWxpY28lM0ElMjMwMDAwMDAlN0NCYXNlX2VzdHJ1Y3R1cmElM0ElMjMyMzIzMjMmcXVhbnRpdHk9MSZ0b2tlbj1lMWJkNzlkYS1kYzdlLTQ4NmQtYmQwZS03NmVkOGM4Mzc5ODEmbW9kZWxVcmw9aHR0cHMlM0ElMkYlMkZkZW1vLjNkdHdpbnMuZXUlMkZ2aWRhbGxhbXAuZ2xiJmJ1eVVSTD1odHRwcyUzQSUyRiUyRjNkdHdpbnMuZXMlMkY=",
-    title: "Lamp modular",
+    title: "Lamp",
     price: "179€",
     image: "sources/democonfigurador3dluminaria.png",
     meta: "Printing On demand",
