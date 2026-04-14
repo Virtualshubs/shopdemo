@@ -5,7 +5,7 @@
 body {
   margin: 0;
   font-family: Inter, system-ui, sans-serif;
-  background: radial-gradient(circle at 50% -20%, #1a2230 0%, #0b0f14 45%, #070a0f 100%);
+  background: #f1f1f1;
   color: #e7e2d6;
   letter-spacing: 0.2px;
 }
@@ -159,6 +159,7 @@ h1, h2, h3 {
 
 .collection {
   padding: 60px;
+   blacground: #f1f1f1;
 }
 
 .collection h2 {
@@ -329,6 +330,7 @@ h1, h2, h3 {
   border-radius: 14px;
   overflow: hidden;
   border: 1px solid rgba(230,226,214,0.1);
+     padding: 8px;
 }
 
 .my-design-card img {
@@ -349,6 +351,7 @@ h1, h2, h3 {
   border-radius: 14px;
   overflow: hidden;
   border: 1px solid rgba(230,226,214,0.1);
+     padding: 8px;
    
 }
 
