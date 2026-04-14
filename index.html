@@ -196,7 +196,7 @@ function renderProducts() {
   });
 }
 
-function load(scene, sourceCard = null) {
+function load(scene, sourceCard = null, shouldScroll = true) {
   if (!scene) return;
 
   if (currentScene && currentScene !== scene) {
@@ -212,13 +212,16 @@ function load(scene, sourceCard = null) {
 
   updateProductPanel(sourceCard);
 
-  const viewer = document.querySelector("#vh-main-container");
+  // 🔥 SOLO SCROLL SI ESTÁ ACTIVADO
+  if (shouldScroll) {
+    const viewer = document.querySelector("#vh-main-container");
 
-  if (viewer) {
-    viewer.scrollIntoView({
-      behavior: "smooth",
-      block: "center"
-    });
+    if (viewer && window.scrollY > 200) {
+      viewer.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+      });
+    }
   }
 }
 
