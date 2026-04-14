@@ -1,3 +1,8 @@
+:root {
+  --header-height: 80px; /* ajusta si tu header cambia */
+}
+
+
 body {
   margin: 0;
   font-family: Inter, system-ui, sans-serif;
@@ -12,12 +17,11 @@ h1, h2, h3 {
    color: black;
 }
 
-
 .header {
   position: sticky;
   top: 0;
   z-index: 1000;
- background: rgba(255,255,255,0.02);
+  background: rgba(255,255,255,0.02);
   backdrop-filter: blur(14px);
   display: flex;
   align-items: center;
@@ -26,6 +30,7 @@ h1, h2, h3 {
   border-bottom: 1px solid rgba(231, 226, 214, 0.08);
   box-shadow: 0 10px 30px rgba(0,0,0,0.25);
 }
+
 
 .header-left,
 .header-right {
@@ -97,48 +102,65 @@ h1, h2, h3 {
   box-shadow: 0 0 0 2px rgba(231, 226, 214, 0.05);
 }
 
-
+/* =========================
+   HERO (FIXED FULL BLEED)
+========================= */
 .hero {
-  height: 100%;
+  height: calc(100vh - var(--header-height));
   display: flex;
-  align-items: center;
+  align-items: stretch;
   justify-content: center;
   background: #f1f1f1;
   overflow: hidden;
+
+  /* 🔥 clave para efecto editorial */
+  margin-top: calc(var(--header-height) * -1);
+  padding-top: var(--header-height);
 }
 
+/* =========================
+   CAROUSEL
+========================= */
 .hero-carousel {
   width: 100%;
-  max-width: 1200px;
+  height: 100%;
   position: relative;
 }
 
 .hero-track {
+  height: 100%;
   position: relative;
 }
 
 .hero-slide {
   display: none;
-  position: relative;
+  position: absolute;
+  inset: 0;
 }
 
 .hero-slide.active {
   display: block;
+  height: 100%;
 }
 
+/* 🔥 FIX IMAGEN */
 .hero-slide img {
   width: 100%;
-  height: 900px;
+  height: 100%;
   object-fit: cover;
-  border-radius: 2px;
+  display: block;
 }
 
+/* =========================
+   CONTENT
+========================= */
 .hero-content {
   position: absolute;
-  bottom: 40px;
-  left: 40px;
+  bottom: 60px;
+  left: 60px;
   color: black;
   max-width: 400px;
+  z-index: 2;
 }
 
 .hero-content h1 {
@@ -159,7 +181,9 @@ h1, h2, h3 {
   cursor: pointer;
 }
 
-/* DOTS estilo línea fina */
+/* =========================
+   DOTS
+========================= */
 .hero-dots {
   display: flex;
   gap: 10px;
@@ -189,7 +213,6 @@ h1, h2, h3 {
   from { width: 0%; }
   to { width: 100%; }
 }
-
 /* =========================
    COLLECTION GRID (RETAIL SYSTEM)
 ========================= */
