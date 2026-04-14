@@ -131,7 +131,7 @@ h1, h2, h3 {
 
 
 .hero {
-  padding: 100px 60px 60px;
+  padding: 100px 60px 80px;
   text-align: center;
   background: radial-gradient(circle at top, #1a2230, #0b0f14);
 }
@@ -141,6 +141,7 @@ h1, h2, h3 {
   letter-spacing: 12px;
   margin: 0;
   font-weight: 400;
+   color: white;
 }
 
 .hero p {
@@ -179,7 +180,7 @@ h1, h2, h3 {
   overflow: hidden;
   cursor: pointer;
   transition: 0.25s;
-  border: 1px solid rgba(231, 226, 214, 0.06);
+   border: 1px solid rgba(230,226,214,0.2);
    padding: 10px;
 }
 
@@ -191,7 +192,7 @@ h1, h2, h3 {
 
 .card img {
   width: 100%;
-  height: 220px;
+  height: 320px;
   object-fit: cover;
 }
 
@@ -205,7 +206,7 @@ h1, h2, h3 {
 
 .card-price {
   font-size: 12px;
-  color: rgba(231, 226, 214, 0.55);
+  color: black;
   letter-spacing: 0.08em;
   margin-top: 10px;
 }
@@ -227,6 +228,7 @@ h1, h2, h3 {
   transition: 0.2s;
   font-weight: 600;
   letter-spacing: 0.05em;
+   border: 1px solid rgba(230,226,214,0.2);
 }
 
 .vh-add-to-cart:hover {
@@ -254,11 +256,11 @@ h1, h2, h3 {
 }
 
 .vh-card {
-  background: linear-gradient(180deg, #101722, #0d121a);
+  background: #f5f5f5;
   border-radius: 1px;
   overflow: hidden;
   cursor: pointer;
-  border: 1px solid rgba(231, 226, 214, 0.06);
+   border: 1px solid rgba(230,226,214,0.2);
 padding: 10px;
  
 }
@@ -277,6 +279,7 @@ padding: 10px;
 .vh-card-info {
   padding: 10px;
   font-size: 12px;
+   color: black;
 }
 
 .viewer {
@@ -319,6 +322,7 @@ padding: 10px;
   gap: 16px;
   overflow-x: auto;
   padding-bottom: 10px;
+   border: 1px solid rgba(230,226,214,0.2);
 }
 
 .my-designs-row::-webkit-scrollbar {
@@ -330,14 +334,14 @@ padding: 10px;
   background: #f1f1f1;
   border-radius: 1px;
   overflow: hidden;
-  border: 1px solid rgba(230,226,214,0.1);
+  border: 1px solid rgba(230,226,214,0.2);
      padding: 8px;
    color: black;
 }
 
 .my-design-card img {
   width: 100%;
-  height: 100px;
+  height: 140px;
   object-fit: cover;
 }
 
