@@ -99,8 +99,7 @@ h1, h2, h3 {
 
 
 .hero {
-  width: 100vw;
-  margin-left: calc(-50vw + 50%);
+  width: 100vh;
   height: 80vh;
 
   display: flex;
