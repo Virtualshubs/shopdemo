@@ -1,11 +1,11 @@
 const PRODUCTS = [
   {
     id: "lunar-white",
-    scene: "aHR0cHM6Ly9wcm9kdWN0LjNkdHdpbnMudGVjaC8/bmFtZT1Tb2YlQzMlQTEmY29uZmlnPUJhc2VfbWV0JUMzJUExbGljYSUzQSUyMzAzMDQyYiU3Q0VzdHJ1Y3R1cmFfYmFzZSUzQSUyMzE3MTcxNyU3Q0VzdHJ1Y3R1cmFfaW50ZXJuYSUzQSUyMzFmMWYxZiU3Q0VzdHJ1Y3R1cmFfZXh0ZXJuYSUzQSUyMzEyMTIxMiU3Q0NvamluZXNfYXV4aWxpYXJlcyUzQSUyMzE0MTQxNCU3Q0FzaWVudG9zJTNBJTIzMDgwODA4JnF1YW50aXR5PTEmdG9rZW49MDk4ZDM1ZmUtNDBkZC00MzZlLWIyNDUtNWMzZjA4NWJhYWIxJm1vZGVsVXJsPWh0dHBzJTNBJTJGJTJGdmlld2VyLjNkdHdpbnMudGVjaCUyRlNvZmElQ0MlODEuZ2xiJmJ1eVVSTD1odHRwcyUzQSUyRiUyRjNkdHdpbnMuZXM=",
-    title: "Lunar White",
-    price: "129€",
+    scene: "aHR0cHM6Ly9wcm9kdWN0LjNkdHdpbnMudGVjaC8/bmFtZT0mY29uZmlnPU9iamVjdF8yJTNBJTIzZmZmYmI5JTdDQ3VlcnBvJTNBJTIzYWE3OTQyJTdDQyVDMyVCQXB1bGElM0ElMjNmZmZmZmYlN0NPYmplY3RfNSUzQSUyM2ZmNjI1MSU3Q1RhbGxvX21ldCVDMyVBMWxpY28lM0ElMjMwMDAwMDAlN0NCYXNlX2VzdHJ1Y3R1cmElM0ElMjMyMzIzMjMmcXVhbnRpdHk9MSZ0b2tlbj1lMWJkNzlkYS1kYzdlLTQ4NmQtYmQwZS03NmVkOGM4Mzc5ODEmbW9kZWxVcmw9aHR0cHMlM0ElMkYlMkZkZW1vLjNkdHdpbnMuZXUlMkZ2aWRhbGxhbXAuZ2xiJmJ1eVVSTD1odHRwcyUzQSUyRiUyRjNkdHdpbnMuZXMlMkY=",
+    title: "Lamp modular",
+    price: "179€",
     image: "https://cdn.shopify.com/s/files/1/0948/5366/1017/files/CapturadePantalla2026-03-24alas14.25.40.png?v=1774358754",
-    meta: "On demand",
+    meta: "Printing On demand",
     type: "vh" // sidebar
   },
   {
