@@ -99,7 +99,7 @@ h1, h2, h3 {
 
 
 .hero {
-  height: 50vh;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
