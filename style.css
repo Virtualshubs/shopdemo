@@ -101,7 +101,7 @@ h1, h2, h3 {
 /* =========================
    HERO (FIXED FULL BLEED)
 ========================= */
-.hero { height: 100%; display: flex; align-items: center; justify-content: center; background: #f1f1f1; overflow: hidden; }
+.hero { height: 80vh; display: flex; align-items: center; justify-content: center; background: #f1f1f1; overflow: hidden; }
 /* =========================
    CAROUSEL
 ========================= */
