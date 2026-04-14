@@ -37,9 +37,7 @@
         <div class="hero-content">
           <h1>3DTWINS DEMO</h1>
           <p>A new generation of interactive commerce</p>
-        <a href="#3dstoredemo">
-  <button>Explore</button>
-</a>
+      <button id="explore-btn">Explore</button>
         </div>
       </div>
 
@@ -159,7 +157,16 @@ setInterval(() => {
 }, 5000);
 
 
-  
+  document.getElementById("explore-btn").addEventListener("click", () => {
+  const viewer = document.querySelector("#vh-main-container");
+
+  if (viewer) {
+    viewer.scrollIntoView({
+      behavior: "smooth",
+      block: "center"
+    });
+  }
+});
 
 let container = document.getElementById("vh-main-container");
 
