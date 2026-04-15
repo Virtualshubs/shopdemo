@@ -11,7 +11,7 @@ const PRODUCTS = [
   {
     id: "Bolso",
     scene: "aHR0cHM6Ly9wcm9kdWN0LjNkdHdpbnMudGVjaC8%2FbmFtZT1Cb2xzbyZjb25maWc9Y2FtYmlhcl9jb2xvciUzQSUyM2FkMDAwMCZxdWFudGl0eT0xJnRva2VuPTFjMGJhNTVhLTZiYjUtNDhhMi1iNDRjLWIyYzFmN2JkNjFlNyZtb2RlbFVybD1odHRwcyUzQSUyRiUyRnZpZXdlci4zZHR3aW5zLnRlY2glMkZib2xzb3BpZWwuZ2xiJmJ1eVVSTD1odHRwcyUzQSUyRiUyRjNkdHdpbnMuZXMlMkY%3D",
-    title: "Limo",
+    title: "Bolso",
     price: "129€",
     image: "https://cdn.shopify.com/s/files/1/0948/5366/1017/files/CapturadePantalla2026-03-24alas14.25.40.png?v=1774358754",
     meta: "On demand",
@@ -39,7 +39,7 @@ const PRODUCTS = [
   {
     id: "Bolso",
     scene: "aHR0cHM6Ly9wcm9kdWN0LjNkdHdpbnMudGVjaC8%2FbmFtZT1Cb2xzbyZjb25maWc9Y2FtYmlhcl9jb2xvciUzQSUyM2FkMDAwMCZxdWFudGl0eT0xJnRva2VuPTFjMGJhNTVhLTZiYjUtNDhhMi1iNDRjLWIyYzFmN2JkNjFlNyZtb2RlbFVybD1odHRwcyUzQSUyRiUyRnZpZXdlci4zZHR3aW5zLnRlY2glMkZib2xzb3BpZWwuZ2xiJmJ1eVVSTD1odHRwcyUzQSUyRiUyRjNkdHdpbnMuZXMlMkY%3D",
-    title: "Limo",
+    title: "Bolso",
     price: "129€",
     image: "https://cdn.shopify.com/s/files/1/0948/5366/1017/files/CapturadePantalla2026-03-24alas14.25.40.png?v=1774358754",
     meta: "On demand",
