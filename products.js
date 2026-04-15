@@ -36,13 +36,13 @@ const PRODUCTS = [
     meta: "Printing On demand",
     type: "grid" 
   },
-  {
-    id: "Bolso",
-    scene: "aHR0cHM6Ly9wcm9kdWN0LjNkdHdpbnMudGVjaC8%2FbmFtZT1Cb2xzbyZjb25maWc9Y2FtYmlhcl9jb2xvciUzQSUyM2FkMDAwMCZxdWFudGl0eT0xJnRva2VuPTFjMGJhNTVhLTZiYjUtNDhhMi1iNDRjLWIyYzFmN2JkNjFlNyZtb2RlbFVybD1odHRwcyUzQSUyRiUyRnZpZXdlci4zZHR3aW5zLnRlY2glMkZib2xzb3BpZWwuZ2xiJmJ1eVVSTD1odHRwcyUzQSUyRiUyRjNkdHdpbnMuZXMlMkY%3D",
-    title: "Bolso",
-    price: "129€",
-    image: "https://cdn.shopify.com/s/files/1/0948/5366/1017/files/CapturadePantalla2026-03-24alas14.25.40.png?v=1774358754",
-    meta: "On demand",
+   {
+    id: "Mantra",
+    scene: "aHR0cHM6Ly9wcm9kdWN0LjNkdHdpbnMudGVjaC8/bmFtZT1NYW50cmEmY29uZmlnPUhvbWFrY29tYnJfRFNHTjcyNV9NYXRlcmlhbF8lMjMzNzlfMCUzQSUyM2QyOWQwMCU3Q0hvbWFrY29tYnJfRFNHTjcyNV9QcmV0b18yXzAlM0ElMjNkNTg0MDAlN0NjYWJlemFfZGVfbWFkZXJhJTNBJTIzZmZlNGE4JTdDQXJjbyUzQSUyMzIzMjMyMyU3Q1JlY3RhbmdsZTAwM19Db3Vyb19NYXJyb21fMCUzQSUyMzIzMjMyMyU3Q0N5bGluZGVyMDA4X01hZGVpcmFfQ2xhcmFfMCUzQSUyM2ZmZTRhOCU3Q0N5bGluZGVyMDA5X01hdGVyaWFsXyUyMzE5XzAlM0ElMjMwMDJlN2ElN0NDeWxpbmRlcjAxMF9NYXRlcmlhbF8lMjMxOV8wJTNBJTIzMDAyZTdhJTdDQ3VwdWxhJTNBJTIzMDAyZTdhJTdDTGluZTM3Nl9NYXRlcmlhbF8lMjMyN18wJTNBJTIzZmZmZmZmJnF1YW50aXR5PTEmdG9rZW49OThkNGExNWEtMGFmNS00ZjU5LWI5NzYtNWUxYzU5NGE1NWE3Jm1vZGVsVXJsPWh0dHBzJTNBJTJGJTJGZGVtby4zZHR3aW5zLmV1JTJGTWFudHJhLmdsYiZidXlVUkw9aHR0cHMlM0ElMkYlMkYzZHR3aW5zLmVzJTJG",
+    title: "Mantra",
+    price: "160€",
+    image: "sources/mantra_azul.png",
+    meta: "Printing On demand",
     type: "grid"
   },
   
