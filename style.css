@@ -487,24 +487,35 @@ padding: 10px;
   margin-bottom: 12px;
 }
 
-/* =========================
-   RESPONSIVE FIX
-========================= */
 
 @media (max-width: 768px) {
-  .grid {
-    grid-template-columns: 1fr;
-  }
 
   .vh-layout {
     flex-direction: column;
   }
 
-  .viewer {
-    height: 500px;
+  .vh-sidebar {
+    width: 100%;
+    flex-direction: row;
+    overflow-x: auto;
+    gap: 10px;
   }
 
-  .search input {
-    width: 140px;
+  .vh-card {
+    min-width: 140px;
+    flex: 0 0 auto;
   }
+
+  .vh-card img {
+    height: 80px;
+  }
+
+  .viewer {
+    height: 60vh;
+  }
+
+  #vh-main-container {
+    height: 60vh;
+  }
+
 }
