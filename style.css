@@ -564,7 +564,7 @@ padding: 10px;
   }
 
   .search input {
-    width: 140px;
+    width: 100px;
   }
 }
 
@@ -712,7 +712,7 @@ padding: 10px;
 
   .vh-sidebar-list .vh-card {
     min-width: 160px;
-    max-width: 160px;
+    max-width: 180px;
   }
 
   .vh-card img {
