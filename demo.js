@@ -1,4 +1,4 @@
-<script>
+
 
 const slides = document.querySelectorAll(".hero-slide");
 const dots = document.querySelectorAll(".dot");
@@ -230,4 +230,3 @@ renderProducts();
 
 const first = PRODUCTS[0];
 if (first) load(first.scene, document.querySelector("[data-scene]"));
-</script>
