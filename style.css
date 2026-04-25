@@ -533,6 +533,8 @@ padding: 10px;
     font-size: 12px;
     padding: 6px 10px;
     white-space: nowrap;
+      background: #1e1e1e;
+    color: white;
   }
 
   .experience,
@@ -634,6 +636,8 @@ padding: 10px;
   .header-btn {
     font-size: 12px;
     padding: 5px 8px;
+      background: #1e1e1e;
+    color: white;
   }
 
   .search {
@@ -737,6 +741,8 @@ padding: 10px;
   .header-btn {
     font-size: 12px;
     padding: 5px 8px;
+      background: #1e1e1e;
+    color: white;
   }
 
   /* =========================
