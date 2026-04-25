@@ -497,6 +497,8 @@ padding: 10px;
     align-items: stretch;
     gap: 10px;
     padding: 12px 16px;
+    height: 60px;
+   
   }
 
   .logo {
@@ -622,6 +624,8 @@ padding: 10px;
 
   .header {
     gap: 8px;
+    height: 60px;
+    
   }
 
   .header-left,
@@ -723,6 +727,7 @@ padding: 10px;
 
   .header {
     padding: 10px 12px;
+     height: 60px;
   }
 
   .logo {
