@@ -34,9 +34,9 @@ h1, h2, h3 {
 }
 
 .header-btn {
-  background: transparent;
+  background: #1e1e1e;
   border: 1px solid rgba(230,226,214,0.9);
-  color: black;
+  color: white;
   padding: 8px 14px;
   border-radius: 999px;
   font-size: 12px;
