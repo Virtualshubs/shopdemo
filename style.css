@@ -229,62 +229,106 @@ h1, h2, h3 {
 /* =========================
    COLLECTION GRID (RETAIL SYSTEM)
 ========================= */
-
 .collection {
   padding: 60px;
-   blacground: #f1f1f1;
+  background: #f1f1f1;
 }
 
 .collection h2 {
-  font-size: 18px;
-  letter-spacing: 2px;
+  font-size: 14px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
   margin-bottom: 24px;
   color: black;
+  border-bottom: 1px solid rgba(0,0,0,0.15);
+  padding-bottom: 10px;
 }
+
+/* =========================
+   GRID SYSTEM (FIX + CONSISTENCIA)
+========================= */
 
 .grid {
-  display: flex;
-  gap: 16px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+
   overflow-x: auto;
   padding-bottom: 10px;
-   border: 1px solid rgba(230,226,214,0.2);
+
+  border: 1px solid rgba(0,0,0,0.15);
 }
+
+/* =========================
+   CARD BRUTALISTA
+========================= */
 
 .card {
-  background: #f1f1f1;
-  border-radius: 1px;
+  background: transparent;
+  border: 1px solid rgba(0,0,0,0.2);
+  border-radius: 0;
   overflow: hidden;
   cursor: pointer;
-  transition: 0.25s;
-   border: 1px solid rgba(230,226,214,0.9);
-   padding: 10px;
+  transition: 0.2s ease;
+  padding: 0;
 }
 
+/* hover mínimo */
 .card:hover {
-  border-color: rgba(231, 226, 214, 0.35);
-  transform: translateY(-6px);
-  
+  transform: translateY(-2px);
+  border-color: rgba(0,0,0,0.4);
 }
+
+/* =========================
+   IMAGE (CONTROL VISUAL)
+========================= */
 
 .card img {
   width: 100%;
-  height: 320px;
+  height: 260px;
   object-fit: cover;
+  display: block;
+  border-bottom: 1px solid rgba(0,0,0,0.15);
 }
 
+/* =========================
+   INFO BLOCK
+========================= */
+
 .card-info {
-  padding: 16px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .card-title {
-  font-weight: 600;
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .card-price {
-  font-size: 12px;
-  color: black;
-  letter-spacing: 0.08em;
-  margin-top: 10px;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  opacity: 0.7;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* =========================
