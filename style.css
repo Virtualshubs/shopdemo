@@ -42,7 +42,16 @@ h1, h2, h3 {
   white-space: nowrap;
   animation: promoText 18s linear infinite;
 }
+.promo-track a {
+  color: black;
+  text-decoration: none;
+  opacity: 0.8;
+  transition: 0.2s ease;
+}
 
+.promo-track a:hover {
+  opacity: 1;
+}
 /* animación de fondo lenta */
 @keyframes promoBg {
   0% { background-position: 0% 50%; }
