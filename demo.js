@@ -81,7 +81,6 @@ function renderSidebar(filteredProducts) {
   sidebarList.innerHTML = "";
 
   filteredProducts.forEach(p => {
-    if (p.type !== "vh") return;
 
     const card = document.createElement("div");
     card.className = "vh-card";
@@ -98,7 +97,6 @@ function renderSidebar(filteredProducts) {
     sidebarList.appendChild(card);
   });
 }
-
 
 
 function load(scene, sourceCard = null, shouldScroll = true) {
