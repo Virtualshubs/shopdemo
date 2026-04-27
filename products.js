@@ -6,7 +6,8 @@ const PRODUCTS = [
     price: "179€",
     image: "sources/democonfigurador3dluminaria.png",
     meta: "Printing On demand",
-   type: ["vh", "grid"]
+   type: ["vh", "grid"],
+    tags: ["lamp", "lighting", "design", "minimal", "3d","de mesa",]
   },
   {
     id: "Mantra",
@@ -15,7 +16,8 @@ const PRODUCTS = [
     price: "160€",
     image: "sources/mantra_azul.png",
     meta: "Printing On demand",
-    type: ["vh", "grid"]
+    type: ["vh", "grid"],
+     tags: ["lamp", "lighting", "design", "minimal", "3d", "azul",]
   },
 
   {
@@ -24,7 +26,8 @@ const PRODUCTS = [
     title: "Egglamp",
     price: "129€",
     image: "sources/egglamp.png",
-    type: "grid"
+    type: "grid",
+    tags: ["lamp", "lighting", "design", "minimal", "3d","huevo",]
   },
   
 ];
