@@ -485,6 +485,31 @@ padding: 10px;
   height: 360px;
   object-fit: cover;
 }
+
+
+.community {
+  padding: 60px;
+}
+
+.community h2 {
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+
+.community-row {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+}
+
+.community-row img {
+  width: 180px;
+  height: 220px;
+  object-fit: cover;
+  border: 1px solid rgba(230,226,214,0.2);
+}
+
+
 .footer {
   padding: 60px;
   border-top: 1px solid rgba(231, 226, 214, 0.08);
