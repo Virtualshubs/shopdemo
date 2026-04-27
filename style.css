@@ -345,6 +345,7 @@ h1, h2, h3 {
 ========================= */
 
 .card-info {
+  margin: 10px;
   padding: 12px;
   display: flex;
   flex-direction: column;
