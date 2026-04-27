@@ -319,7 +319,7 @@ h1, h2, h3 {
   overflow: hidden;
   cursor: pointer;
   transition: 0.2s ease;
-  padding: 0;
+  padding: 10px;
 }
 
 /* hover mínimo */
