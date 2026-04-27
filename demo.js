@@ -6,7 +6,6 @@ const dots = document.querySelectorAll(".dot");
 let index = 0;
 
 function showSlide(i) {
-
   slides.forEach(s => s.classList.remove("active"));
   dots.forEach(d => d.classList.remove("active"));
 
@@ -17,19 +16,16 @@ function showSlide(i) {
 }
 
 dots.forEach((dot, i) => {
-  dot.addEventListener("click", () => {
-    showSlide(i);
-  });
+  dot.addEventListener("click", () => showSlide(i));
 });
 
-// AUTO PLAY
 setInterval(() => {
   let next = (index + 1) % slides.length;
   showSlide(next);
 }, 5000);
 
 
-  document.getElementById("explore-btn").addEventListener("click", () => {
+document.getElementById("explore-btn").addEventListener("click", () => {
   const viewer = document.querySelector("#vh-main-container");
 
   if (viewer) {
@@ -40,15 +36,19 @@ setInterval(() => {
   }
 });
 
-let container = document.getElementById("vh-main-container");
 
+let container = document.getElementById("vh-main-container");
 const sidebarList = document.getElementById("vh-sidebar-list");
 const gridList = document.getElementById("vh-grid-list");
 
 let currentScene = null;
 let savedDesigns = new Map();
 
+
 function renderProducts() {
+
+  sidebarList.innerHTML = "";
+  gridList.innerHTML = "";
 
   PRODUCTS.forEach(p => {
 
@@ -63,19 +63,43 @@ function renderProducts() {
       <button class="vh-add-to-cart">Add to cart ↗</button>
     `;
 
-    /* SIDEBAR */
     if (p.type === "vh") {
       card.className = "vh-card";
       sidebarList.appendChild(card);
     }
 
-    /* GRID */
     if (p.type === "grid") {
       card.className = "card vh-trigger";
       gridList.appendChild(card);
     }
   });
 }
+
+
+function renderSidebar(filteredProducts) {
+
+  sidebarList.innerHTML = "";
+
+  filteredProducts.forEach(p => {
+    if (p.type !== "vh") return;
+
+    const card = document.createElement("div");
+    card.className = "vh-card";
+    card.dataset.scene = p.scene;
+
+    card.innerHTML = `
+      <img src="${p.image}" />
+      <div class="card-title">${p.title}</div>
+      <div class="card-price">${p.price || ""}</div>
+      <div class="vh-card-info">${p.meta || ""}</div>
+      <button class="vh-add-to-cart">Add to cart ↗</button>
+    `;
+
+    sidebarList.appendChild(card);
+  });
+}
+
+
 
 function load(scene, sourceCard = null, shouldScroll = true) {
   if (!scene) return;
@@ -93,7 +117,6 @@ function load(scene, sourceCard = null, shouldScroll = true) {
 
   updateProductPanel(sourceCard);
 
-  // 🔥 SOLO SCROLL SI ESTÁ ACTIVADO
   if (shouldScroll) {
     const viewer = document.querySelector("#vh-main-container");
 
@@ -119,12 +142,14 @@ function updateProductPanel(card) {
   document.querySelector(".vh-product-meta").textContent = meta;
 }
 
+
 const designsRow = document.querySelector(".my-designs-row");
 const designsSection = document.getElementById("my-designs");
 
 function saveCurrentDesign(scene) {
 
   if (!scene || savedDesigns.has(scene)) return;
+
   const product = PRODUCTS.find(p => p.scene === scene);
   if (!product) return;
 
@@ -141,9 +166,7 @@ function saveCurrentDesign(scene) {
     </div>
   `;
 
-  card.addEventListener("click", () => {
-    load(scene);
-  });
+  card.addEventListener("click", () => load(scene));
 
   designsRow.appendChild(card);
 
@@ -156,7 +179,6 @@ document.addEventListener("click", (e) => {
   const card = e.target.closest("[data-scene]");
   if (!card) return;
 
-
   if (e.target.classList.contains("vh-add-to-cart")) {
     e.stopPropagation();
 
@@ -166,7 +188,6 @@ document.addEventListener("click", (e) => {
     window.open(`${baseUrl}?scene=${scene}`, "_blank");
     return;
   }
-
 
   const scene = card.dataset.scene;
 
@@ -178,55 +199,59 @@ document.addEventListener("click", (e) => {
   card.classList.add("active");
 });
 
+
 const searchInput = document.querySelector(".search input");
 
 searchInput.addEventListener("input", (e) => {
 
   const query = e.target.value.toLowerCase().trim();
 
-  const allCards = document.querySelectorAll(".vh-card, .card");
-
   if (!query) {
-    allCards.forEach(card => {
-      card.style.display = "";
-    });
+    renderProducts();
     return;
   }
 
-  const matchingProducts = PRODUCTS.filter(p => {
+  const filtered = PRODUCTS.filter(p => {
     const title = (p.title || "").toLowerCase();
     const meta = (p.meta || "").toLowerCase();
 
     return title.includes(query) || meta.includes(query);
   });
 
-  const matchingScenes = matchingProducts.map(p => p.scene);
-  allCards.forEach(card => {
-    const scene = card.dataset.scene;
 
-    if (matchingScenes.includes(scene)) {
-      card.style.display = "";
-    } else {
-      card.style.display = "none";
-    }
+  renderSidebar(filtered);
+
+
+  document.querySelectorAll(".card").forEach(card => {
+    const scene = card.dataset.scene;
+    card.style.display = filtered.some(p => p.scene === scene) ? "" : "none";
   });
 
-  if (matchingScenes.length === 1) {
+  if (filtered.length > 0) {
+    const first = filtered[0];
 
-    const scene = matchingScenes[0];
-    const card = document.querySelector(`[data-scene="${scene}"]`);
+    setTimeout(() => {
+      const firstCard = document.querySelector(`[data-scene="${first.scene}"]`);
 
-    if (card) {
-      load(scene, card);
+      if (firstCard) {
+        load(first.scene, firstCard);
 
-      allCards.forEach(c => c.classList.remove("active"));
-      card.classList.add("active");
-    }
+        document.querySelectorAll(".vh-card")
+          .forEach(c => c.classList.remove("active"));
+
+        firstCard.classList.add("active");
+      }
+    }, 50);
   }
-
 });
+
 
 renderProducts();
 
 const first = PRODUCTS[0];
-if (first) load(first.scene, document.querySelector("[data-scene]"));
+if (first) {
+  setTimeout(() => {
+    const firstCard = document.querySelector(`[data-scene="${first.scene}"]`);
+    load(first.scene, firstCard, false);
+  }, 100);
+}
