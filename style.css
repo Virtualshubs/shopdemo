@@ -486,27 +486,82 @@ padding: 10px;
   object-fit: cover;
 }
 
-
 .community {
   padding: 60px;
+  background: #f1f1f1;
 }
 
-.community h2 {
-  font-size: 18px;
-  margin-bottom: 20px;
-}
-
-.community-row {
+/* HEADER */
+.community-head {
   display: flex;
-  gap: 12px;
-  overflow-x: auto;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 24px;
+  border-bottom: 1px solid rgba(0,0,0,0.1);
+  padding-bottom: 12px;
 }
 
-.community-row img {
-  width: 180px;
-  height: 220px;
+.community-head h2 {
+  font-size: 16px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.community-head p {
+  font-size: 12px;
+  opacity: 0.6;
+  margin: 0;
+}
+
+/* GRID */
+.community-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+/* CARD */
+.community-card {
+  border: 1px solid rgba(0,0,0,0.15);
+  background: transparent;
+  overflow: hidden;
+  transition: 0.2s ease;
+}
+
+.community-card img {
+  width: 100%;
+  height: 260px;
   object-fit: cover;
-  border: 1px solid rgba(230,226,214,0.2);
+  display: block;
+}
+
+/* META */
+.community-meta {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 10px;
+  border-top: 1px solid rgba(0,0,0,0.1);
+}
+
+/* HOVER (mínimo) */
+.community-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(0,0,0,0.3);
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .community-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .community-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 
