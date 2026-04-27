@@ -19,14 +19,11 @@ h1, h2, h3 {
   display: flex;
   align-items: center;
   justify-content: center;
-
+  position: sticky;
   font-size: 11px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-
   border-bottom: 1px solid rgba(0,0,0,0.1);
-
-  /* fondo dinámico suave */
   background: linear-gradient(
     90deg,
     #f1f1f1,
