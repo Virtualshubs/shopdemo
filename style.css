@@ -470,10 +470,21 @@ padding: 10px;
   font-weight: 600;
 }
 
-/* =========================
-   FOOTER (MISSION CONTROL)
-========================= */
+.editorial {
+  padding: 60px;
+}
 
+.editorial-track {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+}
+
+.editorial-track img {
+  width: 280px;
+  height: 360px;
+  object-fit: cover;
+}
 .footer {
   padding: 60px;
   border-top: 1px solid rgba(231, 226, 214, 0.08);
