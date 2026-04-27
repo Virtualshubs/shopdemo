@@ -1,4 +1,6 @@
-
+/* =========================
+   HERO SLIDER
+========================= */
 
 const slides = document.querySelectorAll(".hero-slide");
 const dots = document.querySelectorAll(".dot");
@@ -25,6 +27,10 @@ setInterval(() => {
 }, 5000);
 
 
+/* =========================
+   SCROLL
+========================= */
+
 document.getElementById("explore-btn").addEventListener("click", () => {
   const viewer = document.querySelector("#vh-main-container");
 
@@ -37,6 +43,10 @@ document.getElementById("explore-btn").addEventListener("click", () => {
 });
 
 
+/* =========================
+   VARIABLES
+========================= */
+
 let container = document.getElementById("vh-main-container");
 const sidebarList = document.getElementById("vh-sidebar-list");
 const gridList = document.getElementById("vh-grid-list");
@@ -45,6 +55,38 @@ let currentScene = null;
 let savedDesigns = new Map();
 
 
+/* =========================
+   HELPERS
+========================= */
+
+// 🔥 evita duplicados por id
+function removeDuplicates(products) {
+  const map = new Map();
+  products.forEach(p => map.set(p.id, p));
+  return Array.from(map.values());
+}
+
+// 🔥 crea card base
+function createCard(p) {
+  const card = document.createElement("div");
+  card.dataset.scene = p.scene;
+
+  card.innerHTML = `
+    <img src="${p.image}" />
+    <div class="card-title">${p.title}</div>
+    <div class="card-price">${p.price || ""}</div>
+    <div class="vh-card-info">${p.meta || ""}</div>
+    <button class="vh-add-to-cart">Add to cart ↗</button>
+  `;
+
+  return card;
+}
+
+
+/* =========================
+   RENDER PRODUCTS
+========================= */
+
 function renderProducts() {
 
   sidebarList.innerHTML = "";
@@ -52,29 +94,29 @@ function renderProducts() {
 
   PRODUCTS.forEach(p => {
 
-    const card = document.createElement("div");
-    card.dataset.scene = p.scene;
+    // 🔥 aseguramos array
+    const types = Array.isArray(p.type) ? p.type : [p.type];
 
-    card.innerHTML = `
-      <img src="${p.image}" />
-      <div class="card-title">${p.title}</div>
-      <div class="card-price">${p.price || ""}</div>
-      <div class="vh-card-info">${p.meta || ""}</div>
-      <button class="vh-add-to-cart">Add to cart ↗</button>
-    `;
+    const baseCard = createCard(p);
 
-    if (p.type === "vh") {
-      card.className = "vh-card";
-      sidebarList.appendChild(card);
+    if (types.includes("vh")) {
+      const cardVH = baseCard.cloneNode(true);
+      cardVH.className = "vh-card";
+      sidebarList.appendChild(cardVH);
     }
 
-    if (p.type === "grid") {
-      card.className = "card vh-trigger";
-      gridList.appendChild(card);
+    if (types.includes("grid")) {
+      const cardGrid = baseCard.cloneNode(true);
+      cardGrid.className = "card vh-trigger";
+      gridList.appendChild(cardGrid);
     }
   });
 }
 
+
+/* =========================
+   RENDER SIDEBAR (SEARCH)
+========================= */
 
 function renderSidebar(filteredProducts) {
 
@@ -82,22 +124,17 @@ function renderSidebar(filteredProducts) {
 
   filteredProducts.forEach(p => {
 
-    const card = document.createElement("div");
+    const card = createCard(p);
     card.className = "vh-card";
-    card.dataset.scene = p.scene;
-
-    card.innerHTML = `
-      <img src="${p.image}" />
-      <div class="card-title">${p.title}</div>
-      <div class="card-price">${p.price || ""}</div>
-      <div class="vh-card-info">${p.meta || ""}</div>
-      <button class="vh-add-to-cart">Add to cart ↗</button>
-    `;
 
     sidebarList.appendChild(card);
   });
 }
 
+
+/* =========================
+   LOAD SCENE
+========================= */
 
 function load(scene, sourceCard = null, shouldScroll = true) {
   if (!scene) return;
@@ -128,6 +165,10 @@ function load(scene, sourceCard = null, shouldScroll = true) {
 }
 
 
+/* =========================
+   PRODUCT PANEL
+========================= */
+
 function updateProductPanel(card) {
   if (!card) return;
 
@@ -140,6 +181,10 @@ function updateProductPanel(card) {
   document.querySelector(".vh-product-meta").textContent = meta;
 }
 
+
+/* =========================
+   SAVE DESIGNS
+========================= */
 
 const designsRow = document.querySelector(".my-designs-row");
 const designsSection = document.getElementById("my-designs");
@@ -172,6 +217,11 @@ function saveCurrentDesign(scene) {
   designsSection.style.display = "block";
 }
 
+
+/* =========================
+   CLICK HANDLER
+========================= */
+
 document.addEventListener("click", (e) => {
 
   const card = e.target.closest("[data-scene]");
@@ -198,6 +248,10 @@ document.addEventListener("click", (e) => {
 });
 
 
+/* =========================
+   SEARCH SYSTEM
+========================= */
+
 const searchInput = document.querySelector(".search input");
 
 searchInput.addEventListener("input", (e) => {
@@ -206,25 +260,35 @@ searchInput.addEventListener("input", (e) => {
 
   if (!query) {
     renderProducts();
+
+    // 🔥 restaurar grid
+    document.querySelectorAll(".card").forEach(card => {
+      card.style.display = "";
+    });
+
     return;
   }
 
-  const filtered = PRODUCTS.filter(p => {
+  let filtered = PRODUCTS.filter(p => {
     const title = (p.title || "").toLowerCase();
     const meta = (p.meta || "").toLowerCase();
 
     return title.includes(query) || meta.includes(query);
   });
 
+  // 🔥 quitar duplicados
+  filtered = removeDuplicates(filtered);
 
+  // 🔥 sidebar = resultados
   renderSidebar(filtered);
 
-
+  // 🔥 filtrar grid visualmente
   document.querySelectorAll(".card").forEach(card => {
     const scene = card.dataset.scene;
     card.style.display = filtered.some(p => p.scene === scene) ? "" : "none";
   });
 
+  // 🔥 autoload primer resultado
   if (filtered.length > 0) {
     const first = filtered[0];
 
@@ -243,6 +307,10 @@ searchInput.addEventListener("input", (e) => {
   }
 });
 
+
+/* =========================
+   INIT
+========================= */
 
 renderProducts();
 
