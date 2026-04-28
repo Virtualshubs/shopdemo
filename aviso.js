@@ -2,69 +2,99 @@
 
   function createAnalyticsNotice() {
 
-    const banner = document.createElement("div");
+    const overlay = document.createElement("div");
 
-    banner.innerHTML = `
-      <div class="vh-cookie-banner">
-        <div class="vh-cookie-text">
-          This website uses analytics to understand how users interact with the 3D experience.
-          No personal data is collected or shared with third parties.
+    overlay.innerHTML = `
+      <div class="vh-cookie-overlay">
+        <div class="vh-cookie-modal">
+
+          <h3>Analytics & Cookies</h3>
+
+          <p>
+            This website uses analytics to understand how users interact with the 3D experience.
+            No personal data is collected or shared with third parties.
+          </p>
+
+          <div class="vh-cookie-actions">
+            <button class="vh-cookie-accept">Accept</button>
+            <button class="vh-cookie-reject">Reject</button>
+          </div>
+
         </div>
-
-        <button class="vh-cookie-btn">
-          Got it
-        </button>
       </div>
     `;
 
     const style = document.createElement("style");
     style.innerHTML = `
-      .vh-cookie-banner{
+      .vh-cookie-overlay {
         position: fixed;
-        bottom: 20px;
-        left: 20px;
-        right: 20px;
-        background: #0f0f0f;
-        color: #fff;
-        padding: 14px 16px;
+        inset: 0;
+        background: rgba(0,0,0,0.6);
+        backdrop-filter: blur(4px);
         display: flex;
-        justify-content: space-between;
         align-items: center;
+        justify-content: center;
         z-index: 99999;
-        font-family: Arial, sans-serif;
-        border: 1px solid rgba(255,255,255,0.1);
       }
 
-      .vh-cookie-text{
-        font-size: 12px;
-        line-height: 1.4;
-        opacity: 0.85;
-        max-width: 80%;
-      }
-
-      .vh-cookie-btn{
-        background: #fff;
+      .vh-cookie-modal {
+        background: #f1f1f1;
         color: #000;
-        border: none;
+        padding: 28px;
+        max-width: 420px;
+        width: 90%;
+        border: 1px solid rgba(0,0,0,0.2);
+        font-family: Arial, sans-serif;
+      }
+
+      .vh-cookie-modal h3 {
+        margin-bottom: 12px;
+        font-size: 16px;
+        letter-spacing: 1px;
+      }
+
+      .vh-cookie-modal p {
+        font-size: 12px;
+        line-height: 1.5;
+        margin-bottom: 20px;
+        opacity: 0.9;
+      }
+
+      .vh-cookie-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+      }
+
+      .vh-cookie-actions button {
         padding: 8px 12px;
         font-size: 12px;
         cursor: pointer;
+        border: 1px solid black;
+        background: white;
+        transition: 0.2s;
       }
 
-      .vh-cookie-btn:hover{
-        opacity: 0.8;
+      .vh-cookie-actions button:hover {
+        opacity: 0.7;
       }
     `;
 
     document.head.appendChild(style);
-    document.body.appendChild(banner);
+    document.body.appendChild(overlay);
 
-    banner.querySelector(".vh-cookie-btn").addEventListener("click", () => {
-      banner.remove();
+    const acceptBtn = overlay.querySelector(".vh-cookie-accept");
+    const rejectBtn = overlay.querySelector(".vh-cookie-reject");
+
+    acceptBtn.addEventListener("click", () => {
+      overlay.remove();
+    });
+
+    rejectBtn.addEventListener("click", () => {
+      overlay.remove();
     });
   }
 
-  // mostrar siempre al entrar (demo mode)
   window.addEventListener("DOMContentLoaded", createAnalyticsNotice);
 
 })();
