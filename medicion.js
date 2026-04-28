@@ -106,6 +106,24 @@
   }
 
   /* =========================
+     HEADER BUTTONS (CTA)
+  ========================= */
+
+  document.querySelectorAll(".header-btn").forEach(btn => {
+
+    btn.addEventListener("click", () => {
+
+      const label = btn.dataset.cta || btn.textContent.trim();
+
+      track("header_cta_click", {
+        label
+      });
+
+    });
+
+  });
+
+  /* =========================
      SLIDER
   ========================= */
 
