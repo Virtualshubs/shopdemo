@@ -1,6 +1,17 @@
 (function () {
 
-  function createAnalyticsNotice() {
+  let analyticsEnabled = false;
+  let consentStatus = null;
+
+  function track(event, params = {}) {
+    if (!analyticsEnabled) return;
+
+    if (typeof gtag === "function") {
+      gtag('event', event, params);
+    }
+  }
+
+  function showConsentModal() {
 
     const overlay = document.createElement("div");
 
@@ -11,7 +22,7 @@
           <h3>Analytics & Cookies</h3>
 
           <p>
-            This website uses analytics to understand how users interact with the 3D experience.
+            We use analytics to understand how users interact with this 3D experience.
             No personal data is collected or shared with third parties.
           </p>
 
@@ -50,7 +61,6 @@
       .vh-cookie-modal h3 {
         margin-bottom: 12px;
         font-size: 16px;
-        letter-spacing: 1px;
       }
 
       .vh-cookie-modal p {
@@ -72,7 +82,6 @@
         cursor: pointer;
         border: 1px solid black;
         background: white;
-        transition: 0.2s;
       }
 
       .vh-cookie-actions button:hover {
@@ -87,14 +96,41 @@
     const rejectBtn = overlay.querySelector(".vh-cookie-reject");
 
     acceptBtn.addEventListener("click", () => {
+      analyticsEnabled = true;
+      consentStatus = "accepted";
+      localStorage.setItem("vh_tracking", "accepted");
       overlay.remove();
     });
 
     rejectBtn.addEventListener("click", () => {
+      analyticsEnabled = false;
+      consentStatus = "rejected";
+      localStorage.setItem("vh_tracking", "rejected");
       overlay.remove();
     });
   }
 
-  window.addEventListener("DOMContentLoaded", createAnalyticsNotice);
+  function initConsent() {
+
+    const saved = localStorage.getItem("vh_tracking");
+
+    if (saved === "accepted") {
+      analyticsEnabled = true;
+      consentStatus = "accepted";
+    }
+
+    if (saved === "rejected") {
+      analyticsEnabled = false;
+      consentStatus = "rejected";
+    }
+
+    if (!saved) {
+      showConsentModal();
+    }
+  }
+
+  window.addEventListener("DOMContentLoaded", initConsent);
+
+  window.VHAnalytics = { track };
 
 })();
