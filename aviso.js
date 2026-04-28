@@ -1,7 +1,6 @@
 (function () {
 
   let analyticsEnabled = false;
-  let consentStatus = null;
 
   function track(event, params = {}) {
     if (!analyticsEnabled) return;
@@ -97,15 +96,13 @@
 
     acceptBtn.addEventListener("click", () => {
       analyticsEnabled = true;
-      consentStatus = "accepted";
       localStorage.setItem("vh_tracking", "accepted");
       overlay.remove();
     });
 
     rejectBtn.addEventListener("click", () => {
       analyticsEnabled = false;
-      consentStatus = "rejected";
-      localStorage.setItem("vh_tracking", "rejected");
+      localStorage.removeItem("vh_tracking"); // 🔥 clave para re-preguntar
       overlay.remove();
     });
   }
@@ -116,15 +113,8 @@
 
     if (saved === "accepted") {
       analyticsEnabled = true;
-      consentStatus = "accepted";
-    }
-
-    if (saved === "rejected") {
+    } else {
       analyticsEnabled = false;
-      consentStatus = "rejected";
-    }
-
-    if (!saved) {
       showConsentModal();
     }
   }
