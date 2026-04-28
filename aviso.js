@@ -2,6 +2,10 @@
 
   let analyticsEnabled = false;
 
+  function getConsentStatus() {
+    return localStorage.getItem("vh_tracking");
+  }
+
   function track(event, params = {}) {
     if (!analyticsEnabled) return;
 
@@ -12,6 +16,15 @@
 
   function showConsentModal() {
 
+    const current = getConsentStatus();
+
+    const statusText =
+      current === "accepted"
+        ? `<span style="color:green;">Currently: ACCEPTED</span>`
+        : current === "rejected"
+          ? `<span style="color:red;">Currently: REJECTED</span>`
+          : `<span style="color:gray;">No preference set</span>`;
+
     const overlay = document.createElement("div");
 
     overlay.innerHTML = `
@@ -19,6 +32,8 @@
         <div class="vh-cookie-modal">
 
           <h3>Analytics & Cookies</h3>
+
+          <p>${statusText}</p>
 
           <p>
             We use analytics to understand how users interact with this 3D experience.
@@ -32,6 +47,32 @@
 
         </div>
       </div>
+    `;
+
+    document.body.appendChild(overlay);
+
+    const acceptBtn = overlay.querySelector(".vh-cookie-accept");
+    const rejectBtn = overlay.querySelector(".vh-cookie-reject");
+
+    acceptBtn.addEventListener("click", () => {
+      analyticsEnabled = true;
+      localStorage.setItem("vh_tracking", "accepted");
+      overlay.remove();
+    });
+
+    rejectBtn.addEventListener("click", () => {
+      analyticsEnabled = false;
+      localStorage.setItem("vh_tracking", "rejected");
+      overlay.remove();
+    });
+  }
+
+  function createConsentButton() {
+
+    const wrapper = document.createElement("div");
+
+    wrapper.innerHTML = `
+      <div class="vh-consent-fab">Privacy</div>
     `;
 
     const style = document.createElement("style");
@@ -86,37 +127,46 @@
       .vh-cookie-actions button:hover {
         opacity: 0.7;
       }
+
+      .vh-consent-fab {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: #000;
+        color: #fff;
+        padding: 10px 12px;
+        font-size: 12px;
+        cursor: pointer;
+        z-index: 99998;
+        font-family: Arial;
+      }
+
+      .vh-consent-fab:hover {
+        opacity: 0.8;
+      }
     `;
 
     document.head.appendChild(style);
-    document.body.appendChild(overlay);
+    document.body.appendChild(wrapper);
 
-    const acceptBtn = overlay.querySelector(".vh-cookie-accept");
-    const rejectBtn = overlay.querySelector(".vh-cookie-reject");
-
-    acceptBtn.addEventListener("click", () => {
-      analyticsEnabled = true;
-      localStorage.setItem("vh_tracking", "accepted");
-      overlay.remove();
-    });
-
-    rejectBtn.addEventListener("click", () => {
-      analyticsEnabled = false;
-      localStorage.removeItem("vh_tracking"); // 🔥 clave para re-preguntar
-      overlay.remove();
+    wrapper.querySelector(".vh-consent-fab").addEventListener("click", () => {
+      showConsentModal();
     });
   }
 
   function initConsent() {
 
-    const saved = localStorage.getItem("vh_tracking");
+    const saved = getConsentStatus();
 
     if (saved === "accepted") {
       analyticsEnabled = true;
-    } else {
+    } else if (saved === "rejected") {
       analyticsEnabled = false;
+    } else {
       showConsentModal();
     }
+
+    createConsentButton();
   }
 
   window.addEventListener("DOMContentLoaded", initConsent);
