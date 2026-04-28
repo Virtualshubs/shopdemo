@@ -678,6 +678,17 @@ padding: 10px;
   margin-bottom: 12px;
 }
 
+.footer a {
+  color: black;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  font-size: 12px;
+}
+
+.footer a:hover {
+  border-bottom: 1px solid black;
+}
+
 
 @media (max-width: 768px) {
  .header {
