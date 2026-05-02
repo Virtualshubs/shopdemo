@@ -282,7 +282,7 @@ h1, h2, h3 {
 ========================= */
 .collection {
   padding: 60px;
-  background: #f1f1f1;
+  background: #F3EFEA;
 }
 
 .collection h2 {
@@ -479,6 +479,7 @@ padding: 10px;
 .my-designs {
   padding: 60px;
   border-top: 1px solid rgba(230,226,214,0.1);
+  background: #F3EFEA;
 }
 
 .my-designs h2 {
