@@ -1,6 +1,4 @@
 (function () {
-
-  // 🔒 helper seguro (no rompe si gtag no existe)
   function track(event, params = {}) {
     if (typeof gtag === "function") {
       gtag('event', event, params);
@@ -18,10 +16,6 @@
   let lastScene = null;
   let sceneStartTime = null;
 
-  /* =========================
-     SCENE LOAD (hook VH.init)
-  ========================= */
-
   if (window.VH && typeof window.VH.init === "function") {
 
     const originalInit = window.VH.init;
@@ -31,7 +25,6 @@
       const container = document.getElementById(options.containerId);
       const scene = container?.dataset.scene;
 
-      // tiempo en escena anterior
       if (lastScene && sceneStartTime) {
         const duration = Math.round((Date.now() - sceneStartTime) / 1000);
 
@@ -52,9 +45,6 @@
     };
   }
 
-  /* =========================
-     CLICK CARDS
-  ========================= */
 
   document.addEventListener("click", (e) => {
 
@@ -70,10 +60,6 @@
 
     track("product_click", data);
   });
-
-  /* =========================
-     SEARCH
-  ========================= */
 
   const searchInput = document.querySelector(".search input");
 
@@ -93,10 +79,6 @@
     });
   }
 
-  /* =========================
-     EXPLORE BUTTON
-  ========================= */
-
   const exploreBtn = document.getElementById("explore-btn");
 
   if (exploreBtn) {
@@ -104,10 +86,6 @@
       track("explore_click");
     });
   }
-
-  /* =========================
-     HEADER BUTTONS (CTA)
-  ========================= */
 
   document.querySelectorAll(".header-btn").forEach(btn => {
 
@@ -123,19 +101,12 @@
 
   });
 
-  /* =========================
-     SLIDER
-  ========================= */
-
   document.querySelectorAll(".dot").forEach((dot, i) => {
     dot.addEventListener("click", () => {
       track("hero_slide_click", { slide_index: i });
     });
   });
 
-  /* =========================
-     VIEWER VISIBILITY
-  ========================= */
 
   let viewerSeen = false;
 
