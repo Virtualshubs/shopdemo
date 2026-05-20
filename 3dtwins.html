@@ -897,47 +897,113 @@ window.addEventListener('scroll', () => {
 import {
   animate,
   createTimeline,
-  onScroll
+  onScroll,
+  stagger
 } from 'https://esm.sh/animejs';
 
+/* =========================
+   TIMELINE
+========================= */
+
 const tl = createTimeline({
+
   autoplay: onScroll({
-    sync: true
+
+    target: '.system-scroll-section',
+
+    enter: 'top top',
+    leave: 'bottom bottom',
+
+    sync: true,
+
+    debug: false
   })
+
 });
 
 /* =========================
-   PRODUCT FLOAT
+   OBJECT EMERGENCE
 ========================= */
 
 tl.add('.system-object', {
-  scale: [0.7, 1],
-  rotate: ['-12deg', '0deg'],
-  opacity: [0,1],
+
+  scale: [0.6, 1],
+  rotate: ['-14deg', '0deg'],
+  opacity: [0, 1],
+
+  easing: 'easeOutExpo',
   duration: 1200
+
 });
 
 /* =========================
-   LINES
+   LINES DEPLOY
 ========================= */
 
 tl.add('.system-line', {
-  width: el => [0, el.offsetWidth],
-  opacity: [0,0.5],
-  delay: anime.stagger(80),
-  duration: 800
+
+  scaleX: [0, 1],
+  opacity: [0, 0.45],
+
+  delay: stagger(80),
+
+  easing: 'easeOutExpo',
+  duration: 900
+
 }, '-=700');
 
 /* =========================
-   NODES
+   NODES APPEAR
 ========================= */
 
 tl.add('.system-node', {
-  opacity: [0,1],
-  translateY: [40,0],
-  delay: anime.stagger(120),
-  duration: 1000
-}, '-=600');
+
+  opacity: [0, 1],
+  translateY: [50, 0],
+  scale: [0.8, 1],
+
+  delay: stagger(120),
+
+  easing: 'easeOutExpo',
+  duration: 1200
+
+}, '-=700');
+
+/* =========================
+   SYSTEM FLOAT
+========================= */
+
+animate('.system-object', {
+
+  y: [
+    { to: '-12px', duration: 3000 },
+    { to: '0px', duration: 3000 }
+  ],
+
+  ease: 'inOutSine',
+  loop: true,
+  direction: 'alternate'
+
+});
+
+/* =========================
+   NODE FLOAT
+========================= */
+
+animate('.system-node', {
+
+  y: [
+    { to: '-6px', duration: 2000 },
+    { to: '0px', duration: 2000 }
+  ],
+
+  delay: stagger(120),
+
+  ease: 'inOutSine',
+  loop: true,
+  direction: 'alternate'
+
+});
 
 </script>
 
