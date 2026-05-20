@@ -331,6 +331,98 @@ button {
   transform:translateX(100%);
 }
 
+
+   .system-core{
+  width:100%;
+  height:700px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+  margin-top:80px;
+}
+
+.core-wrap{
+  position:relative;
+  width:500px;
+  height:500px;
+}
+
+/* CENTRO */
+.core-node{
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  width:140px;
+  height:140px;
+  z-index:3;
+}
+
+.core-node img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  border-radius:4px;
+  filter:contrast(1.1);
+}
+
+.core-glow{
+  position:absolute;
+  inset:-20px;
+  background:radial-gradient(circle, rgba(255,255,255,0.15), transparent 70%);
+  filter:blur(10px);
+}
+
+/* NODOS */
+.node{
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:
+    rotate(calc(var(--i) * 51deg))
+    translate(200px)
+    rotate(calc(var(--i) * -51deg));
+
+  padding:8px 12px;
+  border:1px solid rgba(255,255,255,0.12);
+  font-size:11px;
+  letter-spacing:0.15em;
+  background:rgba(255,255,255,0.02);
+  backdrop-filter:blur(10px);
+  transition:all .3s ease;
+}
+
+.node:hover{
+  background:white;
+  color:black;
+  transform:
+    rotate(calc(var(--i) * 51deg))
+    translate(210px)
+    rotate(calc(var(--i) * -51deg));
+}
+
+/* LÍNEAS */
+.lines{
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+}
+
+.line{
+  position:absolute;
+  top:50%;
+  left:50%;
+  height:1px;
+  width:200px;
+  background:linear-gradient(90deg, rgba(255,255,255,0.2), transparent);
+  transform-origin:left center;
+  opacity:0.4;
+}
+
 /* =========================
    RESPONSIVE
 ========================= */
@@ -531,7 +623,29 @@ button {
   </div>
 </section>
 
-   
+   <section class="system-core">
+  <div class="core-wrap">
+
+    <!-- CENTRO -->
+    <div class="core-node" id="core">
+      <img src="https://demo.3dtwins.eu/3DTWINS_THEFUTURE_IS_NOW.png">
+      <div class="core-glow"></div>
+    </div>
+
+    <!-- NODOS -->
+    <div class="node" style="--i:0">metadata</div>
+    <div class="node" style="--i:1">payment</div>
+    <div class="node" style="--i:2">scene</div>
+    <div class="node" style="--i:3">runtime</div>
+    <div class="node" style="--i:4">behavior</div>
+    <div class="node" style="--i:5">QR</div>
+    <div class="node" style="--i:6">interoperability</div>
+
+    <!-- CONEXIONES -->
+    <div class="lines"></div>
+
+  </div>
+</section>
 
 <section id="shopify-section-category" class="section" style="background:#f3efeA0;">
 
@@ -797,6 +911,108 @@ document.querySelectorAll('.category').forEach(card => {
       duration: 400,
       easing: 'easeOutQuad'
     });
+  });
+
+});
+</script>
+
+   <script>
+const nodes = document.querySelectorAll('.node');
+const linesContainer = document.querySelector('.lines');
+const core = document.getElementById('core');
+
+/* =========================
+   CREATE LINES DYNAMICALLY
+========================= */
+
+nodes.forEach((node, i) => {
+
+  const line = document.createElement('div');
+  line.classList.add('line');
+
+  const angle = i * (360 / nodes.length);
+
+  line.style.transform = `
+    translate(250px, 250px)
+    rotate(${angle}deg)
+  `;
+
+  linesContainer.appendChild(line);
+});
+
+/* =========================
+   ENTRY ANIMATION
+========================= */
+
+anime({
+  targets: '.node',
+  opacity: [0,1],
+  scale: [0.5,1],
+  delay: anime.stagger(120),
+  easing: 'easeOutExpo',
+  duration: 1200
+});
+
+anime({
+  targets: '.core-node',
+  scale: [0.6,1],
+  opacity: [0,1],
+  duration: 1200,
+  easing: 'easeOutExpo'
+});
+
+/* =========================
+   CORE PULSE SYSTEM
+========================= */
+
+setInterval(() => {
+  anime({
+    targets: '.core-glow',
+    scale: [1,1.15],
+    opacity: [0.6,0.2],
+    duration: 1200,
+    direction: 'alternate',
+    easing: 'easeInOutSine'
+  });
+}, 1400);
+
+/* =========================
+   NODE INTERACTION
+========================= */
+
+nodes.forEach(node => {
+
+  node.addEventListener('mouseenter', () => {
+
+    anime({
+      targets: node,
+      scale: 1.15,
+      duration: 300,
+      easing: 'easeOutQuad'
+    });
+
+    anime({
+      targets: '.line',
+      opacity: 0.15,
+      duration: 300
+    });
+
+  });
+
+  node.addEventListener('mouseleave', () => {
+
+    anime({
+      targets: node,
+      scale: 1,
+      duration: 300
+    });
+
+    anime({
+      targets: '.line',
+      opacity: 0.4,
+      duration: 300
+    });
+
   });
 
 });
