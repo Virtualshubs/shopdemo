@@ -332,9 +332,13 @@ button {
 }
 
 
-   .system-core{
+  /* =========================
+   SYSTEM CORE (FIXED CLEAN)
+========================= */
+
+.system-core{
   width:100%;
-  height:700px;
+  height:720px;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -344,85 +348,102 @@ button {
 
 .core-wrap{
   position:relative;
-  width:500px;
-  height:500px;
+  width:520px;
+  height:520px;
 }
 
-/* CENTRO */
+/* CENTER */
 .core-node{
   position:absolute;
   top:50%;
   left:50%;
   transform:translate(-50%,-50%);
-  width:140px;
-  height:140px;
-  z-index:3;
+  width:190px;
+  height:190px;
+  z-index:5;
+  border-radius:10px;
+  overflow:hidden;
 }
 
 .core-node img{
   width:100%;
   height:100%;
   object-fit:cover;
-  border-radius:4px;
-  filter:contrast(1.1);
+  filter:contrast(1.2) brightness(1.05);
 }
 
 .core-glow{
   position:absolute;
-  inset:-20px;
-  background:radial-gradient(circle, rgba(255,255,255,0.15), transparent 70%);
-  filter:blur(10px);
+  inset:-50px;
+  background:radial-gradient(circle, rgba(255,255,255,0.18), transparent 70%);
+  filter:blur(25px);
+  z-index:0;
 }
 
-/* NODOS */
+/* NODES */
 .node{
   position:absolute;
   top:50%;
   left:50%;
   transform:
     rotate(calc(var(--i) * 51deg))
-    translate(200px)
+    translate(210px)
     rotate(calc(var(--i) * -51deg));
 
   padding:8px 12px;
-  border:1px solid rgba(255,255,255,0.12);
+  border:1px solid rgba(255,255,255,0.14);
   font-size:11px;
-  letter-spacing:0.15em;
   background:rgba(255,255,255,0.02);
   backdrop-filter:blur(10px);
-  transition:all .3s ease;
+  z-index:3;
 }
 
-.node:hover{
-  background:white;
-  color:black;
-  transform:
-    rotate(calc(var(--i) * 51deg))
-    translate(210px)
-    rotate(calc(var(--i) * -51deg));
-}
-
-/* LÍNEAS */
+/* LINES */
 .lines{
   position:absolute;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
-  pointer-events:none;
+  inset:0;
+  z-index:1;
 }
 
 .line{
   position:absolute;
-  top:50%;
   left:50%;
+  top:50%;
   height:1px;
-  width:200px;
-  background:linear-gradient(90deg, rgba(255,255,255,0.2), transparent);
+  background:linear-gradient(90deg, rgba(255,255,255,0.4), transparent);
   transform-origin:left center;
-  opacity:0.4;
+  opacity:0.5;
 }
 
+/* CATEGORY (simplificado) */
+.category-system{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:1px;
+}
+
+.category{
+  background:#121214;
+  padding:20px;
+  border:1px solid rgba(255,255,255,0.08);
+}
+
+.category img{
+  width:100%;
+  height:220px;
+  object-fit:cover;
+}
+
+.section{
+  padding:80px 60px;
+}
+
+.title{
+  font-size:12px;
+  margin-bottom:30px;
+  border-bottom:1px solid var(--line);
+  padding-bottom:10px;
+}
 /* =========================
    RESPONSIVE
 ========================= */
@@ -623,28 +644,27 @@ button {
   </div>
 </section>
 
-   <section class="system-core">
+<section class="system-core">
+
   <div class="core-wrap">
 
-    <!-- CENTRO -->
-    <div class="core-node" id="core">
+    <div class="core-node">
       <img src="https://demo.3dtwins.eu/3DTWINS_THEFUTURE_IS_NOW.png">
       <div class="core-glow"></div>
     </div>
 
-    <!-- NODOS -->
     <div class="node" style="--i:0">metadata</div>
     <div class="node" style="--i:1">payment</div>
     <div class="node" style="--i:2">scene</div>
     <div class="node" style="--i:3">runtime</div>
     <div class="node" style="--i:4">behavior</div>
     <div class="node" style="--i:5">QR</div>
-    <div class="node" style="--i:6">interoperability</div>
+    <div class="node" style="--i:6">interop</div>
 
-    <!-- CONEXIONES -->
     <div class="lines"></div>
 
   </div>
+
 </section>
 
 <section id="shopify-section-category" class="section" style="background:#f3efeA0;">
@@ -916,59 +936,48 @@ document.querySelectorAll('.category').forEach(card => {
 });
 </script>
 
-   <script>
-const nodes = document.querySelectorAll('.node');
-const linesContainer = document.querySelector('.lines');
-const core = document.getElementById('core');
+<script>
 
 /* =========================
-   CREATE LINES DYNAMICALLY
+   FIXED LINE SYSTEM
 ========================= */
+
+const nodes = document.querySelectorAll('.node');
+const linesContainer = document.querySelector('.lines');
+
+linesContainer.innerHTML = "";
+
+const centerX = 260;
+const centerY = 260;
+const radius = 210;
 
 nodes.forEach((node, i) => {
 
+  const angle = (i / nodes.length) * Math.PI * 2;
+
+  const x = centerX + Math.cos(angle) * radius;
+  const y = centerY + Math.sin(angle) * radius;
+
+  const dx = x - centerX;
+  const dy = y - centerY;
+
+  const length = Math.sqrt(dx*dx + dy*dy);
+  const rot = Math.atan2(dy, dx) * 180 / Math.PI;
+
   const line = document.createElement('div');
-  line.classList.add('line');
+  line.className = "line";
 
-  const angle = i * (360 / nodes.length);
-
-  line.style.transform = `
-    translate(250px, 250px)
-    rotate(${angle}deg)
-  `;
+  line.style.width = length + "px";
+  line.style.transform = `translate(${centerX}px, ${centerY}px) rotate(${rot}deg)`;
 
   linesContainer.appendChild(line);
 });
 
-/* =========================
-   ENTRY ANIMATION
-========================= */
-
-anime({
-  targets: '.node',
-  opacity: [0,1],
-  scale: [0.5,1],
-  delay: anime.stagger(120),
-  easing: 'easeOutExpo',
-  duration: 1200
-});
-
-anime({
-  targets: '.core-node',
-  scale: [0.6,1],
-  opacity: [0,1],
-  duration: 1200,
-  easing: 'easeOutExpo'
-});
-
-/* =========================
-   CORE PULSE SYSTEM
-========================= */
-
+/* CORE PULSE */
 setInterval(() => {
   anime({
     targets: '.core-glow',
-    scale: [1,1.15],
+    scale: [1,1.12],
     opacity: [0.6,0.2],
     duration: 1200,
     direction: 'alternate',
@@ -976,46 +985,6 @@ setInterval(() => {
   });
 }, 1400);
 
-/* =========================
-   NODE INTERACTION
-========================= */
-
-nodes.forEach(node => {
-
-  node.addEventListener('mouseenter', () => {
-
-    anime({
-      targets: node,
-      scale: 1.15,
-      duration: 300,
-      easing: 'easeOutQuad'
-    });
-
-    anime({
-      targets: '.line',
-      opacity: 0.15,
-      duration: 300
-    });
-
-  });
-
-  node.addEventListener('mouseleave', () => {
-
-    anime({
-      targets: node,
-      scale: 1,
-      duration: 300
-    });
-
-    anime({
-      targets: '.line',
-      opacity: 0.4,
-      duration: 300
-    });
-
-  });
-
-});
 </script>
 </body>
 </html>
