@@ -106,44 +106,34 @@ button {
   cursor: pointer;
 }
 
-   .orbit-system{
+  .orbit-system{
   position:absolute;
-  right:8%;
+  right:10%;
   top:50%;
   transform:translateY(-50%);
   width:420px;
   height:420px;
   pointer-events:none;
-  opacity:0.5;
 }
 
 .orbit{
   position:absolute;
   inset:0;
-  border:1px solid rgba(255,255,255,0.08);
   border-radius:50%;
+  border:1px solid rgba(255,255,255,0.08);
+  transition:transform 0.2s linear;
 }
 
 .orbit-1{
-  transform:rotate(12deg) scale(1);
+  transform:rotate(0deg) scale(1);
 }
 
 .orbit-2{
-  transform:rotate(-18deg) scale(0.8);
+  transform:rotate(25deg) scale(0.8);
 }
 
 .orbit-3{
-  transform:rotate(38deg) scale(0.6);
-}
-
-.orbit-label{
-  position:absolute;
-  bottom:-30px;
-  left:50%;
-  transform:translateX(-50%);
-  font-size:10px;
-  letter-spacing:0.25em;
-  opacity:0.5;
+  transform:rotate(-25deg) scale(0.6);
 }
 /* =========================
    SYSTEM BANNER FULL BLEED
@@ -582,6 +572,41 @@ button {
 <section class="final">
   <h2>BUILD YOUR DIGITAL TWINS SYSTEM</h2>
 </section>
+<script>
 
+window.addEventListener('scroll', () => {
+
+  const scrollY = window.scrollY;
+
+  anime({
+    targets: '.orbit-1',
+    translateX: scrollY * 0.08,
+    translateY: scrollY * -0.04,
+    rotate: scrollY * 0.05,
+    duration: 400,
+    easing: 'easeOutQuad'
+  });
+
+  anime({
+    targets: '.orbit-2',
+    translateX: scrollY * -0.05,
+    translateY: scrollY * 0.06,
+    rotate: scrollY * -0.08,
+    duration: 400,
+    easing: 'easeOutQuad'
+  });
+
+  anime({
+    targets: '.orbit-3',
+    translateX: scrollY * 0.03,
+    translateY: scrollY * 0.1,
+    rotate: scrollY * 0.12,
+    duration: 400,
+    easing: 'easeOutQuad'
+  });
+
+});
+
+</script>
 </body>
 </html>
