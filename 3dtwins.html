@@ -259,6 +259,78 @@ button {
   font-size: 28px;
 }
 
+
+
+
+   .category-system{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:1px;
+  background:rgba(255,255,255,0.05);
+  perspective:1000px;
+}
+
+.category{
+  background:#121214;
+  padding:20px;
+  border:1px solid rgba(255,255,255,0.08);
+  position:relative;
+  overflow:hidden;
+  transition:all .4s ease;
+  transform-style:preserve-3d;
+}
+
+.category img{
+  width:100%;
+  height:240px;
+  object-fit:cover;
+  margin-bottom:12px;
+  filter:contrast(1.05);
+  transition:transform .6s ease, filter .6s ease;
+}
+
+/* hover “system activation” */
+.category:hover{
+  transform:translateY(-10px) rotateX(4deg);
+  background:#16161a;
+}
+
+.category:hover img{
+  transform:scale(1.08);
+  filter:contrast(1.2) brightness(1.1);
+}
+
+.category .meta{
+  font-size:11px;
+  opacity:0.6;
+  margin-bottom:10px;
+  letter-spacing:0.2em;
+}
+
+.category h3{
+  font-size:14px;
+  margin:0 0 8px 0;
+}
+
+.category p{
+  font-size:12px;
+  opacity:0.7;
+}
+
+/* glitch micro-effect */
+.category::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.05),transparent);
+  transform:translateX(-100%);
+  transition:transform .8s ease;
+}
+
+.category:hover::after{
+  transform:translateX(100%);
+}
+
 /* =========================
    RESPONSIVE
 ========================= */
@@ -388,6 +460,44 @@ button {
   <div class="orbit orbit-3"></div>
 
 </div>
+</section>
+
+
+   <!-- SYSTEM MODULE — DIGITAL CATEGORIES -->
+<section class="section">
+  <div class="title reveal">SYSTEM MODULE — DIGITAL CATEGORIES</div>
+
+  <div class="category-system">
+
+    <div class="category reveal-card">
+      <div class="meta">01 / CREATE</div>
+      <img src="https://demo.3dtwins.eu/3DTWINS_THEFUTURE_IS_NOW.png">
+      <h3>BEST SELLERS</h3>
+      <p>High demand digital objects inside the infrastructure layer.</p>
+    </div>
+
+    <div class="category reveal-card">
+      <div class="meta">02 / EXPORT</div>
+      <img src="https://demo.3dtwins.eu/3DTWINS_THEFUTURE_IS_NOW.png">
+      <h3>JEWELRY SYSTEM</h3>
+      <p>Parametric objects with embedded metadata and logic.</p>
+    </div>
+
+    <div class="category reveal-card">
+      <div class="meta">03 / DEPLOY</div>
+      <img src="https://demo.3dtwins.eu/3DTWINS_THEFUTURE_IS_NOW.png">
+      <h3>NEO LITHIC</h3>
+      <p>Experimental digital matter and synthetic artifacts.</p>
+    </div>
+
+    <div class="category reveal-card">
+      <div class="meta">04 / RUN</div>
+      <img src="https://demo.3dtwins.eu/3DTWINS_THEFUTURE_IS_NOW.png">
+      <h3>3D OBJECTS</h3>
+      <p>Interactive assets generated inside 3D Twins engine.</p>
+    </div>
+
+  </div>
 </section>
 
 <!-- MANIFESTO -->
@@ -627,6 +737,69 @@ window.addEventListener('scroll', () => {
 
 });
 
+</script>
+
+   <script>
+/* =========================
+   REVEAL ON LOAD
+========================= */
+
+anime({
+  targets: '.reveal, .reveal-card',
+  opacity: [0, 1],
+  translateY: [30, 0],
+  delay: anime.stagger(120),
+  duration: 1200,
+  easing: 'easeOutExpo'
+});
+
+/* =========================
+   SCROLL SYSTEM PULSE
+========================= */
+
+window.addEventListener('scroll', () => {
+
+  const scrollY = window.scrollY;
+
+  anime({
+    targets: '.category',
+    translateY: function(el, i){
+      return Math.sin((scrollY * 0.002) + i) * 6;
+    },
+    rotateX: function(el, i){
+      return Math.sin((scrollY * 0.001) + i) * 2;
+    },
+    duration: 0,
+    easing: 'linear'
+  });
+
+});
+
+/* =========================
+   HOVER MICRO INTERACTION
+========================= */
+
+document.querySelectorAll('.category').forEach(card => {
+
+  card.addEventListener('mouseenter', () => {
+    anime({
+      targets: card,
+      scale: 1.03,
+      duration: 400,
+      easing: 'easeOutQuad'
+    });
+  });
+
+  card.addEventListener('mouseleave', () => {
+    anime({
+      targets: card,
+      scale: 1,
+      duration: 400,
+      easing: 'easeOutQuad'
+    });
+  });
+
+});
 </script>
 </body>
 </html>
