@@ -4,18 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>3D Twins — Digital Object Infrastructure</title>
-
-<!-- TYPOGRAPHY -->
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
 
 <style>
-
-/* =========================
-   CORE SYSTEM
-========================= */
 
 :root {
   --bg: #0b0b0c;
@@ -335,114 +328,133 @@ button {
   /* =========================
    SYSTEM CORE (FIXED CLEAN)
 ========================= */
+.system-scroll-section{
+  height:300vh;
+  position:relative;
+}
 
-.system-core{
-  width:100%;
-  height:720px;
+.system-sticky{
+  position:sticky;
+  top:0;
+  height:100vh;
+  overflow:hidden;
+
   display:flex;
   align-items:center;
   justify-content:center;
-  position:relative;
-  margin-top:80px;
 }
 
-.core-wrap{
-  position:relative;
-  width:520px;
-  height:520px;
-}
+/* =========================
+   PRODUCT
+========================= */
 
-/* CENTER */
-.core-node{
+.system-object{
   position:absolute;
-  top:50%;
-  left:50%;
-  transform:translate(-50%,-50%);
-  width:190px;
-  height:190px;
+  width:340px;
+  height:340px;
   z-index:5;
-  border-radius:10px;
-  overflow:hidden;
 }
 
-.core-node img{
+.system-object img{
   width:100%;
   height:100%;
   object-fit:cover;
-  filter:contrast(1.2) brightness(1.05);
+  filter:contrast(1.05);
 }
 
-.core-glow{
+/* =========================
+   NODES
+========================= */
+
+.system-node{
   position:absolute;
-  inset:-50px;
-  background:radial-gradient(circle, rgba(255,255,255,0.18), transparent 70%);
-  filter:blur(25px);
-  z-index:0;
+
+  padding:10px 14px;
+
+  border:1px solid rgba(255,255,255,0.12);
+
+  font-size:11px;
+  letter-spacing:0.18em;
+
+  background:rgba(255,255,255,0.03);
+  backdrop-filter:blur(10px);
+
+  opacity:0;
 }
 
-/* NODES */
-.node{
+/* POSITIONS */
+
+.node-1{ top:18%; left:22%; }
+.node-2{ top:28%; right:18%; }
+.node-3{ top:50%; left:10%; }
+.node-4{ top:52%; right:10%; }
+.node-5{ bottom:22%; left:20%; }
+.node-6{ bottom:18%; right:24%; }
+.node-7{ bottom:10%; left:50%; transform:translateX(-50%); }
+
+/* =========================
+   LINES
+========================= */
+
+.system-line{
   position:absolute;
+  height:1px;
+  background:rgba(255,255,255,0.18);
+
+  transform-origin:left center;
+
+  opacity:0;
+}
+
+/* CUSTOM LINES */
+
+.line-1{
+  width:260px;
+  top:32%;
+  left:38%;
+  transform:rotate(-28deg);
+}
+
+.line-2{
+  width:240px;
+  top:38%;
+  right:34%;
+  transform:rotate(28deg);
+}
+
+.line-3{
+  width:280px;
   top:50%;
+  left:18%;
+}
+
+.line-4{
+  width:280px;
+  top:50%;
+  right:18%;
+}
+
+.line-5{
+  width:240px;
+  bottom:32%;
+  left:32%;
+  transform:rotate(28deg);
+}
+
+.line-6{
+  width:240px;
+  bottom:28%;
+  right:32%;
+  transform:rotate(-28deg);
+}
+
+.line-7{
+  width:180px;
+  bottom:22%;
   left:50%;
   transform:
-    rotate(calc(var(--i) * 51deg))
-    translate(210px)
-    rotate(calc(var(--i) * -51deg));
-
-  padding:8px 12px;
-  border:1px solid rgba(255,255,255,0.14);
-  font-size:11px;
-  background:rgba(255,255,255,0.02);
-  backdrop-filter:blur(10px);
-  z-index:3;
-}
-
-/* LINES */
-.lines{
-  position:absolute;
-  inset:0;
-  z-index:1;
-}
-
-.line{
-  position:absolute;
-  left:50%;
-  top:50%;
-  height:1px;
-  background:linear-gradient(90deg, rgba(255,255,255,0.4), transparent);
-  transform-origin:left center;
-  opacity:0.5;
-}
-
-/* CATEGORY (simplificado) */
-.category-system{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:1px;
-}
-
-.category{
-  background:#121214;
-  padding:20px;
-  border:1px solid rgba(255,255,255,0.08);
-}
-
-.category img{
-  width:100%;
-  height:220px;
-  object-fit:cover;
-}
-
-.section{
-  padding:80px 60px;
-}
-
-.title{
-  font-size:12px;
-  margin-bottom:30px;
-  border-bottom:1px solid var(--line);
-  padding-bottom:10px;
+    translateX(-50%)
+    rotate(90deg);
 }
 /* =========================
    RESPONSIVE
@@ -552,27 +564,35 @@ button {
 }
 </style>
 
-<!-- SYSTEM BANNER -->
-<section class="system-banner">
+<section class="system-scroll-section">
 
-  <div class="banner-image">
-    <img src="https://demo.3dtwins.eu/3DTWINS_THEFUTURE_IS_NOW.png">
-    <div class="grid-overlay"></div>
+  <div class="system-sticky">
+
+    <!-- PRODUCT -->
+    <div class="system-object">
+      <img src="https://demo.3dtwins.eu/3DTWINS_THEFUTURE_IS_NOW.png">
+    </div>
+
+    <!-- NODES -->
+    <div class="system-node node-1">METADATA</div>
+    <div class="system-node node-2">PAYMENT</div>
+    <div class="system-node node-3">RUNTIME</div>
+    <div class="system-node node-4">SCENE</div>
+    <div class="system-node node-5">QR</div>
+    <div class="system-node node-6">BEHAVIOR</div>
+    <div class="system-node node-7">INTEROPERABILITY</div>
+
+    <!-- LINES -->
+    <div class="system-line line-1"></div>
+    <div class="system-line line-2"></div>
+    <div class="system-line line-3"></div>
+    <div class="system-line line-4"></div>
+    <div class="system-line line-5"></div>
+    <div class="system-line line-6"></div>
+    <div class="system-line line-7"></div>
+
   </div>
 
-  <div class="section">
-    <div class="title">SYSTEM SIGNAL</div>
-    <p>Digital objects are not files. They are systems.</p>
-    <div style="opacity:0.5;margin-top:20px">未来はすでに存在している</div>
-       
-  </div>
-<div class="orbit-system">
-
-  <div class="orbit orbit-1"></div>
-  <div class="orbit orbit-2"></div>
-  <div class="orbit orbit-3"></div>
-
-</div>
 </section>
 
 
@@ -872,119 +892,54 @@ window.addEventListener('scroll', () => {
 });
 
 </script>
+<script type="module">
 
-   <script>
+import {
+  animate,
+  createTimeline,
+  onScroll
+} from 'https://esm.sh/animejs';
+
+const tl = createTimeline({
+  autoplay: onScroll({
+    sync: true
+  })
+});
+
 /* =========================
-   REVEAL ON LOAD
+   PRODUCT FLOAT
 ========================= */
 
-anime({
-  targets: '.reveal, .reveal-card',
-  opacity: [0, 1],
-  translateY: [30, 0],
+tl.add('.system-object', {
+  scale: [0.7, 1],
+  rotate: ['-12deg', '0deg'],
+  opacity: [0,1],
+  duration: 1200
+});
+
+/* =========================
+   LINES
+========================= */
+
+tl.add('.system-line', {
+  width: el => [0, el.offsetWidth],
+  opacity: [0,0.5],
+  delay: anime.stagger(80),
+  duration: 800
+}, '-=700');
+
+/* =========================
+   NODES
+========================= */
+
+tl.add('.system-node', {
+  opacity: [0,1],
+  translateY: [40,0],
   delay: anime.stagger(120),
-  duration: 1200,
-  easing: 'easeOutExpo'
-});
-
-/* =========================
-   SCROLL SYSTEM PULSE
-========================= */
-
-window.addEventListener('scroll', () => {
-
-  const scrollY = window.scrollY;
-
-  anime({
-    targets: '.category',
-    translateY: function(el, i){
-      return Math.sin((scrollY * 0.002) + i) * 6;
-    },
-    rotateX: function(el, i){
-      return Math.sin((scrollY * 0.001) + i) * 2;
-    },
-    duration: 0,
-    easing: 'linear'
-  });
-
-});
-
-/* =========================
-   HOVER MICRO INTERACTION
-========================= */
-
-document.querySelectorAll('.category').forEach(card => {
-
-  card.addEventListener('mouseenter', () => {
-    anime({
-      targets: card,
-      scale: 1.03,
-      duration: 400,
-      easing: 'easeOutQuad'
-    });
-  });
-
-  card.addEventListener('mouseleave', () => {
-    anime({
-      targets: card,
-      scale: 1,
-      duration: 400,
-      easing: 'easeOutQuad'
-    });
-  });
-
-});
-</script>
-
-<script>
-
-/* =========================
-   FIXED LINE SYSTEM
-========================= */
-
-const nodes = document.querySelectorAll('.node');
-const linesContainer = document.querySelector('.lines');
-
-linesContainer.innerHTML = "";
-
-const centerX = 260;
-const centerY = 260;
-const radius = 210;
-
-nodes.forEach((node, i) => {
-
-  const angle = (i / nodes.length) * Math.PI * 2;
-
-  const x = centerX + Math.cos(angle) * radius;
-  const y = centerY + Math.sin(angle) * radius;
-
-  const dx = x - centerX;
-  const dy = y - centerY;
-
-  const length = Math.sqrt(dx*dx + dy*dy);
-  const rot = Math.atan2(dy, dx) * 180 / Math.PI;
-
-  const line = document.createElement('div');
-  line.className = "line";
-
-  line.style.width = length + "px";
-  line.style.transform = `translate(${centerX}px, ${centerY}px) rotate(${rot}deg)`;
-
-  linesContainer.appendChild(line);
-});
-
-/* CORE PULSE */
-setInterval(() => {
-  anime({
-    targets: '.core-glow',
-    scale: [1,1.12],
-    opacity: [0.6,0.2],
-    duration: 1200,
-    direction: 'alternate',
-    easing: 'easeInOutSine'
-  });
-}, 1400);
+  duration: 1000
+}, '-=600');
 
 </script>
+
 </body>
 </html>
