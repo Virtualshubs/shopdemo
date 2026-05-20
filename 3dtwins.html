@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3D Twins — Digital Object Infrastructure</title>
+
+<!-- TYPOGRAPHY -->
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+
+<style>
+
+/* =========================
+   CORE SYSTEM
+========================= */
+
+:root {
+  --bg: #0b0b0c;
+  --surface: #121214;
+  --line: rgba(255,255,255,0.08);
+  --text: #f2f2ee;
+}
+
+body {
+  margin: 0;
+  font-family: "Space Grotesk", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* =========================
+   P SYSTEM (UPGRADED)
+========================= */
+
+p {
+  font-family: "IBM Plex Sans", sans-serif;
+  font-weight: 300;
+  font-size: 14px;
+  line-height: 1.7;
+  letter-spacing: 0.01em;
+  text-transform: none;
+  opacity: 0.85;
+  max-width: 620px;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.header {
+  position: sticky;
+  top: 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 18px 40px;
+  border-bottom: 1px solid var(--line);
+  background: rgba(11,11,12,0.7);
+  backdrop-filter: blur(18px);
+  z-index: 100;
+}
+
+.logo {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* =========================
+   HERO
+========================= */
+
+.hero {
+  height: 90vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 60px;
+}
+
+.hero h1 {
+  font-size: 64px;
+  margin: 0;
+}
+
+.hero .jp {
+  opacity: 0.5;
+  margin-bottom: 10px;
+}
+
+.cta {
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+button {
+  padding: 10px 16px;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+}
+
+/* =========================
+   SYSTEM BANNER FULL BLEED
+========================= */
+
+.system-banner {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+  margin-right: calc(-50vw + 50%);
+
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.banner-image {
+  position: relative;
+  height: 520px;
+  overflow: hidden;
+  border-right: 1px solid var(--line);
+}
+
+.banner-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: absolute;
+  inset: 0;
+}
+
+.grid-overlay {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, rgba(255,255,255,0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,0.05) 1px, transparent 1px);
+  background-size: 40px 40px;
+  opacity: 0.25;
+}
+
+/* =========================
+   SECTIONS
+========================= */
+
+.section {
+  padding: 80px 60px;
+}
+
+.title {
+  font-size: 12px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 10px;
+  margin-bottom: 30px;
+}
+
+/* =========================
+   GRID
+========================= */
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4,1fr);
+  gap: 1px;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  padding: 20px;
+}
+
+/* =========================
+   SYSTEM COMPARISON
+========================= */
+
+.comparison {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.comparison iframe {
+  width: 100%;
+  height: 320px;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+/* =========================
+   FOOTER CTA
+========================= */
+
+.final {
+  text-align: center;
+  padding: 120px 40px;
+  border-top: 1px solid var(--line);
+}
+
+.final h2 {
+  font-size: 28px;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media(max-width:900px){
+
+  .system-banner {
+    grid-template-columns: 1fr;
+  }
+
+  .comparison {
+    grid-template-columns: 1fr;
+  }
+
+  .banner-image {
+    height: 360px;
+    border-right: none;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .grid {
+    grid-template-columns: repeat(2,1fr);
+  }
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <button>SYSTEM</button>
+  <div class="logo">3D TWINS</div>
+  <button>NASA MODE</button>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div>
+    <div class="jp">デジタルツイン</div>
+    <h1>3D TWINS</h1>
+
+    <p>
+      Create interoperable digital objects that persist across environments,
+      engines and realities.
+    </p>
+
+    <div style="font-size:11px;opacity:0.6;margin-top:10px">
+      GLB / WEBXR / EMBED / SCENE ENGINE / LIVE DATA
+    </div>
+
+    <div class="cta">
+      <button>ENTER SYSTEM</button>
+      <button>VIEW DEMO</button>
+    </div>
+  </div>
+</section>
+
+<!-- SYSTEM BANNER -->
+<section class="system-banner">
+
+  <div class="banner-image">
+    <img src="https://demo.3dtwins.eu/3DTWINS_THEFUTURE_IS_NOW.png">
+    <div class="grid-overlay"></div>
+  </div>
+
+  <div class="section">
+    <div class="title">SYSTEM SIGNAL</div>
+    <p>Digital objects are not files. They are systems.</p>
+    <div style="opacity:0.5;margin-top:20px">未来はすでに存在している</div>
+  </div>
+
+</section>
+
+<!-- MANIFESTO -->
+<section class="section">
+  <div class="title">MANIFESTO</div>
+  <p>The web is no longer static. Digital objects are systems.</p>
+</section>
+
+<!-- PROBLEM -->
+<section class="section">
+  <div class="title">PROBLEM</div>
+  <div class="grid">
+    <div class="card">Fragmented 3D ecosystems</div>
+    <div class="card">No persistence</div>
+    <div class="card">No interoperability</div>
+    <div class="card">No evolution layer</div>
+  </div>
+</section>
+
+<!-- SOLUTION -->
+<section class="section">
+  <div class="title">SOLUTION</div>
+  <p>3D Twins transforms digital objects into interoperable infrastructure.</p>
+</section>
+
+<!-- PRINCIPLE -->
+<section class="section">
+  <div class="title">PRINCIPLE</div>
+  <div class="card" style="font-size:18px;">
+    One object. Infinite systems.
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section">
+  <div class="title">HOW IT WORKS</div>
+  <div class="grid">
+    <div class="card">CREATE DIGITAL TWIN (デジタルツイン)</div>
+    <div class="card">ATTACH DATA + BEHAVIOR</div>
+    <div class="card">EXPORT GLB / SCENE</div>
+    <div class="card">DEPLOY ANYWHERE</div>
+  </div>
+</section>
+
+<!-- SYSTEM COMPARISON -->
+<section class="section">
+  <div class="title">SYSTEM COMPARISON</div>
+
+  <div class="comparison">
+
+    <!-- 2D -->
+    <div class="card">
+      <div style="opacity:0.6;margin-bottom:10px;">2D COMMERCE</div>
+
+      <img src="https://demo.3dtwins.eu/3DTWINS_THEFUTURE_IS_NOW.png"
+           style="width:100%;height:320px;object-fit:cover;">
+
+      <p>
+        Static product representation used in traditional e-commerce.
+        No interaction. No data layer. No persistence.
+      </p>
+    </div>
+
+    <!-- 3D -->
+    <div class="card">
+      <div style="opacity:0.6;margin-bottom:10px;">3D TWINS SYSTEM</div>
+
+      <iframe
+        src="https://scene.3dtwins.tech/?scene=aHR0cHM6Ly9wcm9kdWN0LjNkdHdpbnMudGVjaC8/bmFtZT1HYWZhcyZjb25maWc9ZnJvbnRhbCUzQSUyM2NmNmMyYSU3Q1BhdGlsbGFzJTNBJTIzOTBlNTZjJTdDQ3Jpc3RhbGVzJTNBJTIzMDAwMDAwJnF1YW50aXR5PTEmdG9rZW49OTllNjIzNDYtMDk5MC00YzZlLWJlYmYtYzRhMDAwNzQ4MTU4Jm1vZGVsVXJsPWh0dHBzJTNBJTJGJTJGdmlld2VyLjNkdHdpbnMudGVjaCUyRmdhZmFzLmdsYiZidXlVUkw9aHR0cHMlM0ElMkYlMkZ3ZWIuM2R0d2lucy50ZWNoJTJG"
+        frameborder="0">
+      </iframe>
+
+      <p>
+        Living digital object with embedded behavior, data layers and interoperability.
+        It persists across environments and platforms.
+      </p>
+    </div>
+
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="final">
+  <h2>BUILD YOUR DIGITAL TWINS SYSTEM</h2>
+</section>
+
+</body>
+</html>
