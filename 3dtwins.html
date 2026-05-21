@@ -328,7 +328,7 @@ button {
    SYSTEM CORE (FIXED CLEAN)
 ========================= */
 .system-scroll-section{
-  height:280vh;
+  height: 420vh;
   position:relative;
     overflow:hidden;
 }
@@ -336,12 +336,12 @@ button {
 .system-sticky{
   position:sticky;
   top:0;
+  width:100%;
   height:100vh;
-  overflow:hidden;
-
   display:flex;
   align-items:center;
   justify-content:center;
+  overflow:hidden;
 }
 
 /* =========================
@@ -607,47 +607,50 @@ button {
   </div>
 </section>
 
+  
 <section class="system-scroll-section">
 
   <div class="system-sticky">
 
-<div class="system-object">
+    <!-- CORE OBJECT (fase 1-2) -->
+    <div class="system-object">
 
-  <!-- STATIC PRODUCT -->
-  <img
-    class="system-img-product"
-    src="https://demo.3dtwins.eu/3DTWINS_THEFUTURE_IS_NOW.png"
-  >
+      <img
+        class="system-img-product"
+        src="https://demo.3dtwins.eu/3DTWINS_THEFUTURE_IS_NOW.png"
+      >
 
-  <!-- LIVE SCENE -->
-  <div class="system-scene-layer">
+      <div class="system-scene-layer">
+        <iframe
+          class="system-scene-frame"
+          loading="lazy"
+          frameborder="0"
+          allowfullscreen>
+        </iframe>
+      </div>
 
-    <iframe
-      class="system-scene-frame"
-      loading="lazy"
-      frameborder="0"
-      allowfullscreen>
-    </iframe>
+    </div>
 
-  </div>
+    <!-- SYSTEM NETWORK (fase 3 - oculto al inicio) -->
+    <div class="system-network">
 
-</div>
+      <div class="system-node node-1">METADATA</div>
+      <div class="system-node node-2">PAYMENT</div>
+      <div class="system-node node-3">RUNTIME</div>
+      <div class="system-node node-4">SCENE</div>
+      <div class="system-node node-5">QR</div>
+      <div class="system-node node-6">BEHAVIOR</div>
+      <div class="system-node node-7">INTEROPERABILITY</div>
 
-    <div class="system-node node-1">METADATA</div>
-    <div class="system-node node-2">PAYMENT</div>
-    <div class="system-node node-3">RUNTIME</div>
-    <div class="system-node node-4">SCENE</div>
-    <div class="system-node node-5">QR</div>
-    <div class="system-node node-6">BEHAVIOR</div>
-    <div class="system-node node-7">INTEROPERABILITY</div>
+      <div class="system-line line-1"></div>
+      <div class="system-line line-2"></div>
+      <div class="system-line line-3"></div>
+      <div class="system-line line-4"></div>
+      <div class="system-line line-5"></div>
+      <div class="system-line line-6"></div>
+      <div class="system-line line-7"></div>
 
-    <div class="system-line line-1"></div>
-    <div class="system-line line-2"></div>
-    <div class="system-line line-3"></div>
-    <div class="system-line line-4"></div>
-    <div class="system-line line-5"></div>
-    <div class="system-line line-6"></div>
-    <div class="system-line line-7"></div>
+    </div>
 
   </div>
 
