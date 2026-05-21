@@ -959,8 +959,7 @@ const sceneIframe = document.querySelector('.system-scene-frame');
 let sceneLoaded = false;
 
 /* =========================
-   TIMELINE (FIXED RANGE)
-   🔥 ESTO ES LO QUE ESTABA ROMPIÉNDOSE
+   TIMELINE
 ========================= */
 
 const tl = createTimeline({
@@ -969,14 +968,12 @@ const tl = createTimeline({
 
     target: '.system-scroll-section',
 
-    // ✅ RESTAURADO A UN RANGO ESTABLE
-    enter: 'top bottom',
-    leave: 'bottom top',
+    enter: 'top top',
+    leave: 'bottom bottom',
 
-    // 🔥 clave: no demasiado agresivo
-    sync: 0.55,
-
+    sync: 0.6,
     debug: false
+
   })
 
 });
@@ -992,87 +989,99 @@ tl.add('.system-object', {
   opacity: [0, 1],
 
   easing: 'easeOutExpo',
-  duration: 1100
+  duration: 1200
 
 });
 
 /* =========================
-   STEP 2 — IMAGE OUT / SCENE IN
+   STEP 2 — TRANSITION TO LIVE SCENE
 ========================= */
 
 tl.add(productImg, {
 
   opacity: [1, 0],
-  scale: [1, 0.95],
+  scale: [1, 0.92],
 
   easing: 'easeInOutExpo',
   duration: 700,
 
   begin: () => {
 
-    if (!sceneLoaded) {
+    /* =========================
+       LOAD SCENE ONLY ONCE
+    ========================= */
+
+    if(!sceneLoaded){
 
       sceneIframe.src =
-        "https://scene.3dtwins.tech/?scene=aHR0cHM6Ly9wcm9kdWN0LjNkdHdpbnMudGVjaC8/bmFtZT1HYWZhcyZjb25maWc9ZnJvbnRhbCUzQSUyM2NmNmMyYSU3Q1BhdGlsbGFzJTNBJTIzOTBlNTZjJTdDQ3Jpc3RhbGVzJTNBJTIzMDAwMDAwJnF1YW50aXR5PTEmdG9rZW49OTllNjIzNDYtMDk5MC00YzZlLWJlYmYtYzRhMDAwNzQ4MTU4Jm1vZGVsVXJsPWh0dHBzJTNBJTJGJTJGdmlld2VyLjNkdHdpbnMudGVjaCUyRmdhZmFzLmdsYiZidXlVUkw9aHR0cHMlM0ElMkYlMkZ3ZWIuM2R0d2lucy50ZWNoJTJG";
+      "https://scene.3dtwins.tech/?scene=aHR0cHM6Ly9wcm9kdWN0LjNkdHdpbnMudGVjaC8/bmFtZT1HYWZhcyZjb25maWc9ZnJvbnRhbCUzQSUyM2NmNmMyYSU3Q1BhdGlsbGFzJTNBJTIzOTBlNTZjJTdDQ3Jpc3RhbGVzJTNBJTIzMDAwMDAwJnF1YW50aXR5PTEmdG9rZW49OTllNjIzNDYtMDk5MC00YzZlLWJlYmYtYzRhMDAwNzQ4MTU4Jm1vZGVsVXJsPWh0dHBzJTNBJTJGJTJGdmlld2VyLjNkdHdpbnMudGVjaCUyRmdhZmFzLmdsYiZidXlVUkw9aHR0cHMlM0ElMkYlMkZ3ZWIuM2R0d2lucy50ZWNoJTJG";
 
       sceneLoaded = true;
+
     }
 
+    /* =========================
+       EXPAND SYSTEM
+    ========================= */
+
     systemObject.classList.add('expanded');
+
   }
 
 });
 
 /* =========================
-   STEP 3 — SCENE APPEAR
+   STEP 3 — LIVE SCENE APPEARS
 ========================= */
 
 tl.add(sceneLayer, {
 
   opacity: [0, 1],
-  scale: [1.06, 1],
+  scale: [1.08, 1],
 
-  easing: 'easeOutExpo',
-  duration: 800
-
-}, '-=400');
-
-/* =========================
-   STEP 4 — NETWORK (LINES + NODES)
-========================= */
-
-tl.add('.system-node', {
-
-  opacity: [0, 1],
-  translateY: [40, 0],
-  scale: [0.85, 1],
-
-  delay: stagger(90),
   easing: 'easeOutExpo',
   duration: 900
-
-}, '-=350');
-
-tl.add('.system-line', {
-
-  scaleX: [0, 1],
-  opacity: [0, 0.4],
-
-  delay: stagger(70),
-  easing: 'easeOutExpo',
-  duration: 800
 
 }, '-=500');
 
 /* =========================
-   FLOAT SYSTEM (UNCHANGED STABLE)
+   STEP 4 — SYSTEM DEPLOYMENT
+========================= */
+
+tl.add('.system-line', {
+
+  scaleX: [0, 1],
+  opacity: [0, 0.45],
+
+  delay: stagger(80),
+
+  easing: 'easeOutExpo',
+  duration: 900
+
+}, '-=500');
+
+tl.add('.system-node', {
+
+  opacity: [0, 1],
+  translateY: [50, 0],
+  scale: [0.8, 1],
+
+  delay: stagger(120),
+
+  easing: 'easeOutExpo',
+  duration: 1200
+
+}, '-=700');
+
+/* =========================
+   FLOAT SYSTEM
 ========================= */
 
 animate('.system-object', {
 
   y: [
-    { to: '-10px', duration: 2800 },
-    { to: '0px', duration: 2800 }
+    { to: '-12px', duration: 3000 },
+    { to: '0px', duration: 3000 }
   ],
 
   ease: 'inOutSine',
@@ -1080,21 +1089,74 @@ animate('.system-object', {
   direction: 'alternate'
 
 });
+
+/* =========================
+   NODE FLOAT
+========================= */
 
 animate('.system-node', {
 
   y: [
-    { to: '-5px', duration: 2000 },
+    { to: '-6px', duration: 2000 },
     { to: '0px', duration: 2000 }
   ],
 
-  delay: stagger(90),
+  delay: stagger(120),
 
   ease: 'inOutSine',
   loop: true,
   direction: 'alternate'
 
 });
+
+
+  const section = document.querySelector('.system-scroll-section');
+
+let unlocked = false;
+let lockTimer = null;
+
+const observer = new IntersectionObserver(([entry]) => {
+
+  if (entry.isIntersecting) {
+    unlocked = false;
+    section.classList.remove('locked');
+  }
+
+}, {
+  threshold: 0.8
+});
+
+observer.observe(section);
+
+/* =========================
+   SCROLL BOUNDARY LOCK
+========================= */
+
+window.addEventListener('wheel', (e) => {
+
+  const rect = section.getBoundingClientRect();
+  const atBottom = rect.bottom <= window.innerHeight + 5;
+
+  if (atBottom && !unlocked) {
+
+    e.preventDefault();
+
+    section.classList.add('locked');
+
+    clearTimeout(lockTimer);
+
+    lockTimer = setTimeout(() => {
+      unlocked = true;
+      section.classList.remove('locked');
+
+      // pequeño “release” natural
+      window.scrollBy({ top: 80, behavior: 'smooth' });
+
+    }, 250); // delay de “carga / asentamiento”
+
+  }
+
+}, { passive: false });
 
 </script>
 
