@@ -954,7 +954,8 @@ window.addEventListener('scroll', () => {
 
 </script>
 
-<script type="module">
+
+  <script type="module">
 
 import {
   animate,
@@ -968,6 +969,7 @@ import {
 ========================= */
 
 const systemObject = document.querySelector('.system-object');
+
 const productImg = document.querySelector('.system-img-product');
 const sceneLayer = document.querySelector('.system-scene-layer');
 const sceneIframe = document.querySelector('.system-scene-frame');
@@ -984,21 +986,16 @@ const tl = createTimeline({
 
     target: '.system-scroll-section',
 
-    // 🔥 más suave y menos “snap”
-    enter: 'top 85%',
-    leave: 'bottom 15%',
+    enter: 'top top',
+    leave: 'bottom bottom',
 
-    sync: 0.85,
+    sync: 0.7,
     debug: false
 
   })
 
 });
 
-/* 🔥 FIX CRÍTICO: evita el salto inicial del primer render */
-requestAnimationFrame(() => {
-  tl.seek(0);
-});
 
 /* =========================
    STEP 1 — PRODUCT EMERGENCE
@@ -1029,16 +1026,23 @@ tl.add(productImg, {
 
   begin: () => {
 
-    /* LOAD SCENE ONLY ONCE */
-    if (!sceneLoaded) {
+    /* =========================
+       LOAD SCENE ONLY ONCE
+    ========================= */
+
+    if(!sceneLoaded){
 
       sceneIframe.src =
-        "https://scene.3dtwins.tech/?scene=aHR0cHM6Ly9wcm9kdWN0LjNkdHdpbnMudGVjaC8/bmFtZT1HYWZhcyZjb25maWc9ZnJvbnRhbCUzQSUyM2NmNmMyYSU3Q1BhdGlsbGFzJTNBJTIzOTBlNTZjJTdDQ3Jpc3RhbGVzJTNBJTIzMDAwMDAwJnF1YW50aXR5PTEmdG9rZW49OTllNjIzNDYtMDk5MC00YzZlLWJlYmYtYzRhMDAwNzQ4MTU4Jm1vZGVsVXJsPWh0dHBzJTNBJTJGJTJGdmlld2VyLjNkdHdpbnMudGVjaCUyRmdhZmFzLmdsYiZidXlVUkw9aHR0cHMlM0ElMkYlMkZ3ZWIuM2R0d2lucy50ZWNoJTJG";
+      "https://scene.3dtwins.tech/?scene=aHR0cHM6Ly9wcm9kdWN0LjNkdHdpbnMudGVjaC8/bmFtZT1HYWZhcyZjb25maWc9ZnJvbnRhbCUzQSUyM2NmNmMyYSU3Q1BhdGlsbGFzJTNBJTIzOTBlNTZjJTdDQ3Jpc3RhbGVzJTNBJTIzMDAwMDAwJnF1YW50aXR5PTEmdG9rZW49OTllNjIzNDYtMDk5MC00YzZlLWJlYmYtYzRhMDAwNzQ4MTU4Jm1vZGVsVXJsPWh0dHBzJTNBJTJGJTJGdmlld2VyLjNkdHdpbnMudGVjaCUyRmdhZmFzLmdsYiZidXlVUkw9aHR0cHMlM0ElMkYlMkZ3ZWIuM2R0d2lucy50ZWNoJTJG";
 
       sceneLoaded = true;
+
     }
 
-    /* EXPAND SYSTEM */
+    /* =========================
+       EXPAND SYSTEM
+    ========================= */
+
     systemObject.classList.add('expanded');
 
   }
@@ -1057,7 +1061,7 @@ tl.add(sceneLayer, {
   easing: 'easeOutExpo',
   duration: 700
 
-}, '-=450');
+}, '-=500');
 
 /* =========================
    STEP 4 — SYSTEM DEPLOYMENT
@@ -1073,13 +1077,12 @@ tl.add('.system-line', {
   easing: 'easeOutExpo',
   duration: 600
 
-}, '-=650');
-
+}, '-=900');   // 👈 antes empiezan
 
 tl.add('.system-node', {
 
   opacity: [0, 1],
-  translateY: [40, 0],
+  translateY: [40, 0],   // 👈 menos recorrido = más rápido visualmente
   scale: [0.85, 1],
 
   delay: stagger(80),
@@ -1087,10 +1090,10 @@ tl.add('.system-node', {
   easing: 'easeOutExpo',
   duration: 900
 
-}, '-=750');
+}, '-=950');   // 👈 aún más solapado hacia atrás
 
 /* =========================
-   FLOAT SYSTEM (ambient motion)
+   FLOAT SYSTEM
 ========================= */
 
 animate('.system-object', {
@@ -1124,6 +1127,9 @@ animate('.system-node', {
   direction: 'alternate'
 
 });
+
+
+
 
 </script>
 
