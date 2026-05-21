@@ -330,6 +330,7 @@ button {
 .system-scroll-section{
   height:140vh;
   position:relative;
+    overflow:hidden;
 }
 
 .system-sticky{
@@ -348,8 +349,23 @@ button {
 ========================= */
 .system-object{
   position:relative;
+
   width:260px;
   height:260px;
+
+  transition:
+    width 1.2s cubic-bezier(.16,1,.3,1),
+    height 1.2s cubic-bezier(.16,1,.3,1);
+
+  will-change:width,height;
+}
+
+/* expanded state */
+.system-object.expanded{
+
+  width:720px;
+  height:720px;
+
 }
 
 .system-img-product,
@@ -377,9 +393,8 @@ button {
 .system-scene-frame{
   width:100%;
   height:100%;
-  border:none;
+  pointer-events:auto;
 }
-  
 
 
 /* =========================
@@ -926,6 +941,8 @@ import {
    ELEMENTS
 ========================= */
 
+const systemObject = document.querySelector('.system-object');
+
 const productImg = document.querySelector('.system-img-product');
 const sceneLayer = document.querySelector('.system-scene-layer');
 const sceneIframe = document.querySelector('.system-scene-frame');
@@ -981,7 +998,10 @@ tl.add(productImg, {
 
   begin: () => {
 
-    /* lazy load iframe only when needed */
+    /* =========================
+       LOAD SCENE ONLY ONCE
+    ========================= */
+
     if(!sceneLoaded){
 
       sceneIframe.src =
@@ -991,9 +1011,19 @@ tl.add(productImg, {
 
     }
 
+    /* =========================
+       EXPAND SYSTEM
+    ========================= */
+
+    systemObject.classList.add('expanded');
+
   }
 
 });
+
+/* =========================
+   STEP 3 — LIVE SCENE APPEARS
+========================= */
 
 tl.add(sceneLayer, {
 
@@ -1006,7 +1036,7 @@ tl.add(sceneLayer, {
 }, '-=500');
 
 /* =========================
-   STEP 3 — SYSTEM DEPLOYMENT
+   STEP 4 — SYSTEM DEPLOYMENT
 ========================= */
 
 tl.add('.system-line', {
@@ -1050,6 +1080,10 @@ animate('.system-object', {
   direction: 'alternate'
 
 });
+
+/* =========================
+   NODE FLOAT
+========================= */
 
 animate('.system-node', {
 
