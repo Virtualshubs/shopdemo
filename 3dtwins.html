@@ -324,48 +324,50 @@ button {
 }
 
 
-/* =========================
-   SYSTEM SCROLL FIX (CONTROLLED HEIGHT)
+  /* =========================
+   SYSTEM CORE (FIXED CLEAN)
 ========================= */
-
 .system-scroll-section{
-  height: 200vh; /* 👈 clave: 2 pantallas = control real del timeline */
-  position: relative;
-  overflow: hidden;
+  height:140vh;
+  position:relative;
+    overflow:hidden;
 }
 
 .system-sticky{
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
+  position:sticky;
+  top:0;
+  height:100vh;
+  overflow:hidden;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
 }
 
 /* =========================
-   PRODUCT CORE
+   PRODUCT
 ========================= */
-
 .system-object{
-  position: relative;
-  width: 260px;
-  height: 260px;
+  position:relative;
+
+  width:260px;
+  height:260px;
 
   transition:
-    width 0.9s cubic-bezier(.16,1,.3,1),
-    height 0.9s cubic-bezier(.16,1,.3,1);
+    width 1.2s cubic-bezier(.16,1,.3,1),
+    height 1.2s cubic-bezier(.16,1,.3,1);
 
-  will-change: transform, width, height;
+  will-change:width,height;
 }
 
+/* expanded state */
 .system-object.expanded{
-  width: 720px;
-  height: 720px;
+
+  width:720px;
+  height:720px;
+
 }
 
-/* layers */
 .system-img-product,
 .system-scene-layer{
   position:absolute;
@@ -375,34 +377,25 @@ button {
 }
 
 .system-img-product{
-  object-fit: cover;
-  z-index: 2;
+  object-fit:cover;
+  z-index:2;
 }
 
 .system-scene-layer{
-  opacity: 0;
-  z-index: 3;
-  overflow: hidden;
-  border-radius: 10px;
-  border: 1px solid rgba(255,255,255,0.08);
+  opacity:0;
+  z-index:3;
+  overflow:hidden;
+  border-radius:8px;
+  border:1px solid rgba(255,255,255,0.08);
+  background:#0b0b0c;
 }
 
-/* iframe MUST be large and interactive */
 .system-scene-frame{
-  width: 200%;
-  height: 200%;
-  transform: scale(0.55);
-  transform-origin: top left;
-  pointer-events: auto;
+  width:100%;
+  height:100%;
+  pointer-events:auto;
 }
 
-/* =========================
-   NETWORK RESET STATE
-========================= */
-
-.system-network{
-  opacity: 0;
-}
 
 /* =========================
    NODES
@@ -410,14 +403,97 @@ button {
 
 .system-node{
   position:absolute;
+
   padding:10px 14px;
+
   border:1px solid rgba(255,255,255,0.12);
+
   font-size:11px;
   letter-spacing:0.18em;
+
   background:rgba(255,255,255,0.03);
-  backdrop-filter: blur(10px);
+  backdrop-filter:blur(10px);
+
   opacity:0;
 }
+
+/* POSITIONS */
+
+.node-1{ top:18%; left:22%; }
+.node-2{ top:28%; right:18%; }
+.node-3{ top:50%; left:10%; }
+.node-4{ top:52%; right:10%; }
+.node-5{ bottom:22%; left:20%; }
+.node-6{ bottom:18%; right:24%; }
+.node-7{ bottom:10%; left:50%; transform:translateX(-50%); }
+
+/* =========================
+   LINES
+========================= */
+
+.system-line{
+  position:absolute;
+  height:1px;
+  background:rgba(255,255,255,0.18);
+
+  transform-origin:left center;
+
+  opacity:0;
+}
+
+/* CUSTOM LINES */
+
+.line-1{
+  width:260px;
+  top:32%;
+  left:38%;
+  transform:rotate(-28deg);
+}
+
+.line-2{
+  width:240px;
+  top:38%;
+  right:34%;
+  transform:rotate(28deg);
+}
+
+.line-3{
+  width:280px;
+  top:50%;
+  left:18%;
+}
+
+.line-4{
+  width:280px;
+  top:50%;
+  right:18%;
+}
+
+.line-5{
+  width:240px;
+  bottom:32%;
+  left:32%;
+  transform:rotate(28deg);
+}
+
+.line-6{
+  width:240px;
+  bottom:28%;
+  right:32%;
+  transform:rotate(-28deg);
+}
+
+.line-7{
+  width:180px;
+  bottom:22%;
+  left:50%;
+  transform:
+    translateX(-50%)
+    rotate(90deg);
+}
+/* =========================
+   RESPONSIVE
+========================= */
 
 @media(max-width:900px){
 
@@ -531,50 +607,47 @@ button {
   </div>
 </section>
 
-  
 <section class="system-scroll-section">
 
   <div class="system-sticky">
 
-    <!-- CORE OBJECT (fase 1-2) -->
-    <div class="system-object">
+<div class="system-object">
 
-      <img
-        class="system-img-product"
-        src="https://demo.3dtwins.eu/3DTWINS_THEFUTURE_IS_NOW.png"
-      >
+  <!-- STATIC PRODUCT -->
+  <img
+    class="system-img-product"
+    src="https://demo.3dtwins.eu/3DTWINS_THEFUTURE_IS_NOW.png"
+  >
 
-      <div class="system-scene-layer">
-        <iframe
-          class="system-scene-frame"
-          loading="lazy"
-          frameborder="0"
-          allowfullscreen>
-        </iframe>
-      </div>
+  <!-- LIVE SCENE -->
+  <div class="system-scene-layer">
 
-    </div>
+    <iframe
+      class="system-scene-frame"
+      loading="lazy"
+      frameborder="0"
+      allowfullscreen>
+    </iframe>
 
-    <!-- SYSTEM NETWORK (fase 3 - oculto al inicio) -->
-    <div class="system-network">
+  </div>
 
-      <div class="system-node node-1">METADATA</div>
-      <div class="system-node node-2">PAYMENT</div>
-      <div class="system-node node-3">RUNTIME</div>
-      <div class="system-node node-4">SCENE</div>
-      <div class="system-node node-5">QR</div>
-      <div class="system-node node-6">BEHAVIOR</div>
-      <div class="system-node node-7">INTEROPERABILITY</div>
+</div>
 
-      <div class="system-line line-1"></div>
-      <div class="system-line line-2"></div>
-      <div class="system-line line-3"></div>
-      <div class="system-line line-4"></div>
-      <div class="system-line line-5"></div>
-      <div class="system-line line-6"></div>
-      <div class="system-line line-7"></div>
+    <div class="system-node node-1">METADATA</div>
+    <div class="system-node node-2">PAYMENT</div>
+    <div class="system-node node-3">RUNTIME</div>
+    <div class="system-node node-4">SCENE</div>
+    <div class="system-node node-5">QR</div>
+    <div class="system-node node-6">BEHAVIOR</div>
+    <div class="system-node node-7">INTEROPERABILITY</div>
 
-    </div>
+    <div class="system-line line-1"></div>
+    <div class="system-line line-2"></div>
+    <div class="system-line line-3"></div>
+    <div class="system-line line-4"></div>
+    <div class="system-line line-5"></div>
+    <div class="system-line line-6"></div>
+    <div class="system-line line-7"></div>
 
   </div>
 
@@ -855,9 +928,7 @@ window.addEventListener('scroll', () => {
 });
 
 </script>
-
-
-  <script type="module">
+<script type="module">
 
 import {
   animate,
@@ -866,7 +937,12 @@ import {
   stagger
 } from 'https://esm.sh/animejs';
 
+/* =========================
+   ELEMENTS
+========================= */
+
 const systemObject = document.querySelector('.system-object');
+
 const productImg = document.querySelector('.system-img-product');
 const sceneLayer = document.querySelector('.system-scene-layer');
 const sceneIframe = document.querySelector('.system-scene-frame');
@@ -874,7 +950,7 @@ const sceneIframe = document.querySelector('.system-scene-frame');
 let sceneLoaded = false;
 
 /* =========================
-   TIMELINE CONTROLLED (CRITICAL FIX)
+   TIMELINE
 ========================= */
 
 const tl = createTimeline({
@@ -883,17 +959,18 @@ const tl = createTimeline({
 
     target: '.system-scroll-section',
 
-    enter: 'top bottom',   // 👈 empieza antes (no “vacío”)
-    leave: 'bottom top',   // 👈 termina antes (no overflow infinito)
+    enter: 'top top',
+    leave: 'bottom bottom',
 
-    sync: 1.0,             // 👈 CLAVE: full scrub (no saltos)
+    sync: 0.6,
     debug: false
+
   })
 
 });
 
 /* =========================
-   STEP 1 — EMERGENCE
+   STEP 1 — PRODUCT EMERGENCE
 ========================= */
 
 tl.add('.system-object', {
@@ -903,31 +980,40 @@ tl.add('.system-object', {
   opacity: [0, 1],
 
   easing: 'easeOutExpo',
-  duration: 800
+  duration: 1200
 
 });
 
 /* =========================
-   STEP 2 — EXPAND + SCENE LOAD
+   STEP 2 — TRANSITION TO LIVE SCENE
 ========================= */
 
 tl.add(productImg, {
 
   opacity: [1, 0],
-  scale: [1, 0.9],
+  scale: [1, 0.92],
 
   easing: 'easeInOutExpo',
-  duration: 600,
+  duration: 700,
 
   begin: () => {
 
-    if (!sceneLoaded) {
+    /* =========================
+       LOAD SCENE ONLY ONCE
+    ========================= */
+
+    if(!sceneLoaded){
 
       sceneIframe.src =
-        "https://scene.3dtwins.tech/?scene=aHR0cHM6Ly9wcm9kdWN0LjNkdHdpbnMudGVjaC8/bmFtZT1HYWZhcyZjb25maWc9ZnJvbnRhbCUzQSUyM2NmNmMyYSU3Q1BhdGlsbGFzJTNBJTIzOTBlNTZjJTdDQ3Jpc3RhbGVzJTNBJTIzMDAwMDAwJnF1YW50aXR5PTEmdG9rZW49OTllNjIzNDYtMDk5MC00YzZlLWJlYmYtYzRhMDAwNzQ4MTU4Jm1vZGVsVXJsPWh0dHBzJTNBJTJGJTJGdmlld2VyLjNkdHdpbnMudGVjaCUyRmdhZmFzLmdsYiZidXlVUkw9aHR0cHMlM0ElMkYlMkZ3ZWIuM2R0d2lucy50ZWNoJTJG";
+      "https://scene.3dtwins.tech/?scene=aHR0cHM6Ly9wcm9kdWN0LjNkdHdpbnMudGVjaC8/bmFtZT1HYWZhcyZjb25maWc9ZnJvbnRhbCUzQSUyM2NmNmMyYSU3Q1BhdGlsbGFzJTNBJTIzOTBlNTZjJTdDQ3Jpc3RhbGVzJTNBJTIzMDAwMDAwJnF1YW50aXR5PTEmdG9rZW49OTllNjIzNDYtMDk5MC00YzZlLWJlYmYtYzRhMDAwNzQ4MTU4Jm1vZGVsVXJsPWh0dHBzJTNBJTJGJTJGdmlld2VyLjNkdHdpbnMudGVjaCUyRmdhZmFzLmdsYiZidXlVUkw9aHR0cHMlM0ElMkYlMkZ3ZWIuM2R0d2lucy50ZWNoJTJG";
 
       sceneLoaded = true;
+
     }
+
+    /* =========================
+       EXPAND SYSTEM
+    ========================= */
 
     systemObject.classList.add('expanded');
 
@@ -936,81 +1022,82 @@ tl.add(productImg, {
 });
 
 /* =========================
-   STEP 3 — SCENE IN
+   STEP 3 — LIVE SCENE APPEARS
 ========================= */
 
 tl.add(sceneLayer, {
 
   opacity: [0, 1],
-  scale: [1.05, 1],
+  scale: [1.08, 1],
 
   easing: 'easeOutExpo',
-  duration: 700
+  duration: 900
 
-}, '-=300');
-
-/* =========================
-   STEP 4 — NETWORK (FIXED TIMING)
-========================= */
-
-tl.add('.system-network', {
-
-  opacity: [0, 1],
-  duration: 500,
-  easing: 'easeOutExpo'
-
-}, '-=200');
+}, '-=500');
 
 /* =========================
-   STEP 5 — LINES + NODES
+   STEP 4 — SYSTEM DEPLOYMENT
 ========================= */
 
 tl.add('.system-line', {
 
   scaleX: [0, 1],
-  opacity: [0, 0.4],
+  opacity: [0, 0.45],
 
-  delay: stagger(60),
-  duration: 700,
-  easing: 'easeOutExpo'
+  delay: stagger(80),
 
-}, '-=300');
+  easing: 'easeOutExpo',
+  duration: 900
+
+}, '-=500');
 
 tl.add('.system-node', {
 
   opacity: [0, 1],
-  translateY: [30, 0],
-  scale: [0.9, 1],
+  translateY: [50, 0],
+  scale: [0.8, 1],
 
-  delay: stagger(80),
-  duration: 800,
-  easing: 'easeOutExpo'
+  delay: stagger(120),
 
-}, '-=600');
+  easing: 'easeOutExpo',
+  duration: 1200
+
+}, '-=700');
 
 /* =========================
-   FLOAT (unchanged)
+   FLOAT SYSTEM
 ========================= */
 
 animate('.system-object', {
+
   y: [
-    { to: '-10px', duration: 2500 },
-    { to: '0px', duration: 2500 }
+    { to: '-12px', duration: 3000 },
+    { to: '0px', duration: 3000 }
   ],
+
   ease: 'inOutSine',
   loop: true,
   direction: 'alternate'
+
 });
 
+/* =========================
+   NODE FLOAT
+========================= */
+
 animate('.system-node', {
+
   y: [
-    { to: '-5px', duration: 1800 },
-    { to: '0px', duration: 1800 }
+    { to: '-6px', duration: 2000 },
+    { to: '0px', duration: 2000 }
   ],
-  delay: stagger(100),
+
+  delay: stagger(120),
+
   ease: 'inOutSine',
   loop: true,
   direction: 'alternate'
+
 });
 
 </script>
