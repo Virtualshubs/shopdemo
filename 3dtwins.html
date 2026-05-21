@@ -354,10 +354,9 @@ button {
 
 .system-sticky{
   position:sticky;
-  top:0;
-  height:140vh;
+  top: 40px; /* 👈 clave */
+  height: calc(100vh - 40px);
   overflow:hidden;
-
   display:flex;
   align-items:center;
   justify-content:center;
@@ -962,15 +961,14 @@ let sceneLoaded = false;
 /* =========================
    TIMELINE
 ========================= */
-
 const tl = createTimeline({
 
   autoplay: onScroll({
 
     target: '.system-scroll-section',
 
-    enter: 'top top',
-    leave: 'bottom bottom',
+    enter: 'top 80%',
+    leave: 'bottom 20%',
 
     sync: 0.6,
     debug: false
