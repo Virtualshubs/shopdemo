@@ -328,7 +328,7 @@ button {
    SYSTEM CORE (FIXED CLEAN)
 ========================= */
 .system-scroll-section{
-  height: 420vh;
+  height: 200vh;
   position:relative;
     overflow:hidden;
 }
@@ -396,7 +396,10 @@ button {
   pointer-events:auto;
 }
 
-
+.system-network{
+  opacity:0;
+  pointer-events:none;
+}
 /* =========================
    NODES
 ========================= */
@@ -1001,10 +1004,6 @@ tl.add(productImg, {
 
   begin: () => {
 
-    /* =========================
-       LOAD SCENE ONLY ONCE
-    ========================= */
-
     if(!sceneLoaded){
 
       sceneIframe.src =
@@ -1014,10 +1013,6 @@ tl.add(productImg, {
 
     }
 
-    /* =========================
-       EXPAND SYSTEM
-    ========================= */
-
     systemObject.classList.add('expanded');
 
   }
@@ -1025,7 +1020,7 @@ tl.add(productImg, {
 });
 
 /* =========================
-   STEP 3 — LIVE SCENE APPEARS
+   STEP 3 — SCENE APPEARS
 ========================= */
 
 tl.add(sceneLayer, {
@@ -1037,6 +1032,19 @@ tl.add(sceneLayer, {
   duration: 900
 
 }, '-=500');
+
+/* =========================
+   STEP 3A — SYSTEM NETWORK REVEAL
+========================= */
+
+tl.add('.system-network', {
+
+  opacity: [0, 1],
+
+  easing: 'easeOutExpo',
+  duration: 800
+
+}, '-=300');
 
 /* =========================
    STEP 4 — SYSTEM DEPLOYMENT
@@ -1083,10 +1091,6 @@ animate('.system-object', {
   direction: 'alternate'
 
 });
-
-/* =========================
-   NODE FLOAT
-========================= */
 
 animate('.system-node', {
 
