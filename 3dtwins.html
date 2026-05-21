@@ -917,45 +917,7 @@ button {
 
 </section>
   
-<script>
-
-window.addEventListener('scroll', () => {
-
-  const scrollY = window.scrollY;
-
-  anime({
-    targets: '.orbit-1',
-    translateX: scrollY * 0.08,
-    translateY: scrollY * -0.04,
-    rotate: scrollY * 0.05,
-    duration: 400,
-    easing: 'easeOutQuad'
-  });
-
-  anime({
-    targets: '.orbit-2',
-    translateX: scrollY * -0.05,
-    translateY: scrollY * 0.06,
-    rotate: scrollY * -0.08,
-    duration: 400,
-    easing: 'easeOutQuad'
-  });
-
-  anime({
-    targets: '.orbit-3',
-    translateX: scrollY * 0.03,
-    translateY: scrollY * 0.1,
-    rotate: scrollY * 0.12,
-    duration: 400,
-    easing: 'easeOutQuad'
-  });
-
-});
-
-</script>
-
-
-  <script type="module">
+<script type="module">
 
 import {
   animate,
@@ -996,6 +958,14 @@ const tl = createTimeline({
 
 });
 
+/* =========================
+   🔥 FIX CRÍTICO (NO ROMPE NADA)
+   evita el salto inicial del primer render
+========================= */
+
+requestAnimationFrame(() => {
+  tl.seek(0, { suppressEvents: true });
+});
 
 /* =========================
    STEP 1 — PRODUCT EMERGENCE
@@ -1026,22 +996,13 @@ tl.add(productImg, {
 
   begin: () => {
 
-    /* =========================
-       LOAD SCENE ONLY ONCE
-    ========================= */
-
     if(!sceneLoaded){
 
       sceneIframe.src =
       "https://scene.3dtwins.tech/?scene=aHR0cHM6Ly9wcm9kdWN0LjNkdHdpbnMudGVjaC8/bmFtZT1HYWZhcyZjb25maWc9ZnJvbnRhbCUzQSUyM2NmNmMyYSU3Q1BhdGlsbGFzJTNBJTIzOTBlNTZjJTdDQ3Jpc3RhbGVzJTNBJTIzMDAwMDAwJnF1YW50aXR5PTEmdG9rZW49OTllNjIzNDYtMDk5MC00YzZlLWJlYmYtYzRhMDAwNzQ4MTU4Jm1vZGVsVXJsPWh0dHBzJTNBJTJGJTJGdmlld2VyLjNkdHdpbnMudGVjaCUyRmdhZmFzLmdsYiZidXlVUkw9aHR0cHMlM0ElMkYlMkZ3ZWIuM2R0d2lucy50ZWNoJTJG";
 
       sceneLoaded = true;
-
     }
-
-    /* =========================
-       EXPAND SYSTEM
-    ========================= */
 
     systemObject.classList.add('expanded');
 
@@ -1077,12 +1038,12 @@ tl.add('.system-line', {
   easing: 'easeOutExpo',
   duration: 600
 
-}, '-=900');   // 👈 antes empiezan
+}, '-=900');
 
 tl.add('.system-node', {
 
   opacity: [0, 1],
-  translateY: [40, 0],   // 👈 menos recorrido = más rápido visualmente
+  translateY: [40, 0],
   scale: [0.85, 1],
 
   delay: stagger(80),
@@ -1090,7 +1051,7 @@ tl.add('.system-node', {
   easing: 'easeOutExpo',
   duration: 900
 
-}, '-=950');   // 👈 aún más solapado hacia atrás
+}, '-=950');
 
 /* =========================
    FLOAT SYSTEM
@@ -1127,9 +1088,6 @@ animate('.system-node', {
   direction: 'alternate'
 
 });
-
-
-
 
 </script>
 
