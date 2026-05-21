@@ -328,20 +328,21 @@ button {
    SYSTEM CORE (FIXED CLEAN)
 ========================= */
 .system-scroll-section{
-  height: 200vh;
+  height: 180vh;
   position:relative;
     overflow:hidden;
 }
 
 .system-sticky{
-  position:sticky;
-  top:0;
-  width:100%;
-  height:100vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  overflow:hidden;
+
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+
 }
 
 /* =========================
@@ -968,7 +969,7 @@ const tl = createTimeline({
     enter: 'top top',
     leave: 'bottom bottom',
 
-    sync: 0.6,
+    sync: 0.25,   // 👈 IMPORTANTE: más rápido = menos scroll muerto
     debug: false
 
   })
@@ -986,7 +987,7 @@ tl.add('.system-object', {
   opacity: [0, 1],
 
   easing: 'easeOutExpo',
-  duration: 1200
+  duration: 900
 
 });
 
@@ -1004,42 +1005,27 @@ tl.add(productImg, {
 
   begin: () => {
 
-    if(!sceneLoaded){
+    if (!sceneLoaded) {
 
       sceneIframe.src =
-      "https://scene.3dtwins.tech/?scene=aHR0cHM6Ly9wcm9kdWN0LjNkdHdpbnMudGVjaC8/bmFtZT1HYWZhcyZjb25maWc9ZnJvbnRhbCUzQSUyM2NmNmMyYSU3Q1BhdGlsbGFzJTNBJTIzOTBlNTZjJTdDQ3Jpc3RhbGVzJTNBJTIzMDAwMDAwJnF1YW50aXR5PTEmdG9rZW49OTllNjIzNDYtMDk5MC00YzZlLWJlYmYtYzRhMDAwNzQ4MTU4Jm1vZGVsVXJsPWh0dHBzJTNBJTJGJTJGdmlld2VyLjNkdHdpbnMudGVjaCUyRmdhZmFzLmdsYiZidXlVUkw9aHR0cHMlM0ElMkYlMkZ3ZWIuM2R0d2lucy50ZWNoJTJG";
+        "https://scene.3dtwins.tech/?scene=aHR0cHM6Ly9wcm9kdWN0LjNkdHdpbnMudGVjaC8/bmFtZT1HYWZhcyZjb25maWc9ZnJvbnRhbCUzQSUyM2NmNmMyYSU3Q1BhdGlsbGFzJTNBJTIzOTBlNTZjJTdDQ3Jpc3RhbGVzJTNBJTIzMDAwMDAwJnF1YW50aXR5PTEmdG9rZW49OTllNjIzNDYtMDk5MC00YzZlLWJlYmYtYzRhMDAwNzQ4MTU4Jm1vZGVsVXJsPWh0dHBzJTNBJTJGJTJGdmlld2VyLjNkdHdpbnMudGVjaCUyRmdhZmFzLmdsYiZidXlVUkw9aHR0cHMlM0ElMkYlMkZ3ZWIuM2R0d2lucy50ZWNoJTJG";
 
       sceneLoaded = true;
-
     }
 
     systemObject.classList.add('expanded');
-
   }
 
-});
+}, '-=200'); // 👈 antes estaba demasiado tarde
 
 /* =========================
-   STEP 3 — SCENE APPEARS
+   STEP 3 — LIVE SCENE APPEARS
 ========================= */
 
 tl.add(sceneLayer, {
 
   opacity: [0, 1],
-  scale: [1.08, 1],
-
-  easing: 'easeOutExpo',
-  duration: 900
-
-}, '-=500');
-
-/* =========================
-   STEP 3A — SYSTEM NETWORK REVEAL
-========================= */
-
-tl.add('.system-network', {
-
-  opacity: [0, 1],
+  scale: [1.05, 1],
 
   easing: 'easeOutExpo',
   duration: 800
@@ -1047,7 +1033,21 @@ tl.add('.system-network', {
 }, '-=300');
 
 /* =========================
-   STEP 4 — SYSTEM DEPLOYMENT
+   STEP 3A — SYSTEM NETWORK (FIXED)
+========================= */
+
+tl.add('.system-network', {
+
+  opacity: [0, 1],
+  translateY: [20, 0],
+
+  easing: 'easeOutExpo',
+  duration: 700
+
+}, '-=400'); // 👈 entra ANTES de que sea tarde
+
+/* =========================
+   STEP 4 — LINES + NODES DEPLOY
 ========================= */
 
 tl.add('.system-line', {
@@ -1055,25 +1055,23 @@ tl.add('.system-line', {
   scaleX: [0, 1],
   opacity: [0, 0.45],
 
-  delay: stagger(80),
-
+  delay: stagger(60),
   easing: 'easeOutExpo',
-  duration: 900
+  duration: 800
 
-}, '-=500');
+}, '-=450');
 
 tl.add('.system-node', {
 
   opacity: [0, 1],
-  translateY: [50, 0],
-  scale: [0.8, 1],
+  translateY: [40, 0],
+  scale: [0.85, 1],
 
-  delay: stagger(120),
-
+  delay: stagger(80),
   easing: 'easeOutExpo',
-  duration: 1200
+  duration: 900
 
-}, '-=700');
+}, '-=650');
 
 /* =========================
    FLOAT SYSTEM
@@ -1082,8 +1080,8 @@ tl.add('.system-node', {
 animate('.system-object', {
 
   y: [
-    { to: '-12px', duration: 3000 },
-    { to: '0px', duration: 3000 }
+    { to: '-10px', duration: 2500 },
+    { to: '0px', duration: 2500 }
   ],
 
   ease: 'inOutSine',
@@ -1095,12 +1093,11 @@ animate('.system-object', {
 animate('.system-node', {
 
   y: [
-    { to: '-6px', duration: 2000 },
-    { to: '0px', duration: 2000 }
+    { to: '-5px', duration: 1800 },
+    { to: '0px', duration: 1800 }
   ],
 
-  delay: stagger(120),
-
+  delay: stagger(100),
   ease: 'inOutSine',
   loop: true,
   direction: 'alternate'
