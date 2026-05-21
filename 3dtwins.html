@@ -1129,53 +1129,7 @@ animate('.system-node', {
 });
 
 
-  const section = document.querySelector('.system-scroll-section');
 
-let unlocked = false;
-let lockTimer = null;
-
-const observer = new IntersectionObserver(([entry]) => {
-
-  if (entry.isIntersecting) {
-    unlocked = false;
-    section.classList.remove('locked');
-  }
-
-}, {
-  threshold: 0.8
-});
-
-observer.observe(section);
-
-/* =========================
-   SCROLL BOUNDARY LOCK
-========================= */
-
-window.addEventListener('wheel', (e) => {
-
-  const rect = section.getBoundingClientRect();
-  const atBottom = rect.bottom <= window.innerHeight + 5;
-
-  if (atBottom && !unlocked) {
-
-    e.preventDefault();
-
-    section.classList.add('locked');
-
-    clearTimeout(lockTimer);
-
-    lockTimer = setTimeout(() => {
-      unlocked = true;
-      section.classList.remove('locked');
-
-      // pequeño “release” natural
-      window.scrollBy({ top: 80, behavior: 'smooth' });
-
-    }, 250); // delay de “carga / asentamiento”
-
-  }
-
-}, { passive: false });
 
 </script>
 
