@@ -1053,25 +1053,25 @@ tl.add('.system-line', {
   scaleX: [0, 1],
   opacity: [0, 0.45],
 
+  delay: stagger(60),
+
+  easing: 'easeOutExpo',
+  duration: 700
+
+}, '-=900');   // 👈 antes empiezan
+
+tl.add('.system-node', {
+
+  opacity: [0, 1],
+  translateY: [40, 0],   // 👈 menos recorrido = más rápido visualmente
+  scale: [0.85, 1],
+
   delay: stagger(80),
 
   easing: 'easeOutExpo',
   duration: 900
 
-}, '-=500');
-
-tl.add('.system-node', {
-
-  opacity: [0, 1],
-  translateY: [50, 0],
-  scale: [0.8, 1],
-
-  delay: stagger(120),
-
-  easing: 'easeOutExpo',
-  duration: 1200
-
-}, '-=700');
+}, '-=950');   // 👈 aún más solapado hacia atrás
 
 /* =========================
    FLOAT SYSTEM
