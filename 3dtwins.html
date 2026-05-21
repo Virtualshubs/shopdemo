@@ -331,6 +331,25 @@ button {
   height:140vh;
   position:relative;
     overflow:hidden;
+   scroll-snap-align: start;
+}
+
+  /* efecto “rebote visual” */
+.system-scroll-section::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 40px;
+  background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.06));
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.system-scroll-section.locked::after {
+  opacity: 1;
 }
 
 .system-sticky{
@@ -1089,6 +1108,55 @@ animate('.system-node', {
   direction: 'alternate'
 
 });
+
+
+  const section = document.querySelector('.system-scroll-section');
+
+let unlocked = false;
+let lockTimer = null;
+
+const observer = new IntersectionObserver(([entry]) => {
+
+  if (entry.isIntersecting) {
+    unlocked = false;
+    section.classList.remove('locked');
+  }
+
+}, {
+  threshold: 0.8
+});
+
+observer.observe(section);
+
+/* =========================
+   SCROLL BOUNDARY LOCK
+========================= */
+
+window.addEventListener('wheel', (e) => {
+
+  const rect = section.getBoundingClientRect();
+  const atBottom = rect.bottom <= window.innerHeight + 5;
+
+  if (atBottom && !unlocked) {
+
+    e.preventDefault();
+
+    section.classList.add('locked');
+
+    clearTimeout(lockTimer);
+
+    lockTimer = setTimeout(() => {
+      unlocked = true;
+      section.classList.remove('locked');
+
+      // pequeño “release” natural
+      window.scrollBy({ top: 80, behavior: 'smooth' });
+
+    }, 250); // delay de “carga / asentamiento”
+
+  }
+
+}, { passive: false });
 
 </script>
 
