@@ -346,39 +346,41 @@ button {
 /* =========================
    PRODUCT
 ========================= */
-
 .system-object{
-  position:absolute;
-  width:340px;
-  height:340px;
+  position:relative;
+  width:260px;
+  height:260px;
 }
 
-.product-state{
+.system-img-product,
+.system-scene-layer{
   position:absolute;
   inset:0;
-
   width:100%;
   height:100%;
+}
 
+.system-img-product{
   object-fit:cover;
-
-  transition:opacity .6s ease;
+  z-index:2;
 }
 
-.state-1{
-  opacity:1;
-}
-
-.state-2{
+.system-scene-layer{
   opacity:0;
+  z-index:3;
+  overflow:hidden;
+  border-radius:8px;
+  border:1px solid rgba(255,255,255,0.08);
+  background:#0b0b0c;
 }
 
-.system-object img{
+.system-scene-frame{
   width:100%;
   height:100%;
-  object-fit:cover;
-  filter:contrast(1.05);
+  border:none;
 }
+  
+
 
 /* =========================
    NODES
@@ -595,15 +597,24 @@ button {
   <div class="system-sticky">
 
 <div class="system-object">
+
+  <!-- STATIC PRODUCT -->
   <img
-    class="product-state state-1"
-    src="https://demo.3dtwins.eu/renderproducto.png"
+    class="system-img-product"
+    src="https://demo.3dtwins.eu/3DTWINS_THEFUTURE_IS_NOW.png"
   >
 
-  <img
-    class="product-state state-2"
-    src="https://demo.3dtwins.eu/modelo3dtwins1.png"
-  >
+  <!-- LIVE SCENE -->
+  <div class="system-scene-layer">
+
+    <iframe
+      class="system-scene-frame"
+      loading="lazy"
+      frameborder="0"
+      allowfullscreen>
+    </iframe>
+
+  </div>
 
 </div>
 
@@ -912,6 +923,16 @@ import {
 } from 'https://esm.sh/animejs';
 
 /* =========================
+   ELEMENTS
+========================= */
+
+const productImg = document.querySelector('.system-img-product');
+const sceneLayer = document.querySelector('.system-scene-layer');
+const sceneIframe = document.querySelector('.system-scene-frame');
+
+let sceneLoaded = false;
+
+/* =========================
    TIMELINE
 ========================= */
 
@@ -924,7 +945,7 @@ const tl = createTimeline({
     enter: 'top top',
     leave: 'bottom bottom',
 
-    sync: 0.7,
+    sync: 0.6,
     debug: false
 
   })
@@ -932,7 +953,7 @@ const tl = createTimeline({
 });
 
 /* =========================
-   OBJECT EMERGENCE
+   STEP 1 — PRODUCT EMERGENCE
 ========================= */
 
 tl.add('.system-object', {
@@ -947,35 +968,45 @@ tl.add('.system-object', {
 });
 
 /* =========================
-   IMAGE STATE TRANSITION
+   STEP 2 — TRANSITION TO LIVE SCENE
 ========================= */
 
-/* CLEAN PRODUCT DISAPPEARS */
-
-tl.add('.state-1', {
+tl.add(productImg, {
 
   opacity: [1, 0],
-  scale: [1, 0.96],
+  scale: [1, 0.92],
 
-  easing: 'easeOutExpo',
-  duration: 700
+  easing: 'easeInOutExpo',
+  duration: 700,
 
-}, '-=300');
+  begin: () => {
 
-/* SYSTEM VERSION APPEARS */
+    /* lazy load iframe only when needed */
+    if(!sceneLoaded){
 
-tl.add('.state-2', {
+      sceneIframe.src =
+      "https://scene.3dtwins.tech/?scene=aHR0cHM6Ly9wcm9kdWN0LjNkdHdpbnMudGVjaC8/bmFtZT1HYWZhcyZjb25maWc9ZnJvbnRhbCUzQSUyM2NmNmMyYSU3Q1BhdGlsbGFzJTNBJTIzOTBlNTZjJTdDQ3Jpc3RhbGVzJTNBJTIzMDAwMDAwJnF1YW50aXR5PTEmdG9rZW49OTllNjIzNDYtMDk5MC00YzZlLWJlYmYtYzRhMDAwNzQ4MTU4Jm1vZGVsVXJsPWh0dHBzJTNBJTJGJTJGdmlld2VyLjNkdHdpbnMudGVjaCUyRmdhZmFzLmdsYiZidXlVUkw9aHR0cHMlM0ElMkYlMkZ3ZWIuM2R0d2lucy50ZWNoJTJG";
+
+      sceneLoaded = true;
+
+    }
+
+  }
+
+});
+
+tl.add(sceneLayer, {
 
   opacity: [0, 1],
-  scale: [0.92, 1],
+  scale: [1.08, 1],
 
   easing: 'easeOutExpo',
-  duration: 1000
+  duration: 900
 
-}, '-=700');
+}, '-=500');
 
 /* =========================
-   LINES DEPLOY
+   STEP 3 — SYSTEM DEPLOYMENT
 ========================= */
 
 tl.add('.system-line', {
@@ -988,11 +1019,7 @@ tl.add('.system-line', {
   easing: 'easeOutExpo',
   duration: 900
 
-}, '-=600');
-
-/* =========================
-   NODES APPEAR
-========================= */
+}, '-=500');
 
 tl.add('.system-node', {
 
@@ -1008,7 +1035,7 @@ tl.add('.system-node', {
 }, '-=700');
 
 /* =========================
-   OBJECT FLOAT
+   FLOAT SYSTEM
 ========================= */
 
 animate('.system-object', {
@@ -1018,20 +1045,11 @@ animate('.system-object', {
     { to: '0px', duration: 3000 }
   ],
 
-  rotate: [
-    { to: '1deg', duration: 4000 },
-    { to: '-1deg', duration: 4000 }
-  ],
-
   ease: 'inOutSine',
   loop: true,
   direction: 'alternate'
 
 });
-
-/* =========================
-   NODE FLOAT
-========================= */
 
 animate('.system-node', {
 
@@ -1045,25 +1063,6 @@ animate('.system-node', {
   ease: 'inOutSine',
   loop: true,
   direction: 'alternate'
-
-});
-
-/* =========================
-   LINE PULSE
-========================= */
-
-animate('.system-line', {
-
-  opacity: [
-    { to: 0.15, duration: 1800 },
-    { to: 0.45, duration: 1800 }
-  ],
-
-  ease: 'inOutSine',
-  loop: true,
-  direction: 'alternate',
-
-  delay: stagger(100)
 
 });
 
