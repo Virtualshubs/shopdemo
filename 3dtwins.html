@@ -937,7 +937,9 @@ window.addEventListener('scroll', () => {
 });
 
 </script>
-<script type="module">
+
+
+  <script type="module">
 
 import {
   animate,
@@ -961,14 +963,15 @@ let sceneLoaded = false;
 /* =========================
    TIMELINE
 ========================= */
+
 const tl = createTimeline({
 
   autoplay: onScroll({
 
     target: '.system-scroll-section',
 
-    enter: 'top 80%',
-    leave: 'bottom 20%',
+    enter: 'top top',
+    leave: 'bottom bottom',
 
     sync: 0.6,
     debug: false
