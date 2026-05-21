@@ -950,23 +950,17 @@ import {
    ELEMENTS
 ========================= */
 
-const section = document.querySelector('.system-scroll-section');
 const systemObject = document.querySelector('.system-object');
 
 const productImg = document.querySelector('.system-img-product');
 const sceneLayer = document.querySelector('.system-scene-layer');
 const sceneIframe = document.querySelector('.system-scene-frame');
 
-/* =========================
-   STATE
-========================= */
-
 let sceneLoaded = false;
-let unlocked = false;
-let lockTimer = null;
 
 /* =========================
-   TIMELINE (CONTROLLED RANGE)
+   TIMELINE (FIXED RANGE)
+   🔥 ESTO ES LO QUE ESTABA ROMPIÉNDOSE
 ========================= */
 
 const tl = createTimeline({
@@ -975,11 +969,12 @@ const tl = createTimeline({
 
     target: '.system-scroll-section',
 
+    // ✅ RESTAURADO A UN RANGO ESTABLE
     enter: 'top bottom',
     leave: 'bottom top',
 
-    // 🔥 clave: reduce “recorrido efectivo”
-    sync: 0.35,
+    // 🔥 clave: no demasiado agresivo
+    sync: 0.55,
 
     debug: false
   })
@@ -987,31 +982,31 @@ const tl = createTimeline({
 });
 
 /* =========================
-   STEP 1 — PRODUCT
+   STEP 1 — PRODUCT EMERGENCE
 ========================= */
 
 tl.add('.system-object', {
 
-  scale: [0.65, 1],
-  rotate: ['-10deg', '0deg'],
+  scale: [0.6, 1],
+  rotate: ['-14deg', '0deg'],
   opacity: [0, 1],
 
   easing: 'easeOutExpo',
-  duration: 900
+  duration: 1100
 
 });
 
 /* =========================
-   STEP 2 — IMAGE OUT + SCENE IN
+   STEP 2 — IMAGE OUT / SCENE IN
 ========================= */
 
 tl.add(productImg, {
 
   opacity: [1, 0],
-  scale: [1, 0.92],
+  scale: [1, 0.95],
 
   easing: 'easeInOutExpo',
-  duration: 500,
+  duration: 700,
 
   begin: () => {
 
@@ -1029,55 +1024,55 @@ tl.add(productImg, {
 });
 
 /* =========================
-   STEP 3 — SCENE
+   STEP 3 — SCENE APPEAR
 ========================= */
 
 tl.add(sceneLayer, {
 
   opacity: [0, 1],
-  scale: [1.05, 1],
+  scale: [1.06, 1],
 
   easing: 'easeOutExpo',
-  duration: 600
+  duration: 800
 
-}, '-=350');
+}, '-=400');
 
 /* =========================
-   STEP 4 — NETWORK (FASTER APPEAR)
+   STEP 4 — NETWORK (LINES + NODES)
 ========================= */
 
 tl.add('.system-node', {
 
   opacity: [0, 1],
-  translateY: [25, 0],
-  scale: [0.9, 1],
+  translateY: [40, 0],
+  scale: [0.85, 1],
 
-  delay: stagger(60),
+  delay: stagger(90),
   easing: 'easeOutExpo',
-  duration: 700
+  duration: 900
 
-}, '-=250');
+}, '-=350');
 
 tl.add('.system-line', {
 
   scaleX: [0, 1],
   opacity: [0, 0.4],
 
-  delay: stagger(40),
+  delay: stagger(70),
   easing: 'easeOutExpo',
-  duration: 600
+  duration: 800
 
-}, '-=400');
+}, '-=500');
 
 /* =========================
-   FLOAT (KEEP SUBTLE)
+   FLOAT SYSTEM (UNCHANGED STABLE)
 ========================= */
 
 animate('.system-object', {
 
   y: [
-    { to: '-10px', duration: 2500 },
-    { to: '0px', duration: 2500 }
+    { to: '-10px', duration: 2800 },
+    { to: '0px', duration: 2800 }
   ],
 
   ease: 'inOutSine',
@@ -1089,62 +1084,17 @@ animate('.system-object', {
 animate('.system-node', {
 
   y: [
-    { to: '-5px', duration: 1800 },
-    { to: '0px', duration: 1800 }
+    { to: '-5px', duration: 2000 },
+    { to: '0px', duration: 2000 }
   ],
 
-  delay: stagger(80),
+  delay: stagger(90),
 
   ease: 'inOutSine',
   loop: true,
   direction: 'alternate'
 
 });
-
-/* =========================
-   SCROLL BOUNDARY CONTROL (FIXED)
-========================= */
-
-const observer = new IntersectionObserver(([entry]) => {
-
-  if (entry.isIntersecting) {
-
-    unlocked = false;
-    section.classList.remove('locked');
-  }
-
-}, {
-  threshold: 0.85
-});
-
-observer.observe(section);
-
-window.addEventListener('wheel', (e) => {
-
-  const rect = section.getBoundingClientRect();
-  const atBottom = rect.bottom <= window.innerHeight + 2;
-
-  if (atBottom && !unlocked) {
-
-    e.preventDefault();
-
-    section.classList.add('locked');
-
-    clearTimeout(lockTimer);
-
-    lockTimer = setTimeout(() => {
-
-      unlocked = true;
-      section.classList.remove('locked');
-
-      // pequeño “release”
-      window.scrollBy({ top: 60, behavior: 'smooth' });
-
-    }, 180);
-
-  }
-
-}, { passive: false });
 
 </script>
 
