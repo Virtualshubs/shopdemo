@@ -323,18 +323,18 @@ button {
   transform:translateX(100%);
 }
 
-
-  /* =========================
+/* =========================
    SYSTEM CORE (FIXED CLEAN)
 ========================= */
+
 .system-scroll-section{
-  height: 180vh;
-  position:relative;
-    overflow:hidden;
+  height: 220vh; /* 🔥 FIX CLAVE: antes 100vh */
+  position: relative;
+  overflow: hidden;
 }
 
+/* sticky stage (escenario real del sistema) */
 .system-sticky{
-
   position: sticky;
   top: 0;
   height: 100vh;
@@ -342,158 +342,179 @@ button {
   align-items: center;
   justify-content: center;
   overflow: hidden;
-
 }
 
 /* =========================
    PRODUCT
 ========================= */
-.system-object{
-  position:relative;
 
-  width:260px;
-  height:260px;
+.system-object{
+  position: relative;
+
+  width: 260px;
+  height: 260px;
 
   transition:
-    width 1.2s cubic-bezier(.16,1,.3,1),
-    height 1.2s cubic-bezier(.16,1,.3,1);
+    width 0.9s cubic-bezier(.16,1,.3,1),
+    height 0.9s cubic-bezier(.16,1,.3,1);
 
-  will-change:width,height;
+  will-change: width, height;
 }
 
 /* expanded state */
 .system-object.expanded{
-
-  width:720px;
-  height:720px;
-
+  width: 720px;
+  height: 720px;
 }
 
+/* layers */
 .system-img-product,
 .system-scene-layer{
-  position:absolute;
-  inset:0;
-  width:100%;
-  height:100%;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
 }
 
+/* static image */
 .system-img-product{
-  object-fit:cover;
-  z-index:2;
+  object-fit: cover;
+  z-index: 2;
 }
 
+/* iframe layer */
 .system-scene-layer{
-  opacity:0;
-  z-index:3;
-  overflow:hidden;
-  border-radius:8px;
-  border:1px solid rgba(255,255,255,0.08);
-  background:#0b0b0c;
+  opacity: 0;
+  z-index: 3;
+  overflow: hidden;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: #0b0b0c;
 }
 
 .system-scene-frame{
-  width:100%;
-  height:100%;
-  pointer-events:auto;
+  width: 100%;
+  height: 100%;
+  pointer-events: auto;
 }
 
+/* hidden by default */
 .system-network{
-  opacity:0;
-  pointer-events:none;
+  opacity: 0;
+  pointer-events: none;
 }
+
 /* =========================
    NODES
 ========================= */
 
 .system-node{
-  position:absolute;
+  position: absolute;
 
-  padding:10px 14px;
+  padding: 10px 14px;
 
-  border:1px solid rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.12);
 
-  font-size:11px;
-  letter-spacing:0.18em;
+  font-size: 11px;
+  letter-spacing: 0.18em;
 
-  background:rgba(255,255,255,0.03);
-  backdrop-filter:blur(10px);
+  background: rgba(255,255,255,0.03);
+  backdrop-filter: blur(10px);
 
-  opacity:0;
+  opacity: 0;
+
+  transform: translateZ(0);
 }
 
 /* POSITIONS */
 
-.node-1{ top:18%; left:22%; }
-.node-2{ top:28%; right:18%; }
-.node-3{ top:50%; left:10%; }
-.node-4{ top:52%; right:10%; }
-.node-5{ bottom:22%; left:20%; }
-.node-6{ bottom:18%; right:24%; }
-.node-7{ bottom:10%; left:50%; transform:translateX(-50%); }
+.node-1{ top: 18%; left: 22%; }
+.node-2{ top: 28%; right: 18%; }
+.node-3{ top: 50%; left: 10%; }
+.node-4{ top: 52%; right: 10%; }
+.node-5{ bottom: 22%; left: 20%; }
+.node-6{ bottom: 18%; right: 24%; }
+.node-7{
+  bottom: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+}
 
 /* =========================
    LINES
 ========================= */
 
 .system-line{
-  position:absolute;
-  height:1px;
-  background:rgba(255,255,255,0.18);
+  position: absolute;
+  height: 1px;
 
-  transform-origin:left center;
+  background: rgba(255,255,255,0.18);
 
-  opacity:0;
+  transform-origin: left center;
+
+  opacity: 0;
 }
 
-/* CUSTOM LINES */
+/* CONNECTIONS (geometría estable) */
 
 .line-1{
-  width:260px;
-  top:32%;
-  left:38%;
-  transform:rotate(-28deg);
+  width: 260px;
+  top: 32%;
+  left: 38%;
+  transform: rotate(-28deg);
 }
 
 .line-2{
-  width:240px;
-  top:38%;
-  right:34%;
-  transform:rotate(28deg);
+  width: 240px;
+  top: 38%;
+  right: 34%;
+  transform: rotate(28deg);
 }
 
 .line-3{
-  width:280px;
-  top:50%;
-  left:18%;
+  width: 280px;
+  top: 50%;
+  left: 18%;
 }
 
 .line-4{
-  width:280px;
-  top:50%;
-  right:18%;
+  width: 280px;
+  top: 50%;
+  right: 18%;
 }
 
 .line-5{
-  width:240px;
-  bottom:32%;
-  left:32%;
-  transform:rotate(28deg);
+  width: 240px;
+  bottom: 32%;
+  left: 32%;
+  transform: rotate(28deg);
 }
 
 .line-6{
-  width:240px;
-  bottom:28%;
-  right:32%;
-  transform:rotate(-28deg);
+  width: 240px;
+  bottom: 28%;
+  right: 32%;
+  transform: rotate(-28deg);
 }
 
 .line-7{
-  width:180px;
-  bottom:22%;
-  left:50%;
+  width: 180px;
+  bottom: 22%;
+  left: 50%;
   transform:
     translateX(-50%)
     rotate(90deg);
+}
+
+/* =========================
+   PERFORMANCE FIXES
+========================= */
+
+.system-object,
+.system-node,
+.system-line,
+.system-scene-layer{
+  will-change: transform, opacity;
 }
 /* =========================
    RESPONSIVE
