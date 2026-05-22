@@ -328,7 +328,7 @@ button {
    SYSTEM CORE (FIXED CLEAN)
 ========================= */
 .system-scroll-section{
-  height: 110vh;
+  height: 220vh;
   position:relative;
     overflow:hidden;
    scroll-snap-align: start;
@@ -931,7 +931,7 @@ const tl = createTimeline({
 
   autoplay: onScroll({
     target: '.system-scroll-section',
-  enter: 'top top',
+ enter: 'top 95%',
     leave: 'bottom bottom',
     sync: 0.7,
     debug: false
