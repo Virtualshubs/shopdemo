@@ -122,10 +122,11 @@ function init() {
   isInitialized = true;
 }
 
+/* -----------------------------
+   MODEL LOADER
+------------------------------*/
 function loadModel(url) {
   if (!isInitialized) return;
-
-  console.log("Loading model:", url);
 
   const loader = new THREE.GLTFLoader();
 
@@ -140,20 +141,18 @@ function loadModel(url) {
       model = gltf.scene;
       scene.add(model);
 
-      // center model
       const box = new THREE.Box3().setFromObject(model);
       const center = box.getCenter(new THREE.Vector3());
       model.position.sub(center);
-
-      console.log("Model loaded successfully");
     },
     undefined,
-    (err) => {
-      console.error("Model load error:", err);
-    }
+    (err) => console.error(err)
   );
 }
 
+/* -----------------------------
+   INPUT
+------------------------------*/
 function loadFromInput() {
   const url = document.getElementById("urlInput").value.trim();
   if (!url) return;
@@ -161,13 +160,22 @@ function loadFromInput() {
   loadModel(url);
 }
 
+/* -----------------------------
+   EXPORT (NEW STANDARD)
+   modelUrl = base64({src})
+------------------------------*/
 function exportScene() {
   const url = document.getElementById("urlInput").value.trim();
-
   if (!url) return;
 
-  // IMPORTANT: NO doble encoding raro
-  const link = `${window.location.origin}${window.location.pathname}?src=${url}`;
+  const payload = {
+    src: url
+  };
+
+  const encoded = btoa(JSON.stringify(payload));
+
+  const link =
+    `${window.location.origin}${window.location.pathname}?modelUrl=${encoded}`;
 
   document.getElementById("linkBox").innerHTML =
     "Scene link:<br>" + link;
@@ -175,21 +183,39 @@ function exportScene() {
   history.pushState({}, "", link);
 }
 
+/* -----------------------------
+   URL RESOLVER
+------------------------------*/
 function checkURL() {
   const params = new URLSearchParams(window.location.search);
+
+  // NEW STANDARD
+  const modelUrlEncoded = params.get("modelUrl");
+
+  if (modelUrlEncoded) {
+    try {
+      const decoded = JSON.parse(atob(modelUrlEncoded));
+      if (decoded?.src) {
+        document.getElementById("ui").style.display = "none";
+        loadModel(decoded.src);
+      }
+    } catch (e) {
+      console.error("Invalid modelUrl payload", e);
+    }
+    return;
+  }
+
+  // LEGACY SUPPORT
   let src = params.get("src");
 
   if (src) {
-    // FIX CLAVE: decode correcto
     src = decodeURIComponent(src);
-
     document.getElementById("ui").style.display = "none";
-
-    // pequeño delay asegura init completo
-    setTimeout(() => loadModel(src), 100);
+    loadModel(src);
   }
 }
 
+/* -----------------------------*/
 function animate() {
   requestAnimationFrame(animate);
   if (controls) controls.update();
