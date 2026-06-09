@@ -157,7 +157,6 @@ function loadFromInput() {
   loadModel(url);
 }
 
-/* ---------------- EXPORT (scene standard) ---------------- */
 function exportScene() {
   const url = document.getElementById("urlInput").value.trim();
   if (!url) return;
@@ -171,10 +170,12 @@ function exportScene() {
   const link =
     `${window.location.origin}${window.location.pathname}?scene=${encoded}`;
 
+  // mostrar link en UI
   document.getElementById("linkBox").innerHTML =
     "Scene link:<br>" + link;
 
-  history.pushState({}, "", link);
+  // 🔥 abrir en nueva pestaña
+  window.open(link, "_blank");
 }
 
 /* ---------------- URL RESOLVER ---------------- */
