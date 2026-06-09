@@ -85,6 +85,7 @@ init();
 animate();
 checkURL();
 
+/* ---------------- INIT ---------------- */
 function init() {
   scene = new THREE.Scene();
   scene.background = new THREE.Color("#eaeaea");
@@ -122,9 +123,7 @@ function init() {
   isInitialized = true;
 }
 
-/* -----------------------------
-   MODEL LOADER
-------------------------------*/
+/* ---------------- MODEL ---------------- */
 function loadModel(url) {
   if (!isInitialized) return;
 
@@ -150,9 +149,7 @@ function loadModel(url) {
   );
 }
 
-/* -----------------------------
-   INPUT
-------------------------------*/
+/* ---------------- INPUT ---------------- */
 function loadFromInput() {
   const url = document.getElementById("urlInput").value.trim();
   if (!url) return;
@@ -160,22 +157,19 @@ function loadFromInput() {
   loadModel(url);
 }
 
-/* -----------------------------
-   EXPORT (NEW STANDARD)
-   modelUrl = base64({src})
-------------------------------*/
+/* ---------------- EXPORT (scene standard) ---------------- */
 function exportScene() {
   const url = document.getElementById("urlInput").value.trim();
   if (!url) return;
 
   const payload = {
-    src: url
+    modelUrl: url
   };
 
   const encoded = btoa(JSON.stringify(payload));
 
   const link =
-    `${window.location.origin}${window.location.pathname}?modelUrl=${encoded}`;
+    `${window.location.origin}${window.location.pathname}?scene=${encoded}`;
 
   document.getElementById("linkBox").innerHTML =
     "Scene link:<br>" + link;
@@ -183,24 +177,24 @@ function exportScene() {
   history.pushState({}, "", link);
 }
 
-/* -----------------------------
-   URL RESOLVER
-------------------------------*/
+/* ---------------- URL RESOLVER ---------------- */
 function checkURL() {
   const params = new URLSearchParams(window.location.search);
 
-  // NEW STANDARD
-  const modelUrlEncoded = params.get("modelUrl");
+  const scene = params.get("scene");
 
-  if (modelUrlEncoded) {
+  if (scene) {
     try {
-      const decoded = JSON.parse(atob(modelUrlEncoded));
-      if (decoded?.src) {
+      const decoded = JSON.parse(atob(scene));
+
+      const url = decoded.modelUrl;
+
+      if (url) {
         document.getElementById("ui").style.display = "none";
-        loadModel(decoded.src);
+        loadModel(url);
       }
     } catch (e) {
-      console.error("Invalid modelUrl payload", e);
+      console.error("Invalid scene payload", e);
     }
     return;
   }
@@ -215,7 +209,7 @@ function checkURL() {
   }
 }
 
-/* -----------------------------*/
+/* ---------------- RENDER LOOP ---------------- */
 function animate() {
   requestAnimationFrame(animate);
   if (controls) controls.update();
