@@ -2,57 +2,115 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<title>3D Twins Lite MVP</title>
+<title>3D Twins Lite</title>
 
 <style>
   body {
     margin: 0;
     overflow: hidden;
-    font-family: Arial, sans-serif;
-    background: #111;
+    font-family: Inter, Arial, sans-serif;
+    background: #0e0f13;
   }
 
+  /* CANVAS */
+  canvas {
+    display: block;
+  }
+
+  /* UI PANEL */
   #ui {
     position: absolute;
     top: 20px;
     left: 20px;
     z-index: 10;
-    background: rgba(0,0,0,0.65);
-    padding: 14px;
-    border-radius: 10px;
-    width: 320px;
-    color: white;
+
+    width: 340px;
+    padding: 16px;
+
+    background: rgba(20, 22, 28, 0.72);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+
+    color: #fff;
+  }
+
+  #title {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    opacity: 0.9;
   }
 
   input {
     width: 100%;
-    padding: 10px;
-    margin-top: 8px;
-    border-radius: 6px;
-    border: none;
+    padding: 12px;
+    border-radius: 10px;
+
+    border: 1px solid rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.05);
+
+    color: white;
+    outline: none;
   }
 
-  button {
+  input::placeholder {
+    color: rgba(255,255,255,0.4);
+  }
+
+  .btn {
     width: 100%;
     margin-top: 10px;
-    padding: 10px;
+    padding: 12px;
+
+    border-radius: 10px;
     border: none;
-    border-radius: 6px;
-    background: #00c2ff;
-    color: black;
-    font-weight: bold;
+
+    font-weight: 600;
     cursor: pointer;
+
+    transition: 0.2s;
   }
 
+  .btn-primary {
+    background: #4da3ff;
+    color: #000;
+  }
+
+  .btn-primary:hover {
+    background: #6bb5ff;
+  }
+
+  .btn-secondary {
+    background: rgba(255,255,255,0.06);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .btn-secondary:hover {
+    background: rgba(255,255,255,0.1);
+  }
+
+  /* LINK BOX */
   #linkBox {
-    margin-top: 10px;
-    font-size: 12px;
+    margin-top: 12px;
+    padding: 10px;
+
+    font-size: 11px;
+    line-height: 1.4;
+
+    background: rgba(0,0,0,0.25);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 10px;
+
     word-break: break-all;
-    color: #aaa;
+    color: rgba(255,255,255,0.65);
   }
 
-  canvas {
-    display: block;
+  .label {
+    font-size: 11px;
+    opacity: 0.5;
+    margin-top: 10px;
   }
 </style>
 </head>
@@ -60,14 +118,20 @@
 <body>
 
 <div id="ui">
-  <b>3D Twins Lite (r134)</b>
+  <div id="title">3D Twins Lite · Scene Viewer</div>
 
   <input id="urlInput" placeholder="Paste GLB URL..." />
 
-  <button onclick="loadFromInput()">Load Model</button>
-  <button onclick="exportScene()">Export Scene Link</button>
+  <button class="btn btn-secondary" onclick="loadFromInput()">
+    Load Model
+  </button>
 
-  <div id="linkBox"></div>
+  <button class="btn btn-primary" onclick="exportScene()">
+    Publish Scene
+  </button>
+
+  <div class="label">Share link</div>
+  <div id="linkBox">No scene generated yet</div>
 </div>
 
 <canvas id="c"></canvas>
@@ -85,10 +149,10 @@ init();
 animate();
 checkURL();
 
-/* ---------------- INIT ---------------- */
+/* INIT */
 function init() {
   scene = new THREE.Scene();
-  scene.background = new THREE.Color("#eaeaea");
+  scene.background = new THREE.Color("#0e0f13");
 
   camera = new THREE.PerspectiveCamera(
     60,
@@ -111,10 +175,10 @@ function init() {
   controls.autoRotate = true;
   controls.autoRotateSpeed = 1.2;
 
-  const light1 = new THREE.HemisphereLight(0xffffff, 0x444444, 1);
+  const light1 = new THREE.HemisphereLight(0xffffff, 0x222233, 1);
   scene.add(light1);
 
-  const light2 = new THREE.DirectionalLight(0xffffff, 1);
+  const light2 = new THREE.DirectionalLight(0xffffff, 0.8);
   light2.position.set(5, 10, 5);
   scene.add(light2);
 
@@ -123,7 +187,7 @@ function init() {
   isInitialized = true;
 }
 
-/* ---------------- MODEL ---------------- */
+/* LOAD */
 function loadModel(url) {
   if (!isInitialized) return;
 
@@ -134,91 +198,63 @@ function loadModel(url) {
     model = null;
   }
 
-  loader.load(
-    url,
-    (gltf) => {
-      model = gltf.scene;
-      scene.add(model);
+  loader.load(url, (gltf) => {
+    model = gltf.scene;
+    scene.add(model);
 
-      const box = new THREE.Box3().setFromObject(model);
-      const center = box.getCenter(new THREE.Vector3());
-      model.position.sub(center);
-    },
-    undefined,
-    (err) => console.error(err)
-  );
+    const box = new THREE.Box3().setFromObject(model);
+    const center = box.getCenter(new THREE.Vector3());
+    model.position.sub(center);
+  });
 }
 
-/* ---------------- INPUT ---------------- */
+/* INPUT */
 function loadFromInput() {
   const url = document.getElementById("urlInput").value.trim();
   if (!url) return;
-
   loadModel(url);
 }
 
+/* EXPORT */
 function exportScene() {
   const url = document.getElementById("urlInput").value.trim();
   if (!url) return;
 
-  const payload = {
-    modelUrl: url
-  };
-
+  const payload = { modelUrl: url };
   const encoded = btoa(JSON.stringify(payload));
 
   const link =
     `${window.location.origin}${window.location.pathname}?scene=${encoded}`;
 
-  // mostrar link en UI
-  document.getElementById("linkBox").innerHTML =
-    "Scene link:<br>" + link;
+  document.getElementById("linkBox").innerHTML = link;
 
-  // 🔥 abrir en nueva pestaña
-  window.open(link, "_blank");
+  window.open(link, "_blank", "noopener,noreferrer");
 }
 
-/* ---------------- URL RESOLVER ---------------- */
+/* URL */
 function checkURL() {
   const params = new URLSearchParams(window.location.search);
-
   const scene = params.get("scene");
 
   if (scene) {
     try {
       const decoded = JSON.parse(atob(scene));
-
-      const url = decoded.modelUrl;
-
-      if (url) {
+      if (decoded?.modelUrl) {
         document.getElementById("ui").style.display = "none";
-        loadModel(url);
+        loadModel(decoded.modelUrl);
       }
-    } catch (e) {
-      console.error("Invalid scene payload", e);
-    }
-    return;
-  }
-
-  // LEGACY SUPPORT
-  let src = params.get("src");
-
-  if (src) {
-    src = decodeURIComponent(src);
-    document.getElementById("ui").style.display = "none";
-    loadModel(src);
+    } catch (e) {}
   }
 }
 
-/* ---------------- RENDER LOOP ---------------- */
+/* LOOP */
 function animate() {
   requestAnimationFrame(animate);
   if (controls) controls.update();
-  if (renderer && scene && camera) {
-    renderer.render(scene, camera);
-  }
+  renderer.render(scene, camera);
 }
 
+/* RESIZE */
 function onResize() {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
