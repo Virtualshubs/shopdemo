@@ -12,12 +12,8 @@
     background: #0e0f13;
   }
 
-  /* CANVAS */
-  canvas {
-    display: block;
-  }
+  canvas { display: block; }
 
-  /* UI PANEL */
   #ui {
     position: absolute;
     top: 20px;
@@ -39,7 +35,6 @@
     font-size: 14px;
     font-weight: 600;
     margin-bottom: 10px;
-    opacity: 0.9;
   }
 
   input {
@@ -52,58 +47,29 @@
 
     color: white;
     outline: none;
-  }
-
-  input::placeholder {
-    color: rgba(255,255,255,0.4);
+    margin-bottom: 8px;
   }
 
   .btn {
     width: 100%;
     margin-top: 10px;
     padding: 12px;
-
     border-radius: 10px;
     border: none;
-
     font-weight: 600;
     cursor: pointer;
-
-    transition: 0.2s;
   }
 
-  .btn-primary {
-    background: #4da3ff;
-    color: #000;
-  }
+  .btn-primary { background: #4da3ff; color: #000; }
+  .btn-secondary { background: rgba(255,255,255,0.06); color: #fff; }
 
-  .btn-primary:hover {
-    background: #6bb5ff;
-  }
-
-  .btn-secondary {
-    background: rgba(255,255,255,0.06);
-    color: white;
-    border: 1px solid rgba(255,255,255,0.08);
-  }
-
-  .btn-secondary:hover {
-    background: rgba(255,255,255,0.1);
-  }
-
-  /* LINK BOX */
   #linkBox {
     margin-top: 12px;
     padding: 10px;
-
     font-size: 11px;
-    line-height: 1.4;
-
-    background: rgba(0,0,0,0.25);
-    border: 1px solid rgba(255,255,255,0.06);
-    border-radius: 10px;
-
     word-break: break-all;
+    background: rgba(0,0,0,0.25);
+    border-radius: 10px;
     color: rgba(255,255,255,0.65);
   }
 
@@ -122,6 +88,13 @@
 
   <input id="urlInput" placeholder="Paste GLB URL..." />
 
+  <!-- 🎨 NEW CONTROLS -->
+  <div class="label">Background color</div>
+  <input id="bgInput" type="color" value="#0e0f13" />
+
+  <div class="label">Background opacity</div>
+  <input id="opacityInput" type="range" min="0" max="1" step="0.05" value="1" />
+
   <button class="btn btn-secondary" onclick="loadFromInput()">
     Load Model
   </button>
@@ -136,12 +109,12 @@
 
 <canvas id="c"></canvas>
 
-<!-- THREE r134 -->
 <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/build/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/controls/OrbitControls.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/loaders/GLTFLoader.js"></script>
 
 <script>
+
 let scene, camera, renderer, controls, model;
 let isInitialized = false;
 
@@ -154,12 +127,7 @@ function init() {
   scene = new THREE.Scene();
   scene.background = new THREE.Color("#0e0f13");
 
-  camera = new THREE.PerspectiveCamera(
-    60,
-    window.innerWidth / window.innerHeight,
-    0.1,
-    1000
-  );
+  camera = new THREE.PerspectiveCamera(60, innerWidth/innerHeight, 0.1, 1000);
   camera.position.set(2, 2, 3);
 
   renderer = new THREE.WebGLRenderer({
@@ -167,85 +135,110 @@ function init() {
     antialias: true
   });
 
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.setSize(innerWidth, innerHeight);
+  renderer.setPixelRatio(devicePixelRatio);
+  renderer.setClearAlpha(1);
 
   controls = new THREE.OrbitControls(camera, renderer.domElement);
   controls.enableDamping = true;
   controls.autoRotate = true;
-  controls.autoRotateSpeed = 1.2;
 
-  const light1 = new THREE.HemisphereLight(0xffffff, 0x222233, 1);
-  scene.add(light1);
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x222233, 1));
 
-  const light2 = new THREE.DirectionalLight(0xffffff, 0.8);
-  light2.position.set(5, 10, 5);
-  scene.add(light2);
+  const d = new THREE.DirectionalLight(0xffffff, 0.8);
+  d.position.set(5,10,5);
+  scene.add(d);
 
   window.addEventListener("resize", onResize);
 
   isInitialized = true;
 }
 
-/* LOAD */
+/* LOAD MODEL */
 function loadModel(url) {
-  if (!isInitialized) return;
-
   const loader = new THREE.GLTFLoader();
 
-  if (model) {
-    scene.remove(model);
-    model = null;
-  }
+  if (model) scene.remove(model);
 
   loader.load(url, (gltf) => {
     model = gltf.scene;
     scene.add(model);
 
     const box = new THREE.Box3().setFromObject(model);
-    const center = box.getCenter(new THREE.Vector3());
-    model.position.sub(center);
+    model.position.sub(box.getCenter(new THREE.Vector3()));
   });
 }
 
 /* INPUT */
 function loadFromInput() {
-  const url = document.getElementById("urlInput").value.trim();
+  const url = urlInput.value.trim();
   if (!url) return;
   loadModel(url);
 }
 
+/* APPLY STYLE */
+function applySceneStyle(bg, opacity) {
+  if (bg) {
+    scene.background = new THREE.Color(bg);
+    document.body.style.background = bg;
+  }
+
+  if (opacity !== undefined) {
+    renderer.setClearAlpha(opacity);
+  }
+}
+
 /* EXPORT */
 function exportScene() {
-  const url = document.getElementById("urlInput").value.trim();
+  const url = urlInput.value.trim();
   if (!url) return;
 
-  const payload = { modelUrl: url };
+  const bg = bgInput.value;
+  const opacity = parseFloat(opacityInput.value);
+
+  const payload = {
+    modelUrl: url,
+    bg,
+    opacity
+  };
+
   const encoded = btoa(JSON.stringify(payload));
 
   const link =
-    `${window.location.origin}${window.location.pathname}?scene=${encoded}`;
+    `${location.origin}${location.pathname}?scene=${encoded}`;
 
-  document.getElementById("linkBox").innerHTML = link;
+  linkBox.innerHTML = link;
 
   window.open(link, "_blank", "noopener,noreferrer");
 }
 
-/* URL */
+/* URL LOAD */
 function checkURL() {
-  const params = new URLSearchParams(window.location.search);
-  const scene = params.get("scene");
+  const sceneParam = new URLSearchParams(location.search).get("scene");
+  if (!sceneParam) return;
 
-  if (scene) {
-    try {
-      const decoded = JSON.parse(atob(scene));
-      if (decoded?.modelUrl) {
-        document.getElementById("ui").style.display = "none";
-        loadModel(decoded.modelUrl);
-      }
-    } catch (e) {}
+  try {
+    const data = JSON.parse(atob(sceneParam));
+
+    if (data.modelUrl) {
+      document.getElementById("ui").style.display = "none";
+      loadModel(data.modelUrl);
+      applySceneStyle(data.bg, data.opacity);
+    }
+  } catch (e) {
+    console.error(e);
   }
 }
+
+/* LIVE UI */
+bgInput.addEventListener("input", e => {
+  scene.background = new THREE.Color(e.target.value);
+  document.body.style.background = e.target.value;
+});
+
+opacityInput.addEventListener("input", e => {
+  renderer.setClearAlpha(parseFloat(e.target.value));
+});
 
 /* LOOP */
 function animate() {
@@ -254,12 +247,12 @@ function animate() {
   renderer.render(scene, camera);
 }
 
-/* RESIZE */
 function onResize() {
-  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.aspect = innerWidth/innerHeight;
   camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setSize(innerWidth, innerHeight);
 }
+
 </script>
 
 </body>
