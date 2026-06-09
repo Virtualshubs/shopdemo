@@ -88,7 +88,14 @@
 
   <input id="urlInput" placeholder="Paste GLB URL..." />
 
-  <!-- ROTATION TOGGLE -->
+  <!-- 🎨 BACKGROUND -->
+  <div class="label">Background color</div>
+  <input id="bgInput" type="color" value="#0e0f13" />
+
+  <div class="label">Opacity</div>
+  <input id="opacityInput" type="range" min="0" max="1" step="0.05" value="1" />
+
+  <!-- 🔁 ONLY NEW FEATURE -->
   <div class="label">Auto rotate</div>
   <label style="display:flex;align-items:center;gap:8px;font-size:12px;opacity:0.85;">
     <input id="rotateInput" type="checkbox" checked />
@@ -177,21 +184,37 @@ function loadFromInput() {
   loadModel(url);
 }
 
-/* APPLY ROTATION */
+/* APPLY STYLE */
+function applySceneStyle(bg, opacity) {
+  if (bg) {
+    scene.background = new THREE.Color(bg);
+    document.body.style.background = bg;
+  }
+
+  if (opacity !== undefined) {
+    renderer.setClearAlpha(opacity);
+  }
+}
+
+/* APPLY ROTATION (NEW ONLY) */
 function applyRotation(value) {
   if (!controls) return;
   controls.autoRotate = value;
 }
 
-/* EXPORT SCENE */
+/* EXPORT */
 function exportScene() {
   const url = urlInput.value.trim();
   if (!url) return;
 
+  const bg = bgInput.value;
+  const opacity = parseFloat(opacityInput.value);
   const rotate = rotateInput.checked;
 
   const payload = {
     modelUrl: url,
+    bg,
+    opacity,
     autoRotate: rotate
   };
 
@@ -217,16 +240,29 @@ function checkURL() {
       document.getElementById("ui").style.display = "none";
       loadModel(data.modelUrl);
 
-      if (typeof data.autoRotate === "boolean") {
-        rotateInput.checked = data.autoRotate;
-        applyRotation(data.autoRotate);
-      }
+      applySceneStyle(data.bg, data.opacity);
+      applyRotation(data.autoRotate ?? true);
+      rotateInput.checked = data.autoRotate ?? true;
     }
 
   } catch (e) {
     console.error(e);
   }
 }
+
+/* LIVE UI */
+bgInput.addEventListener("input", e => {
+  scene.background = new THREE.Color(e.target.value);
+  document.body.style.background = e.target.value;
+});
+
+opacityInput.addEventListener("input", e => {
+  renderer.setClearAlpha(parseFloat(e.target.value));
+});
+
+rotateInput.addEventListener("change", e => {
+  controls.autoRotate = e.target.checked;
+});
 
 /* LOOP */
 function animate() {
