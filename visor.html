@@ -79,10 +79,11 @@
 
 <script>
 let scene, camera, renderer, controls, model;
+let isInitialized = false;
 
 init();
-checkURL();
 animate();
+checkURL();
 
 function init() {
   scene = new THREE.Scene();
@@ -117,12 +118,21 @@ function init() {
   scene.add(light2);
 
   window.addEventListener("resize", onResize);
+
+  isInitialized = true;
 }
 
 function loadModel(url) {
+  if (!isInitialized) return;
+
+  console.log("Loading model:", url);
+
   const loader = new THREE.GLTFLoader();
 
-  if (model) scene.remove(model);
+  if (model) {
+    scene.remove(model);
+    model = null;
+  }
 
   loader.load(
     url,
@@ -134,6 +144,8 @@ function loadModel(url) {
       const box = new THREE.Box3().setFromObject(model);
       const center = box.getCenter(new THREE.Vector3());
       model.position.sub(center);
+
+      console.log("Model loaded successfully");
     },
     undefined,
     (err) => {
@@ -143,18 +155,19 @@ function loadModel(url) {
 }
 
 function loadFromInput() {
-  const url = document.getElementById("urlInput").value;
+  const url = document.getElementById("urlInput").value.trim();
   if (!url) return;
 
   loadModel(url);
 }
 
 function exportScene() {
-  const url = document.getElementById("urlInput").value;
+  const url = document.getElementById("urlInput").value.trim();
 
   if (!url) return;
 
-  const link = `${window.location.origin}${window.location.pathname}?src=${encodeURIComponent(url)}`;
+  // IMPORTANT: NO doble encoding raro
+  const link = `${window.location.origin}${window.location.pathname}?src=${url}`;
 
   document.getElementById("linkBox").innerHTML =
     "Scene link:<br>" + link;
@@ -164,18 +177,25 @@ function exportScene() {
 
 function checkURL() {
   const params = new URLSearchParams(window.location.search);
-  const src = params.get("src");
+  let src = params.get("src");
 
   if (src) {
+    // FIX CLAVE: decode correcto
+    src = decodeURIComponent(src);
+
     document.getElementById("ui").style.display = "none";
-    loadModel(src);
+
+    // pequeño delay asegura init completo
+    setTimeout(() => loadModel(src), 100);
   }
 }
 
 function animate() {
   requestAnimationFrame(animate);
-  controls.update();
-  renderer.render(scene, camera);
+  if (controls) controls.update();
+  if (renderer && scene && camera) {
+    renderer.render(scene, camera);
+  }
 }
 
 function onResize() {
