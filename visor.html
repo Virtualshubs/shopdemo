@@ -1,85 +1,88 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>3D Twins Lite Viewer</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #111;
-      color: white;
-      overflow: hidden;
-    }
+<meta charset="UTF-8" />
+<title>3D Twins Lite MVP</title>
 
-    #ui {
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      z-index: 10;
-      background: rgba(0,0,0,0.6);
-      padding: 15px;
-      border-radius: 10px;
-      width: 320px;
-    }
+<style>
+  body {
+    margin: 0;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+    background: #111;
+  }
 
-    input {
-      width: 100%;
-      padding: 10px;
-      margin-top: 8px;
-      border-radius: 6px;
-      border: none;
-    }
+  #ui {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 10;
+    background: rgba(0,0,0,0.65);
+    padding: 14px;
+    border-radius: 10px;
+    width: 320px;
+    color: white;
+  }
 
-    button {
-      width: 100%;
-      margin-top: 10px;
-      padding: 10px;
-      border: none;
-      border-radius: 6px;
-      background: #00c2ff;
-      color: black;
-      font-weight: bold;
-      cursor: pointer;
-    }
+  input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 8px;
+    border-radius: 6px;
+    border: none;
+  }
 
-    #viewer {
-      width: 100vw;
-      height: 100vh;
-    }
+  button {
+    width: 100%;
+    margin-top: 10px;
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
+    background: #00c2ff;
+    color: black;
+    font-weight: bold;
+    cursor: pointer;
+  }
 
-    #linkBox {
-      margin-top: 10px;
-      font-size: 12px;
-      word-break: break-all;
-      color: #aaa;
-    }
-  </style>
+  #linkBox {
+    margin-top: 10px;
+    font-size: 12px;
+    word-break: break-all;
+    color: #aaa;
+  }
+
+  canvas {
+    display: block;
+  }
+</style>
 </head>
+
 <body>
 
 <div id="ui">
-  <div><b>3D Twins Lite</b></div>
+  <b>3D Twins Lite (r134)</b>
 
   <input id="urlInput" placeholder="Paste GLB URL..." />
 
-  <button onclick="createScene()">Create Scene</button>
+  <button onclick="loadFromInput()">Load Model</button>
+  <button onclick="exportScene()">Export Scene Link</button>
 
   <div id="linkBox"></div>
 </div>
 
-<canvas id="viewer"></canvas>
+<canvas id="c"></canvas>
 
-<!-- Three.js -->
-<script src="https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.161.0/examples/js/controls/OrbitControls.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.161.0/examples/js/loaders/GLTFLoader.js"></script>
+<!-- THREE r134 -->
+<script src="https://cdn.jsdelivr.net/npm/three@0.134.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/controls/OrbitControls.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/loaders/GLTFLoader.js"></script>
 
 <script>
 let scene, camera, renderer, controls, model;
 
 init();
 checkURL();
+animate();
 
 function init() {
   scene = new THREE.Scene();
@@ -94,11 +97,12 @@ function init() {
   camera.position.set(2, 2, 3);
 
   renderer = new THREE.WebGLRenderer({
-    canvas: document.getElementById("viewer"),
+    canvas: document.getElementById("c"),
     antialias: true
   });
 
   renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setPixelRatio(window.devicePixelRatio);
 
   controls = new THREE.OrbitControls(camera, renderer.domElement);
   controls.enableDamping = true;
@@ -112,7 +116,7 @@ function init() {
   light2.position.set(5, 10, 5);
   scene.add(light2);
 
-  animate();
+  window.addEventListener("resize", onResize);
 }
 
 function loadModel(url) {
@@ -120,31 +124,42 @@ function loadModel(url) {
 
   if (model) scene.remove(model);
 
-  loader.load(url, (gltf) => {
-    model = gltf.scene;
-    scene.add(model);
+  loader.load(
+    url,
+    (gltf) => {
+      model = gltf.scene;
+      scene.add(model);
 
-    // center model
-    const box = new THREE.Box3().setFromObject(model);
-    const center = box.getCenter(new THREE.Vector3());
-    model.position.sub(center);
-  });
+      // center model
+      const box = new THREE.Box3().setFromObject(model);
+      const center = box.getCenter(new THREE.Vector3());
+      model.position.sub(center);
+    },
+    undefined,
+    (err) => {
+      console.error("Model load error:", err);
+    }
+  );
 }
 
-function createScene() {
+function loadFromInput() {
+  const url = document.getElementById("urlInput").value;
+  if (!url) return;
+
+  loadModel(url);
+}
+
+function exportScene() {
   const url = document.getElementById("urlInput").value;
 
   if (!url) return;
 
-  loadModel(url);
+  const link = `${window.location.origin}${window.location.pathname}?src=${encodeURIComponent(url)}`;
 
-  const shareURL = `${window.location.origin}${window.location.pathname}?src=${encodeURIComponent(url)}`;
+  document.getElementById("linkBox").innerHTML =
+    "Scene link:<br>" + link;
 
-  document.getElementById("linkBox").innerHTML = `
-    Share link:<br>${shareURL}
-  `;
-
-  history.pushState({}, "", shareURL);
+  history.pushState({}, "", link);
 }
 
 function checkURL() {
@@ -163,11 +178,11 @@ function animate() {
   renderer.render(scene, camera);
 }
 
-window.addEventListener("resize", () => {
+function onResize() {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
-});
+}
 </script>
 
 </body>
