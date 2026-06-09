@@ -88,12 +88,12 @@
 
   <input id="urlInput" placeholder="Paste GLB URL..." />
 
-  <!-- 🎨 NEW CONTROLS -->
-  <div class="label">Background color</div>
-  <input id="bgInput" type="color" value="#0e0f13" />
-
-  <div class="label">Background opacity</div>
-  <input id="opacityInput" type="range" min="0" max="1" step="0.05" value="1" />
+  <!-- ROTATION TOGGLE -->
+  <div class="label">Auto rotate</div>
+  <label style="display:flex;align-items:center;gap:8px;font-size:12px;opacity:0.85;">
+    <input id="rotateInput" type="checkbox" checked />
+    Enable rotation
+  </label>
 
   <button class="btn btn-secondary" onclick="loadFromInput()">
     Load Model
@@ -142,6 +142,7 @@ function init() {
   controls = new THREE.OrbitControls(camera, renderer.domElement);
   controls.enableDamping = true;
   controls.autoRotate = true;
+  controls.autoRotateSpeed = 1.2;
 
   scene.add(new THREE.HemisphereLight(0xffffff, 0x222233, 1));
 
@@ -176,30 +177,22 @@ function loadFromInput() {
   loadModel(url);
 }
 
-/* APPLY STYLE */
-function applySceneStyle(bg, opacity) {
-  if (bg) {
-    scene.background = new THREE.Color(bg);
-    document.body.style.background = bg;
-  }
-
-  if (opacity !== undefined) {
-    renderer.setClearAlpha(opacity);
-  }
+/* APPLY ROTATION */
+function applyRotation(value) {
+  if (!controls) return;
+  controls.autoRotate = value;
 }
 
-/* EXPORT */
+/* EXPORT SCENE */
 function exportScene() {
   const url = urlInput.value.trim();
   if (!url) return;
 
-  const bg = bgInput.value;
-  const opacity = parseFloat(opacityInput.value);
+  const rotate = rotateInput.checked;
 
   const payload = {
     modelUrl: url,
-    bg,
-    opacity
+    autoRotate: rotate
   };
 
   const encoded = btoa(JSON.stringify(payload));
@@ -212,7 +205,7 @@ function exportScene() {
   window.open(link, "_blank", "noopener,noreferrer");
 }
 
-/* URL LOAD */
+/* URL LOADER */
 function checkURL() {
   const sceneParam = new URLSearchParams(location.search).get("scene");
   if (!sceneParam) return;
@@ -223,22 +216,17 @@ function checkURL() {
     if (data.modelUrl) {
       document.getElementById("ui").style.display = "none";
       loadModel(data.modelUrl);
-      applySceneStyle(data.bg, data.opacity);
+
+      if (typeof data.autoRotate === "boolean") {
+        rotateInput.checked = data.autoRotate;
+        applyRotation(data.autoRotate);
+      }
     }
+
   } catch (e) {
     console.error(e);
   }
 }
-
-/* LIVE UI */
-bgInput.addEventListener("input", e => {
-  scene.background = new THREE.Color(e.target.value);
-  document.body.style.background = e.target.value;
-});
-
-opacityInput.addEventListener("input", e => {
-  renderer.setClearAlpha(parseFloat(e.target.value));
-});
 
 /* LOOP */
 function animate() {
@@ -247,6 +235,7 @@ function animate() {
   renderer.render(scene, camera);
 }
 
+/* RESIZE */
 function onResize() {
   camera.aspect = innerWidth/innerHeight;
   camera.updateProjectionMatrix();
