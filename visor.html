@@ -93,7 +93,23 @@
   transform: scale(1.15);
   border: 2px solid rgba(255,255,255,0.6);
 }
-  
+  #colorWheel {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: conic-gradient(
+    red,
+    yellow,
+    lime,
+    cyan,
+    blue,
+    magenta,
+    red
+  );
+
+  cursor: pointer;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+}
 
   #linkBox {
     margin-top: 12px;
@@ -166,10 +182,9 @@ if (new URLSearchParams(location.search).get("scene")) {
   <div id="step2" class="step">
   
 <div class="label">Background color</div>
+<div id="colorWheel" onclick="bgInput.click()"></div>
+<input id="bgInput" type="color" style="display:none;" />
 
-<input id="bgInput" type="color" value="#0e0f13" />
-
-<!-- 🔥 PALETA RÁPIDA -->
 <div id="colorPalette">
   <div class="color-swatch" data-color="#0e0f13" style="background:#0e0f13"></div>
   <div class="color-swatch" data-color="#c2ceff" style="background:#c2ceff"></div>
