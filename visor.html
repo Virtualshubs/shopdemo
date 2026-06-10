@@ -288,13 +288,25 @@ function init() {
     });
   }
 
-  // 🔥 BG LIVE CONTROL (CORRECT PLACE)
-  const bgInput = document.getElementById("bgInput");
-  if (bgInput) {
-    bgInput.addEventListener("input", (e) => {
-      applySceneStyle(e.target.value);
-    });
-  }
+ const bgInput = document.getElementById("bgInput");
+
+if (bgInput) {
+  bgInput.addEventListener("input", (e) => {
+    applySceneStyle(e.target.value);
+  });
+}
+
+const swatches = document.querySelectorAll(".color-swatch");
+
+swatches.forEach((swatch) => {
+  swatch.addEventListener("click", () => {
+    const color = swatch.dataset.color;
+
+    // sync input + scene
+    bgInput.value = color;
+    applySceneStyle(color);
+  });
+});
 
   const actions = document.getElementById("exportActions");
   if (actions) actions.style.display = "none";
