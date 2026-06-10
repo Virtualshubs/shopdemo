@@ -144,19 +144,37 @@
     </div>
   </div>
 
-  <!-- STEP 3 -->
-  <div id="step3" class="step">
-    <button class="btn btn-primary" onclick="exportScene()">
-      Publish Scene
+<div id="step3" class="step">
+
+  <button class="btn btn-primary" onclick="exportScene()">
+    Publish Scene
+  </button>
+
+  <div class="label">Share link</div>
+  <div id="linkBox">No scene generated yet</div>
+
+  <!-- NEW ACTIONS -->
+  <div id="exportActions" style="display:none; margin-top:12px; gap:8px; display:flex; flex-direction:column;">
+
+    <button class="btn btn-secondary" onclick="openScene()">
+      Go to scene
     </button>
 
-    <div class="label">Share link</div>
-    <div id="linkBox">No scene generated yet</div>
+    <button class="btn btn-secondary" onclick="copyURL()">
+      Copy URL
+    </button>
 
-    <div class="stepNav">
-      <button class="btn btn-secondary" onclick="goStep(2)">Back</button>
-    </div>
+    <button class="btn btn-secondary" onclick="generateQR()">
+      Generate QR
+    </button>
+
   </div>
+
+  <div class="stepNav">
+    <button class="btn btn-secondary" onclick="goStep(2)">Back</button>
+  </div>
+
+</div>
 
 </div>
 
@@ -209,6 +227,11 @@ function init() {
 
   window.addEventListener("resize", onResize);
   isInitialized = true;
+
+  // 🔥 ensure UI starts consistent
+  if (typeof rotateInput !== "undefined") {
+    rotateInput.checked = state.autoRotate;
+  }
 }
 
 /* MODEL */
@@ -259,7 +282,7 @@ function applySceneStyle(bg) {
   document.body.style.background = bg;
 }
 
-/* ROTATION (SOURCE OF TRUTH) */
+/* ROTATION (FULL SYNC FIX) */
 function applyRotation(value) {
   state.autoRotate = value;
 
@@ -267,16 +290,18 @@ function applyRotation(value) {
     controls.autoRotate = value;
   }
 
-  // sync UI safely
-  if (rotateInput) {
+  // sync UI
+  if (typeof rotateInput !== "undefined") {
     rotateInput.checked = value;
   }
 }
 
-/* 🔥 SINGLE EVENT SOURCE */
-rotateInput.addEventListener("change", (e) => {
-  applyRotation(e.target.checked);
-});
+/* 🔥 LIVE TOGGLE (REAL TIME FIX) */
+if (typeof rotateInput !== "undefined") {
+  rotateInput.addEventListener("change", (e) => {
+    applyRotation(e.target.checked);
+  });
+}
 
 /* EXPORT */
 function exportScene() {
