@@ -73,6 +73,28 @@
   .btn-primary { background: #4da3ff; color: #000; }
   .btn-secondary { background: rgba(255,255,255,0.06); color: #fff; }
 
+#colorPalette {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.color-swatch {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  cursor: pointer;
+  border: 2px solid rgba(255,255,255,0.15);
+  transition: transform 0.15s ease, border 0.15s ease;
+}
+
+.color-swatch:hover {
+  transform: scale(1.15);
+  border: 2px solid rgba(255,255,255,0.6);
+}
+  
+
   #linkBox {
     margin-top: 12px;
     padding: 10px;
@@ -142,8 +164,20 @@ if (new URLSearchParams(location.search).get("scene")) {
 
   <!-- STEP 2 -->
   <div id="step2" class="step">
-    <div class="label">Background color</div>
-    <input id="bgInput" type="color" value="#0e0f13" />
+  
+<div class="label">Background color</div>
+
+<input id="bgInput" type="color" value="#0e0f13" />
+
+<!-- 🔥 PALETA RÁPIDA -->
+<div id="colorPalette">
+  <div class="color-swatch" data-color="#0e0f13" style="background:#0e0f13"></div>
+  <div class="color-swatch" data-color="#c2ceff" style="background:#c2ceff"></div>
+  <div class="color-swatch" data-color="#ffffff" style="background:#ffffff"></div>
+  <div class="color-swatch" data-color="#1a1a1a" style="background:#1a1a1a"></div>
+  <div class="color-swatch" data-color="#4da3ff" style="background:#4da3ff"></div>
+  <div class="color-swatch" data-color="#ff6b6b" style="background:#ff6b6b"></div>
+</div>
 
     <div class="label">Auto rotate</div>
     <label style="display:flex;align-items:center;gap:8px;font-size:12px;">
@@ -244,13 +278,21 @@ function init() {
 
   window.addEventListener("resize", onResize);
 
-  // UI EVENTS
+  // ================= UI EVENTS =================
+
   const rotateInput = document.getElementById("rotateInput");
   if (rotateInput) {
     rotateInput.checked = state.autoRotate;
-
     rotateInput.addEventListener("change", (e) => {
       applyRotation(e.target.checked);
+    });
+  }
+
+  // 🔥 BG LIVE CONTROL (CORRECT PLACE)
+  const bgInput = document.getElementById("bgInput");
+  if (bgInput) {
+    bgInput.addEventListener("input", (e) => {
+      applySceneStyle(e.target.value);
     });
   }
 
@@ -297,7 +339,6 @@ function goStep(step) {
   }
 
   if (step === 3) {
-    applySceneStyle(bgInput.value);
     applyRotation(document.getElementById("rotateInput").checked);
   }
 }
@@ -308,6 +349,15 @@ function applySceneStyle(bg) {
   state.bg = bg;
   scene.background = new THREE.Color(bg);
   document.body.style.background = bg;
+}
+
+  
+  const bgInput = document.getElementById("bgInput");
+
+if (bgInput) {
+  bgInput.addEventListener("input", (e) => {
+    applySceneStyle(e.target.value);
+  });
 }
 
 /* ================= ROTATION ================= */
@@ -323,13 +373,6 @@ function applyRotation(value) {
   if (rotateInput) rotateInput.checked = value;
 }
 
-const bgInput = document.getElementById("bgInput");
-
-if (bgInput) {
-  bgInput.addEventListener("input", (e) => {
-    applySceneStyle(e.target.value);
-  });
-}
 
 /* ================= EXPORT ================= */
 
