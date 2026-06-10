@@ -14,6 +14,8 @@
 
   canvas { display: block; }
 
+  /* ================= UI ================= */
+
   #ui {
     position: absolute;
     top: 20px;
@@ -34,7 +36,7 @@
   #title {
     font-size: 14px;
     font-weight: 600;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
   }
 
   input {
@@ -78,40 +80,90 @@
     opacity: 0.5;
     margin-top: 10px;
   }
+
+  /* ================= STEPS ================= */
+
+  .step {
+    display: none;
+  }
+
+  .step.active {
+    display: block;
+  }
+
+  .stepsHeader {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+
+  .stepDot {
+    flex: 1;
+    height: 4px;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.1);
+  }
+
+  .stepDot.active {
+    background: #4da3ff;
+  }
 </style>
 </head>
 
 <body>
 
 <div id="ui">
-  <div id="title">3D Twins Lite · Scene Viewer</div>
 
-  <input id="urlInput" placeholder="Paste GLB URL..." />
+  <div id="title">3D Twins Lite</div>
 
-  <!-- 🎨 BACKGROUND -->
-  <div class="label">Background color</div>
-  <input id="bgInput" type="color" value="#0e0f13" />
+  <!-- STEP INDICATOR -->
+  <div class="stepsHeader">
+    <div class="stepDot active" id="dot1"></div>
+    <div class="stepDot" id="dot2"></div>
+    <div class="stepDot" id="dot3"></div>
+  </div>
 
-  <div class="label" hidden>Opacity</div>
-  <input id="opacityInput" type="range" min="0" max="1" step="0.05" value="1" hidden />
+  <!-- STEP 1 -->
+  <div id="step1" class="step active">
 
-  <!-- 🔁 ONLY NEW FEATURE -->
-  <div class="label">Auto rotate</div>
-  <label style="display:flex;align-items:center;gap:8px;font-size:12px;opacity:0.85;">
-    <input id="rotateInput" type="checkbox" checked />
-    Enable rotation
-  </label>
+    <input id="urlInput" placeholder="Paste GLB URL..." />
 
-  <button class="btn btn-secondary" onclick="loadFromInput()">
-    Load Model
-  </button>
+    <button class="btn btn-secondary" onclick="goStep2()">
+      Load Model
+    </button>
 
-  <button class="btn btn-primary" onclick="exportScene()">
-    Publish Scene
-  </button>
+  </div>
 
-  <div class="label">Share link</div>
-  <div id="linkBox">No scene generated yet</div>
+  <!-- STEP 2 -->
+  <div id="step2" class="step">
+
+    <div class="label">Background color</div>
+    <input id="bgInput" type="color" value="#0e0f13" />
+
+    <div class="label">Auto rotate</div>
+    <label style="display:flex;align-items:center;gap:8px;font-size:12px;">
+      <input id="rotateInput" type="checkbox" checked />
+      Enable rotation
+    </label>
+
+    <button class="btn btn-secondary" onclick="goStep3()">
+      Continue
+    </button>
+
+  </div>
+
+  <!-- STEP 3 -->
+  <div id="step3" class="step">
+
+    <button class="btn btn-primary" onclick="exportScene()">
+      Publish Scene
+    </button>
+
+    <div class="label">Share link</div>
+    <div id="linkBox">No scene generated yet</div>
+
+  </div>
+
 </div>
 
 <canvas id="c"></canvas>
@@ -125,11 +177,13 @@
 let scene, camera, renderer, controls, model;
 let isInitialized = false;
 
+let currentStep = 1;
+
+/* INIT */
 init();
 animate();
 checkURL();
 
-/* INIT */
 function init() {
   scene = new THREE.Scene();
   scene.background = new THREE.Color("#c2ceff");
@@ -162,7 +216,8 @@ function init() {
   isInitialized = true;
 }
 
-/* LOAD MODEL */
+/* ================= MODEL ================= */
+
 function loadModel(url) {
   const loader = new THREE.GLTFLoader();
 
@@ -177,58 +232,73 @@ function loadModel(url) {
   });
 }
 
-/* INPUT */
 function loadFromInput() {
   const url = urlInput.value.trim();
   if (!url) return;
   loadModel(url);
 }
 
-/* APPLY STYLE */
-function applySceneStyle(bg, opacity) {
+/* ================= STEPS ================= */
+
+function showStep(step) {
+  currentStep = step;
+
+  document.querySelectorAll(".step").forEach(s => s.classList.remove("active"));
+  document.getElementById("step" + step).classList.add("active");
+
+  document.querySelectorAll(".stepDot").forEach(d => d.classList.remove("active"));
+  document.getElementById("dot" + step).classList.add("active");
+}
+
+function goStep2() {
+  const url = urlInput.value.trim();
+  if (!url) return;
+
+  loadModel(url);
+  showStep(2);
+}
+
+function goStep3() {
+  applySceneStyle(bgInput.value);
+  applyRotation(rotateInput.checked);
+  showStep(3);
+}
+
+/* ================= STYLE ================= */
+
+function applySceneStyle(bg) {
   if (bg) {
     scene.background = new THREE.Color(bg);
     document.body.style.background = bg;
   }
-
-  if (opacity !== undefined) {
-    renderer.setClearAlpha(opacity);
-  }
 }
 
-/* APPLY ROTATION (NEW ONLY) */
 function applyRotation(value) {
-  if (!controls) return;
   controls.autoRotate = value;
 }
 
-/* EXPORT */
+/* ================= EXPORT ================= */
+
 function exportScene() {
   const url = urlInput.value.trim();
-  if (!url) return;
-
-  const bg = bgInput.value;
-  const opacity = parseFloat(opacityInput.value);
-  const rotate = rotateInput.checked;
 
   const payload = {
     modelUrl: url,
-    bg,
-    opacity,
-    autoRotate: rotate
+    bg: bgInput.value,
+    autoRotate: rotateInput.checked
   };
 
   const encoded = btoa(JSON.stringify(payload));
 
-  const link =
-    `${location.origin}${location.pathname}?scene=${encoded}`;
+  const link = `${location.origin}${location.pathname}?scene=${encoded}`;
 
   linkBox.innerHTML = link;
 
   window.open(link, "_blank", "noopener,noreferrer");
 }
 
-/* URL LOADER */
+/* ================= URL LOAD ================= */
+
 function checkURL() {
   const sceneParam = new URLSearchParams(location.search).get("scene");
   if (!sceneParam) return;
@@ -238,11 +308,13 @@ function checkURL() {
 
     if (data.modelUrl) {
       document.getElementById("ui").style.display = "none";
+
       loadModel(data.modelUrl);
 
-      applySceneStyle(data.bg, data.opacity);
-      applyRotation(data.autoRotate ?? true);
-      rotateInput.checked = data.autoRotate ?? true;
+      if (data.bg) applySceneStyle(data.bg);
+      if (typeof data.autoRotate !== "undefined") {
+        applyRotation(data.autoRotate);
+      }
     }
 
   } catch (e) {
@@ -250,28 +322,14 @@ function checkURL() {
   }
 }
 
-/* LIVE UI */
-bgInput.addEventListener("input", e => {
-  scene.background = new THREE.Color(e.target.value);
-  document.body.style.background = e.target.value;
-});
+/* ================= LOOP ================= */
 
-opacityInput.addEventListener("input", e => {
-  renderer.setClearAlpha(parseFloat(e.target.value));
-});
-
-rotateInput.addEventListener("change", e => {
-  controls.autoRotate = e.target.checked;
-});
-
-/* LOOP */
 function animate() {
   requestAnimationFrame(animate);
   if (controls) controls.update();
   renderer.render(scene, camera);
 }
 
-/* RESIZE */
 function onResize() {
   camera.aspect = innerWidth/innerHeight;
   camera.updateProjectionMatrix();
