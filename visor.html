@@ -83,18 +83,14 @@
 
   /* ================= STEPS ================= */
 
-  .step {
-    display: none;
-  }
+  .step { display: none; }
+  .step.active { display: block; }
 
-  .step.active {
-    display: block;
-  }
-
-  .stepsHeader {
+  .stepNav {
     display: flex;
-    gap: 6px;
-    margin-bottom: 12px;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: 10px;
   }
 
   .stepDot {
@@ -116,8 +112,7 @@
 
   <div id="title">3D Twins Lite</div>
 
-  <!-- STEP INDICATOR -->
-  <div class="stepsHeader">
+  <div class="stepNav">
     <div class="stepDot active" id="dot1"></div>
     <div class="stepDot" id="dot2"></div>
     <div class="stepDot" id="dot3"></div>
@@ -125,18 +120,15 @@
 
   <!-- STEP 1 -->
   <div id="step1" class="step active">
-
     <input id="urlInput" placeholder="Paste GLB URL..." />
 
-    <button class="btn btn-secondary" onclick="goStep2()">
+    <button class="btn btn-secondary" onclick="goStep(2)">
       Load Model
     </button>
-
   </div>
 
   <!-- STEP 2 -->
   <div id="step2" class="step">
-
     <div class="label">Background color</div>
     <input id="bgInput" type="color" value="#0e0f13" />
 
@@ -146,15 +138,14 @@
       Enable rotation
     </label>
 
-    <button class="btn btn-secondary" onclick="goStep3()">
-      Continue
-    </button>
-
+    <div class="stepNav">
+      <button class="btn btn-secondary" onclick="goStep(1)">Back</button>
+      <button class="btn btn-secondary" onclick="goStep(3)">Continue</button>
+    </div>
   </div>
 
   <!-- STEP 3 -->
   <div id="step3" class="step">
-
     <button class="btn btn-primary" onclick="exportScene()">
       Publish Scene
     </button>
@@ -162,6 +153,9 @@
     <div class="label">Share link</div>
     <div id="linkBox">No scene generated yet</div>
 
+    <div class="stepNav">
+      <button class="btn btn-secondary" onclick="goStep(2)">Back</button>
+    </div>
   </div>
 
 </div>
@@ -177,16 +171,20 @@
 let scene, camera, renderer, controls, model;
 let isInitialized = false;
 
-let currentStep = 1;
+let state = {
+  modelUrl: null,
+  bg: "#c2ceff",
+  autoRotate: true
+};
 
-/* INIT */
 init();
 animate();
 checkURL();
 
+/* INIT */
 function init() {
   scene = new THREE.Scene();
-  scene.background = new THREE.Color("#c2ceff");
+  scene.background = new THREE.Color(state.bg);
 
   camera = new THREE.PerspectiveCamera(60, innerWidth/innerHeight, 0.1, 1000);
   camera.position.set(2, 2, 3);
@@ -198,12 +196,9 @@ function init() {
 
   renderer.setSize(innerWidth, innerHeight);
   renderer.setPixelRatio(devicePixelRatio);
-  renderer.setClearAlpha(1);
 
   controls = new THREE.OrbitControls(camera, renderer.domElement);
   controls.enableDamping = true;
-  controls.autoRotate = true;
-  controls.autoRotateSpeed = 1.2;
 
   scene.add(new THREE.HemisphereLight(0xffffff, 0x222233, 1));
 
@@ -212,12 +207,10 @@ function init() {
   scene.add(d);
 
   window.addEventListener("resize", onResize);
-
   isInitialized = true;
 }
 
-/* ================= MODEL ================= */
-
+/* MODEL */
 function loadModel(url) {
   const loader = new THREE.GLTFLoader();
 
@@ -232,55 +225,45 @@ function loadModel(url) {
   });
 }
 
-function loadFromInput() {
-  const url = urlInput.value.trim();
-  if (!url) return;
-  loadModel(url);
-}
-
-/* ================= STEPS ================= */
-
-function showStep(step) {
-  currentStep = step;
-
+/* STEPS */
+function goStep(step) {
   document.querySelectorAll(".step").forEach(s => s.classList.remove("active"));
   document.getElementById("step" + step).classList.add("active");
 
   document.querySelectorAll(".stepDot").forEach(d => d.classList.remove("active"));
   document.getElementById("dot" + step).classList.add("active");
-}
 
-function goStep2() {
-  const url = urlInput.value.trim();
-  if (!url) return;
+  // STEP LOGIC
+  if (step === 2) {
+    const url = urlInput.value.trim();
+    if (url && !state.modelUrl) {
+      state.modelUrl = url;
+      loadModel(url);
+    }
+  }
 
-  loadModel(url);
-  showStep(2);
-}
-
-function goStep3() {
-  applySceneStyle(bgInput.value);
-  applyRotation(rotateInput.checked);
-  showStep(3);
-}
-
-/* ================= STYLE ================= */
-
-function applySceneStyle(bg) {
-  if (bg) {
-    scene.background = new THREE.Color(bg);
-    document.body.style.background = bg;
+  if (step === 3) {
+    applySceneStyle(bgInput.value);
+    applyRotation(rotateInput.checked);
   }
 }
 
+/* STYLE */
+function applySceneStyle(bg) {
+  state.bg = bg;
+  scene.background = new THREE.Color(bg);
+  document.body.style.background = bg;
+}
+
+/* ROTATION */
 function applyRotation(value) {
+  state.autoRotate = value;
   controls.autoRotate = value;
 }
 
-/* ================= EXPORT ================= */
-
+/* EXPORT */
 function exportScene() {
-  const url = urlInput.value.trim();
+  const url = state.modelUrl || urlInput.value.trim();
 
   const payload = {
     modelUrl: url,
@@ -289,41 +272,29 @@ function exportScene() {
   };
 
   const encoded = btoa(JSON.stringify(payload));
-
   const link = `${location.origin}${location.pathname}?scene=${encoded}`;
 
   linkBox.innerHTML = link;
-
   window.open(link, "_blank", "noopener,noreferrer");
 }
 
-/* ================= URL LOAD ================= */
-
+/* URL LOAD */
 function checkURL() {
   const sceneParam = new URLSearchParams(location.search).get("scene");
   if (!sceneParam) return;
 
-  try {
-    const data = JSON.parse(atob(sceneParam));
+  const data = JSON.parse(atob(sceneParam));
 
-    if (data.modelUrl) {
-      document.getElementById("ui").style.display = "none";
+  if (data.modelUrl) {
+    document.getElementById("ui").style.display = "none";
+    loadModel(data.modelUrl);
 
-      loadModel(data.modelUrl);
-
-      if (data.bg) applySceneStyle(data.bg);
-      if (typeof data.autoRotate !== "undefined") {
-        applyRotation(data.autoRotate);
-      }
-    }
-
-  } catch (e) {
-    console.error(e);
+    applySceneStyle(data.bg || state.bg);
+    applyRotation(data.autoRotate ?? true);
   }
 }
 
-/* ================= LOOP ================= */
-
+/* LOOP */
 function animate() {
   requestAnimationFrame(animate);
   if (controls) controls.update();
