@@ -194,6 +194,9 @@ let state = {
   autoRotate: false
 };
 
+// 🔥 GLOBAL SHARE URL
+let lastGeneratedURL = null;
+
 init();
 animate();
 checkURL();
@@ -227,9 +230,8 @@ function init() {
 
   window.addEventListener("resize", onResize);
 
-  /* 🔥 UI EVENTS (IMPORTANT FIX) */
+  /* UI INIT */
   const rotateInput = document.getElementById("rotateInput");
-
   if (rotateInput) {
     rotateInput.checked = state.autoRotate;
 
@@ -291,7 +293,7 @@ function applySceneStyle(bg) {
   document.body.style.background = bg;
 }
 
-/* ================= ROTATION (REAL TIME FIX) ================= */
+/* ================= ROTATION ================= */
 
 function applyRotation(value) {
   state.autoRotate = value;
@@ -318,11 +320,50 @@ function exportScene() {
   const encoded = btoa(JSON.stringify(payload));
   const link = `${location.origin}${location.pathname}?scene=${encoded}`;
 
+  // 🔥 STORE GLOBAL URL
+  lastGeneratedURL = link;
+
   linkBox.innerHTML = link;
 
-  /* UI actions (future QR hook ready) */
-  document.getElementById("exportActions")?.style &&
-    (document.getElementById("exportActions").style.display = "flex");
+  // show export actions
+  const actions = document.getElementById("exportActions");
+  if (actions) actions.style.display = "flex";
+}
+
+/* ================= ACTIONS ================= */
+
+function openScene() {
+  if (!lastGeneratedURL) return;
+  window.open(lastGeneratedURL, "_blank", "noopener,noreferrer");
+}
+
+function copyURL() {
+  if (!lastGeneratedURL) return;
+
+  navigator.clipboard.writeText(lastGeneratedURL)
+    .then(() => alert("URL copied"))
+    .catch(() => {
+      const temp = document.createElement("textarea");
+      temp.value = lastGeneratedURL;
+      document.body.appendChild(temp);
+      temp.select();
+      document.execCommand("copy");
+      temp.remove();
+    });
+}
+
+function generateQR() {
+  if (!lastGeneratedURL) return;
+
+  const win = window.open("", "_blank");
+
+  win.document.write(`
+    <html>
+      <body style="display:flex;align-items:center;justify-content:center;height:100vh;margin:0;">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(lastGeneratedURL)}" />
+      </body>
+    </html>
+  `);
 }
 
 /* ================= URL LOAD ================= */
