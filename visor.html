@@ -5,6 +5,14 @@
 <title>3D Twins Lite</title>
 
 <style>
+    body.loading-scene #ui {
+    display: none !important;
+  }
+
+  body.loading-scene {
+    background: #000 !important;
+  }
+  
   body {
     margin: 0;
     overflow: hidden;
@@ -197,8 +205,13 @@ let state = {
 // 🔥 GLOBAL URL STATE
 let lastGeneratedURL = null;
 
-// 🔥 IMPORTANT FIX FLAG (avoids first-frame flicker)
+// 🔥 IMPORTANT FIX FLAG
 let isLoadingFromURL = false;
+
+/* 🔥 PREVENT INITIAL UI FLASH (MUST RUN BEFORE INIT) */
+if (new URLSearchParams(location.search).get("scene")) {
+  document.body.classList.add("loading-scene");
+}
 
 init();
 checkURL();
@@ -243,7 +256,6 @@ function init() {
     });
   }
 
-  // hide export actions initially
   const actions = document.getElementById("exportActions");
   if (actions) actions.style.display = "none";
 }
@@ -371,7 +383,7 @@ function generateQR() {
   `);
 }
 
-/* ================= URL LOAD (FIXED NO-FLASH VERSION) ================= */
+/* ================= URL LOAD (NO FLASH FINAL FIX) ================= */
 
 function checkURL() {
   const sceneParam = new URLSearchParams(location.search).get("scene");
@@ -382,7 +394,6 @@ function checkURL() {
   try {
     const data = JSON.parse(atob(sceneParam));
 
-    // hide UI instantly
     const ui = document.getElementById("ui");
     if (ui) ui.style.display = "none";
 
@@ -402,7 +413,6 @@ function checkURL() {
     console.error(e);
   }
 
-  // release render lock after first paint
   requestAnimationFrame(() => {
     isLoadingFromURL = false;
   });
