@@ -225,7 +225,9 @@ function loadModel(url) {
   });
 }
 
-/* STEPS */
+/* ======================
+   STEPS
+====================== */
 function goStep(step) {
   document.querySelectorAll(".step").forEach(s => s.classList.remove("active"));
   document.getElementById("step" + step).classList.add("active");
@@ -233,7 +235,7 @@ function goStep(step) {
   document.querySelectorAll(".stepDot").forEach(d => d.classList.remove("active"));
   document.getElementById("dot" + step).classList.add("active");
 
-  // STEP LOGIC
+  // STEP 2 → load model once
   if (step === 2) {
     const url = urlInput.value.trim();
     if (url && !state.modelUrl) {
@@ -242,26 +244,44 @@ function goStep(step) {
     }
   }
 
+  // STEP 3 → apply final style snapshot
   if (step === 3) {
     applySceneStyle(bgInput.value);
     applyRotation(rotateInput.checked);
   }
 }
 
-/* STYLE */
+/* ======================
+   STYLE
+====================== */
 function applySceneStyle(bg) {
   state.bg = bg;
   scene.background = new THREE.Color(bg);
   document.body.style.background = bg;
 }
 
-/* ROTATION */
+/* ======================
+   ROTATION (FIXED)
+====================== */
 function applyRotation(value) {
   state.autoRotate = value;
+
+  if (!controls) return;
+
   controls.autoRotate = value;
+
+  // 🔥 force instant visual update
+  controls.update();
 }
 
-/* EXPORT */
+/* LIVE ROTATION LISTENER (KEY FIX) */
+rotateInput.addEventListener("change", (e) => {
+  applyRotation(e.target.checked);
+});
+
+/* ======================
+   EXPORT
+====================== */
 function exportScene() {
   const url = state.modelUrl || urlInput.value.trim();
 
@@ -275,26 +295,42 @@ function exportScene() {
   const link = `${location.origin}${location.pathname}?scene=${encoded}`;
 
   linkBox.innerHTML = link;
+
   window.open(link, "_blank", "noopener,noreferrer");
 }
 
-/* URL LOAD */
+/* ======================
+   URL LOAD
+====================== */
 function checkURL() {
   const sceneParam = new URLSearchParams(location.search).get("scene");
   if (!sceneParam) return;
 
-  const data = JSON.parse(atob(sceneParam));
+  try {
+    const data = JSON.parse(atob(sceneParam));
 
-  if (data.modelUrl) {
-    document.getElementById("ui").style.display = "none";
-    loadModel(data.modelUrl);
+    if (data.modelUrl) {
+      document.getElementById("ui").style.display = "none";
 
-    applySceneStyle(data.bg || state.bg);
-    applyRotation(data.autoRotate ?? true);
+      loadModel(data.modelUrl);
+
+      applySceneStyle(data.bg || state.bg);
+      applyRotation(data.autoRotate ?? true);
+
+      // sync UI if exists
+      if (typeof rotateInput !== "undefined") {
+        rotateInput.checked = data.autoRotate ?? true;
+      }
+    }
+
+  } catch (e) {
+    console.error(e);
   }
 }
 
-/* LOOP */
+/* ======================
+   LOOP
+====================== */
 function animate() {
   requestAnimationFrame(animate);
   if (controls) controls.update();
@@ -302,7 +338,7 @@ function animate() {
 }
 
 function onResize() {
-  camera.aspect = innerWidth/innerHeight;
+  camera.aspect = innerWidth / innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(innerWidth, innerHeight);
 }
