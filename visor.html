@@ -171,10 +171,11 @@
 let scene, camera, renderer, controls, model;
 let isInitialized = false;
 
+/* STATE */
 let state = {
   modelUrl: null,
   bg: "#c2ceff",
-  autoRotate: true
+  autoRotate: false
 };
 
 init();
@@ -186,7 +187,12 @@ function init() {
   scene = new THREE.Scene();
   scene.background = new THREE.Color(state.bg);
 
-  camera = new THREE.PerspectiveCamera(60, innerWidth/innerHeight, 0.1, 1000);
+  camera = new THREE.PerspectiveCamera(
+    60,
+    innerWidth / innerHeight,
+    0.1,
+    1000
+  );
   camera.position.set(2, 2, 3);
 
   renderer = new THREE.WebGLRenderer({
@@ -203,10 +209,11 @@ function init() {
   scene.add(new THREE.HemisphereLight(0xffffff, 0x222233, 1));
 
   const d = new THREE.DirectionalLight(0xffffff, 0.8);
-  d.position.set(5,10,5);
+  d.position.set(5, 10, 5);
   scene.add(d);
 
   window.addEventListener("resize", onResize);
+
   isInitialized = true;
 }
 
@@ -225,17 +232,19 @@ function loadModel(url) {
   });
 }
 
-/* ======================
-   STEPS
-====================== */
+/* STEPS */
 function goStep(step) {
-  document.querySelectorAll(".step").forEach(s => s.classList.remove("active"));
+  document.querySelectorAll(".step").forEach(s =>
+    s.classList.remove("active")
+  );
   document.getElementById("step" + step).classList.add("active");
 
-  document.querySelectorAll(".stepDot").forEach(d => d.classList.remove("active"));
+  document.querySelectorAll(".stepDot").forEach(d =>
+    d.classList.remove("active")
+  );
   document.getElementById("dot" + step).classList.add("active");
 
-  // STEP 2 → load model once
+  /* STEP 2 */
   if (step === 2) {
     const url = urlInput.value.trim();
     if (url && !state.modelUrl) {
@@ -244,44 +253,31 @@ function goStep(step) {
     }
   }
 
-  // STEP 3 → apply final style snapshot
+  /* STEP 3 */
   if (step === 3) {
     applySceneStyle(bgInput.value);
     applyRotation(rotateInput.checked);
   }
 }
 
-/* ======================
-   STYLE
-====================== */
+/* STYLE */
 function applySceneStyle(bg) {
   state.bg = bg;
   scene.background = new THREE.Color(bg);
   document.body.style.background = bg;
 }
 
-/* ======================
-   ROTATION (FIXED)
-====================== */
+/* ROTATION (FIXED SYNC) */
 function applyRotation(value) {
   state.autoRotate = value;
+  if (controls) controls.autoRotate = value;
 
-  if (!controls) return;
-
-  controls.autoRotate = value;
-
-  // 🔥 force instant visual update
-  controls.update();
+  // 🔥 sync UI if exists (important for URL load)
+  const el = document.getElementById("rotateInput");
+  if (el) el.checked = value;
 }
 
-/* LIVE ROTATION LISTENER (KEY FIX) */
-rotateInput.addEventListener("change", (e) => {
-  applyRotation(e.target.checked);
-});
-
-/* ======================
-   EXPORT
-====================== */
+/* EXPORT */
 function exportScene() {
   const url = state.modelUrl || urlInput.value.trim();
 
@@ -295,48 +291,36 @@ function exportScene() {
   const link = `${location.origin}${location.pathname}?scene=${encoded}`;
 
   linkBox.innerHTML = link;
-
   window.open(link, "_blank", "noopener,noreferrer");
 }
 
-/* ======================
-   URL LOAD
-====================== */
+/* URL LOAD */
 function checkURL() {
   const sceneParam = new URLSearchParams(location.search).get("scene");
   if (!sceneParam) return;
 
-  try {
-    const data = JSON.parse(atob(sceneParam));
+  const data = JSON.parse(atob(sceneParam));
 
-    if (data.modelUrl) {
-      document.getElementById("ui").style.display = "none";
+  if (data.modelUrl) {
+    document.getElementById("ui").style.display = "none";
 
-      loadModel(data.modelUrl);
+    loadModel(data.modelUrl);
 
-      applySceneStyle(data.bg || state.bg);
-      applyRotation(data.autoRotate ?? true);
+    applySceneStyle(data.bg || state.bg);
 
-      // sync UI if exists
-      if (typeof rotateInput !== "undefined") {
-        rotateInput.checked = data.autoRotate ?? true;
-      }
-    }
-
-  } catch (e) {
-    console.error(e);
+    // 🔥 IMPORTANT: sync both state + controls + UI
+    applyRotation(data.autoRotate ?? false);
   }
 }
 
-/* ======================
-   LOOP
-====================== */
+/* LOOP */
 function animate() {
   requestAnimationFrame(animate);
   if (controls) controls.update();
   renderer.render(scene, camera);
 }
 
+/* RESIZE */
 function onResize() {
   camera.aspect = innerWidth / innerHeight;
   camera.updateProjectionMatrix();
