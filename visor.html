@@ -323,6 +323,14 @@ function applyRotation(value) {
   if (rotateInput) rotateInput.checked = value;
 }
 
+const bgInput = document.getElementById("bgInput");
+
+if (bgInput) {
+  bgInput.addEventListener("input", (e) => {
+    applySceneStyle(e.target.value);
+  });
+}
+
 /* ================= EXPORT ================= */
 
 function exportScene() {
