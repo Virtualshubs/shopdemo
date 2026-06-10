@@ -194,7 +194,7 @@ let state = {
   autoRotate: false
 };
 
-// 🔥 GLOBAL SHARE URL
+// 🔥 GLOBAL URL STATE
 let lastGeneratedURL = null;
 
 init();
@@ -230,15 +230,18 @@ function init() {
 
   window.addEventListener("resize", onResize);
 
-  /* UI INIT */
+  // 🔥 UI EVENTS
   const rotateInput = document.getElementById("rotateInput");
   if (rotateInput) {
     rotateInput.checked = state.autoRotate;
-
     rotateInput.addEventListener("change", (e) => {
       applyRotation(e.target.checked);
     });
   }
+
+  // 🔥 IMPORTANT: hide actions at start
+  const actions = document.getElementById("exportActions");
+  if (actions) actions.style.display = "none";
 }
 
 /* ================= MODEL ================= */
@@ -320,12 +323,12 @@ function exportScene() {
   const encoded = btoa(JSON.stringify(payload));
   const link = `${location.origin}${location.pathname}?scene=${encoded}`;
 
-  // 🔥 STORE GLOBAL URL
   lastGeneratedURL = link;
 
+  // show URL
   linkBox.innerHTML = link;
 
-  // show export actions
+  // 🔥 ONLY NOW SHOW ACTIONS
   const actions = document.getElementById("exportActions");
   if (actions) actions.style.display = "flex";
 }
