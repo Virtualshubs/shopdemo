@@ -191,17 +191,12 @@ let scene, camera, renderer, controls, model;
 let state = {
   modelUrl: null,
   bg: "#c2ceff",
-  autoRotate: false,
-  lastURL: null
+  autoRotate: false
 };
 
 init();
 animate();
 checkURL();
-
-/* ================= HELPERS ================= */
-
-const $ = (id) => document.getElementById(id);
 
 /* ================= INIT ================= */
 
@@ -232,9 +227,12 @@ function init() {
 
   window.addEventListener("resize", onResize);
 
-  const rotateInput = $("rotateInput");
+  /* 🔥 UI EVENTS (IMPORTANT FIX) */
+  const rotateInput = document.getElementById("rotateInput");
+
   if (rotateInput) {
     rotateInput.checked = state.autoRotate;
+
     rotateInput.addEventListener("change", (e) => {
       applyRotation(e.target.checked);
     });
@@ -261,14 +259,18 @@ function loadModel(url) {
 
 function goStep(step) {
 
-  document.querySelectorAll(".step").forEach(s => s.classList.remove("active"));
-  $("step" + step).classList.add("active");
+  document.querySelectorAll(".step").forEach(s =>
+    s.classList.remove("active")
+  );
+  document.getElementById("step" + step).classList.add("active");
 
-  document.querySelectorAll(".stepDot").forEach(d => d.classList.remove("active"));
-  $("dot" + step).classList.add("active");
+  document.querySelectorAll(".stepDot").forEach(d =>
+    d.classList.remove("active")
+  );
+  document.getElementById("dot" + step).classList.add("active");
 
   if (step === 2) {
-    const url = $("urlInput").value.trim();
+    const url = urlInput.value.trim();
     if (url && !state.modelUrl) {
       state.modelUrl = url;
       loadModel(url);
@@ -276,8 +278,8 @@ function goStep(step) {
   }
 
   if (step === 3) {
-    applySceneStyle($("bgInput").value);
-    applyRotation($("rotateInput").checked);
+    applySceneStyle(bgInput.value);
+    applyRotation(document.getElementById("rotateInput").checked);
   }
 }
 
@@ -289,69 +291,38 @@ function applySceneStyle(bg) {
   document.body.style.background = bg;
 }
 
-/* ================= ROTATION ================= */
+/* ================= ROTATION (REAL TIME FIX) ================= */
 
 function applyRotation(value) {
   state.autoRotate = value;
-  controls.autoRotate = value;
 
-  const rotateInput = $("rotateInput");
+  if (controls) {
+    controls.autoRotate = value;
+  }
+
+  const rotateInput = document.getElementById("rotateInput");
   if (rotateInput) rotateInput.checked = value;
 }
 
 /* ================= EXPORT ================= */
 
 function exportScene() {
-  const url = state.modelUrl || $("urlInput").value.trim();
+  const url = state.modelUrl || urlInput.value.trim();
 
   const payload = {
     modelUrl: url,
-    bg: $("bgInput").value,
+    bg: bgInput.value,
     autoRotate: state.autoRotate
   };
 
   const encoded = btoa(JSON.stringify(payload));
   const link = `${location.origin}${location.pathname}?scene=${encoded}`;
 
-  state.lastURL = link;
+  linkBox.innerHTML = link;
 
-  $("linkBox").innerText = link;
-
-  $("exportActions").style.display = "flex";
-}
-
-/* ================= EXTRA ACTIONS ================= */
-
-function openScene() {
-  if (!state.lastURL) return;
-  window.open(state.lastURL, "_blank");
-}
-
-function copyURL() {
-  if (!state.lastURL) return;
-
-  navigator.clipboard.writeText(state.lastURL);
-}
-
-function generateQR() {
-  if (!state.lastURL) return;
-
-  const box = $("linkBox");
-
-  const qr = document.createElement("div");
-  qr.id = "qr";
-
-  box.appendChild(qr);
-
-  if (window.QRCode) {
-    new QRCode(qr, {
-      text: state.lastURL,
-      width: 160,
-      height: 160
-    });
-  } else {
-    qr.innerText = "QR library missing";
-  }
+  /* UI actions (future QR hook ready) */
+  document.getElementById("exportActions")?.style &&
+    (document.getElementById("exportActions").style.display = "flex");
 }
 
 /* ================= URL LOAD ================= */
@@ -360,15 +331,23 @@ function checkURL() {
   const sceneParam = new URLSearchParams(location.search).get("scene");
   if (!sceneParam) return;
 
-  const data = JSON.parse(atob(sceneParam));
+  try {
+    const data = JSON.parse(atob(sceneParam));
 
-  if (data.modelUrl) {
-    $("ui").style.display = "none";
+    if (data.modelUrl) {
+      document.getElementById("ui").style.display = "none";
 
-    loadModel(data.modelUrl);
+      loadModel(data.modelUrl);
 
-    applySceneStyle(data.bg || state.bg);
-    applyRotation(data.autoRotate ?? false);
+      applySceneStyle(data.bg || state.bg);
+      applyRotation(data.autoRotate ?? false);
+
+      const rotateInput = document.getElementById("rotateInput");
+      if (rotateInput) rotateInput.checked = data.autoRotate ?? false;
+    }
+
+  } catch (e) {
+    console.error(e);
   }
 }
 
@@ -379,6 +358,8 @@ function animate() {
   if (controls) controls.update();
   renderer.render(scene, camera);
 }
+
+/* ================= RESIZE ================= */
 
 function onResize() {
   camera.aspect = innerWidth / innerHeight;
