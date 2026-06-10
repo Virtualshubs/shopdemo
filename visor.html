@@ -194,12 +194,12 @@ let state = {
   autoRotate: false
 };
 
-// 🔥 GLOBAL URL STATE
-let lastGeneratedURL = null;
+let isLoadingFromURL = false;
+let hasInitRender = false;
 
 init();
-animate();
 checkURL();
+animate();
 
 /* ================= INIT ================= */
 
@@ -230,7 +230,6 @@ function init() {
 
   window.addEventListener("resize", onResize);
 
-  // 🔥 UI EVENTS
   const rotateInput = document.getElementById("rotateInput");
   if (rotateInput) {
     rotateInput.checked = state.autoRotate;
@@ -238,10 +237,6 @@ function init() {
       applyRotation(e.target.checked);
     });
   }
-
-  // 🔥 IMPORTANT: hide actions at start
-  const actions = document.getElementById("exportActions");
-  if (actions) actions.style.display = "none";
 }
 
 /* ================= MODEL ================= */
@@ -300,18 +295,13 @@ function applySceneStyle(bg) {
 
 function applyRotation(value) {
   state.autoRotate = value;
-
-  if (controls) {
-    controls.autoRotate = value;
-  }
-
-  const rotateInput = document.getElementById("rotateInput");
-  if (rotateInput) rotateInput.checked = value;
+  if (controls) controls.autoRotate = value;
 }
 
 /* ================= EXPORT ================= */
 
 function exportScene() {
+
   const url = state.modelUrl || urlInput.value.trim();
 
   const payload = {
@@ -323,84 +313,57 @@ function exportScene() {
   const encoded = btoa(JSON.stringify(payload));
   const link = `${location.origin}${location.pathname}?scene=${encoded}`;
 
-  lastGeneratedURL = link;
-
-  // show URL
   linkBox.innerHTML = link;
 
-  // 🔥 ONLY NOW SHOW ACTIONS
-  const actions = document.getElementById("exportActions");
-  if (actions) actions.style.display = "flex";
+  // 🔥 show buttons ONLY after URL exists
+  document.getElementById("exportActions").style.display = "flex";
 }
 
-/* ================= ACTIONS ================= */
-
-function openScene() {
-  if (!lastGeneratedURL) return;
-  window.open(lastGeneratedURL, "_blank", "noopener,noreferrer");
-}
-
-function copyURL() {
-  if (!lastGeneratedURL) return;
-
-  navigator.clipboard.writeText(lastGeneratedURL)
-    .then(() => alert("URL copied"))
-    .catch(() => {
-      const temp = document.createElement("textarea");
-      temp.value = lastGeneratedURL;
-      document.body.appendChild(temp);
-      temp.select();
-      document.execCommand("copy");
-      temp.remove();
-    });
-}
-
-function generateQR() {
-  if (!lastGeneratedURL) return;
-
-  const win = window.open("", "_blank");
-
-  win.document.write(`
-    <html>
-      <body style="display:flex;align-items:center;justify-content:center;height:100vh;margin:0;">
-        <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(lastGeneratedURL)}" />
-      </body>
-    </html>
-  `);
-}
-
-/* ================= URL LOAD ================= */
+/* ================= URL LOAD (IMPORTANT FIX) ================= */
 
 function checkURL() {
+
   const sceneParam = new URLSearchParams(location.search).get("scene");
   if (!sceneParam) return;
+
+  isLoadingFromURL = true;
 
   try {
     const data = JSON.parse(atob(sceneParam));
 
+    // 🔥 hide UI immediately (before any frame render)
+    document.getElementById("ui").style.display = "none";
+
     if (data.modelUrl) {
-      document.getElementById("ui").style.display = "none";
-
       loadModel(data.modelUrl);
-
-      applySceneStyle(data.bg || state.bg);
-      applyRotation(data.autoRotate ?? false);
-
-      const rotateInput = document.getElementById("rotateInput");
-      if (rotateInput) rotateInput.checked = data.autoRotate ?? false;
     }
+
+    applySceneStyle(data.bg || state.bg);
+    applyRotation(data.autoRotate ?? false);
+
+    const rotateInput = document.getElementById("rotateInput");
+    if (rotateInput) rotateInput.checked = data.autoRotate ?? false;
 
   } catch (e) {
     console.error(e);
   }
+
+  // allow first frame after state is ready
+  requestAnimationFrame(() => {
+    isLoadingFromURL = false;
+  });
 }
 
 /* ================= LOOP ================= */
 
 function animate() {
+
   requestAnimationFrame(animate);
-  if (controls) controls.update();
-  renderer.render(scene, camera);
+
+  if (!isLoadingFromURL) {
+    if (controls) controls.update();
+    renderer.render(scene, camera);
+  }
 }
 
 /* ================= RESIZE ================= */
