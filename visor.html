@@ -14,6 +14,8 @@
 
   canvas { display: block; }
 
+  /* ================= UI ================= */
+
   #ui {
     position: absolute;
     top: 20px;
@@ -41,8 +43,10 @@
     width: 100%;
     padding: 12px;
     border-radius: 10px;
+
     border: 1px solid rgba(255,255,255,0.08);
     background: rgba(255,255,255,0.05);
+
     color: white;
     outline: none;
     margin-bottom: 8px;
@@ -71,10 +75,13 @@
     color: rgba(255,255,255,0.65);
   }
 
-  #qrBox {
+  .label {
+    font-size: 11px;
+    opacity: 0.5;
     margin-top: 10px;
-    text-align: center;
   }
+
+  /* ================= STEPS ================= */
 
   .step {
     display: none;
@@ -84,20 +91,21 @@
     display: block;
   }
 
-  .navRow {
+  .stepsHeader {
     display: flex;
-    gap: 8px;
-    margin-top: 10px;
+    gap: 6px;
+    margin-bottom: 12px;
   }
 
-  .navBtn {
+  .stepDot {
     flex: 1;
-    padding: 10px;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-    background: rgba(255,255,255,0.08);
-    color: white;
+    height: 4px;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.1);
+  }
+
+  .stepDot.active {
+    background: #4da3ff;
   }
 </style>
 </head>
@@ -108,12 +116,19 @@
 
   <div id="title">3D Twins Lite</div>
 
+  <!-- STEP INDICATOR -->
+  <div class="stepsHeader">
+    <div class="stepDot active" id="dot1"></div>
+    <div class="stepDot" id="dot2"></div>
+    <div class="stepDot" id="dot3"></div>
+  </div>
+
   <!-- STEP 1 -->
   <div id="step1" class="step active">
 
     <input id="urlInput" placeholder="Paste GLB URL..." />
 
-    <button class="btn btn-secondary" onclick="loadAndNext()">
+    <button class="btn btn-secondary" onclick="goStep2()">
       Load Model
     </button>
 
@@ -122,19 +137,18 @@
   <!-- STEP 2 -->
   <div id="step2" class="step">
 
-    <div class="label">Background</div>
+    <div class="label">Background color</div>
     <input id="bgInput" type="color" value="#0e0f13" />
 
     <div class="label">Auto rotate</div>
-    <label style="display:flex;gap:8px;font-size:12px;">
+    <label style="display:flex;align-items:center;gap:8px;font-size:12px;">
       <input id="rotateInput" type="checkbox" checked />
       Enable rotation
     </label>
 
-    <div class="navRow">
-      <button class="navBtn" onclick="prevStep()">Back</button>
-      <button class="navBtn" onclick="nextStep()">Next</button>
-    </div>
+    <button class="btn btn-secondary" onclick="goStep3()">
+      Continue
+    </button>
 
   </div>
 
@@ -145,12 +159,8 @@
       Publish Scene
     </button>
 
+    <div class="label">Share link</div>
     <div id="linkBox">No scene generated yet</div>
-    <div id="qrBox"></div>
-
-    <div class="navRow">
-      <button class="navBtn" onclick="prevStep()">Back</button>
-    </div>
 
   </div>
 
@@ -162,19 +172,17 @@
 <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/controls/OrbitControls.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/loaders/GLTFLoader.js"></script>
 
-<!-- QR -->
-<script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
-
 <script>
 
 let scene, camera, renderer, controls, model;
-let step = 1;
+let isInitialized = false;
 
+let currentStep = 1;
+
+/* INIT */
 init();
 animate();
 checkURL();
-
-/* ================= INIT ================= */
 
 function init() {
   scene = new THREE.Scene();
@@ -190,6 +198,7 @@ function init() {
 
   renderer.setSize(innerWidth, innerHeight);
   renderer.setPixelRatio(devicePixelRatio);
+  renderer.setClearAlpha(1);
 
   controls = new THREE.OrbitControls(camera, renderer.domElement);
   controls.enableDamping = true;
@@ -204,14 +213,7 @@ function init() {
 
   window.addEventListener("resize", onResize);
 
-  /* LIVE EVENTS */
-  bgInput.addEventListener("input", e => {
-    applySceneStyle(e.target.value);
-  });
-
-  rotateInput.addEventListener("change", e => {
-    controls.autoRotate = e.target.checked;
-  });
+  isInitialized = true;
 }
 
 /* ================= MODEL ================= */
@@ -230,35 +232,49 @@ function loadModel(url) {
   });
 }
 
-function loadAndNext() {
+function loadFromInput() {
   const url = urlInput.value.trim();
   if (!url) return;
-
   loadModel(url);
-  goStep(2);
 }
 
 /* ================= STEPS ================= */
 
-function goStep(n) {
-  step = n;
+function showStep(step) {
+  currentStep = step;
+
   document.querySelectorAll(".step").forEach(s => s.classList.remove("active"));
-  document.getElementById("step"+n).classList.add("active");
+  document.getElementById("step" + step).classList.add("active");
+
+  document.querySelectorAll(".stepDot").forEach(d => d.classList.remove("active"));
+  document.getElementById("dot" + step).classList.add("active");
 }
 
-function nextStep() {
-  if (step < 3) goStep(step + 1);
+function goStep2() {
+  const url = urlInput.value.trim();
+  if (!url) return;
+
+  loadModel(url);
+  showStep(2);
 }
 
-function prevStep() {
-  if (step > 1) goStep(step - 1);
+function goStep3() {
+  applySceneStyle(bgInput.value);
+  applyRotation(rotateInput.checked);
+  showStep(3);
 }
 
 /* ================= STYLE ================= */
 
 function applySceneStyle(bg) {
-  scene.background = new THREE.Color(bg);
-  document.body.style.background = bg;
+  if (bg) {
+    scene.background = new THREE.Color(bg);
+    document.body.style.background = bg;
+  }
+}
+
+function applyRotation(value) {
+  controls.autoRotate = value;
 }
 
 /* ================= EXPORT ================= */
@@ -273,39 +289,37 @@ function exportScene() {
   };
 
   const encoded = btoa(JSON.stringify(payload));
+
   const link = `${location.origin}${location.pathname}?scene=${encoded}`;
 
   linkBox.innerHTML = link;
 
-  /* QR */
-  qrBox.innerHTML = "";
-  QRCode.toCanvas(link, { width: 140 }, function (err, canvas) {
-    if (!err) qrBox.appendChild(canvas);
-  });
-
   window.open(link, "_blank", "noopener,noreferrer");
 }
 
-/* ================= URL ================= */
+/* ================= URL LOAD ================= */
 
 function checkURL() {
-  const p = new URLSearchParams(location.search).get("scene");
-  if (!p) return;
+  const sceneParam = new URLSearchParams(location.search).get("scene");
+  if (!sceneParam) return;
 
   try {
-    const d = JSON.parse(atob(p));
+    const data = JSON.parse(atob(sceneParam));
 
-    document.getElementById("ui").style.display = "none";
+    if (data.modelUrl) {
+      document.getElementById("ui").style.display = "none";
 
-    loadModel(d.modelUrl);
+      loadModel(data.modelUrl);
 
-    if (d.bg) applySceneStyle(d.bg);
-    if (d.autoRotate !== undefined) {
-      rotateInput.checked = d.autoRotate;
-      controls.autoRotate = d.autoRotate;
+      if (data.bg) applySceneStyle(data.bg);
+      if (typeof data.autoRotate !== "undefined") {
+        applyRotation(data.autoRotate);
+      }
     }
 
-  } catch (e) {}
+  } catch (e) {
+    console.error(e);
+  }
 }
 
 /* ================= LOOP ================= */
