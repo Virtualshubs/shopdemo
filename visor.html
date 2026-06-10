@@ -194,8 +194,11 @@ let state = {
   autoRotate: false
 };
 
+// 🔥 GLOBAL URL STATE
+let lastGeneratedURL = null;
+
+// 🔥 IMPORTANT FIX FLAG (avoids first-frame flicker)
 let isLoadingFromURL = false;
-let hasInitRender = false;
 
 init();
 checkURL();
@@ -230,13 +233,19 @@ function init() {
 
   window.addEventListener("resize", onResize);
 
+  // UI EVENTS
   const rotateInput = document.getElementById("rotateInput");
   if (rotateInput) {
     rotateInput.checked = state.autoRotate;
+
     rotateInput.addEventListener("change", (e) => {
       applyRotation(e.target.checked);
     });
   }
+
+  // hide export actions initially
+  const actions = document.getElementById("exportActions");
+  if (actions) actions.style.display = "none";
 }
 
 /* ================= MODEL ================= */
@@ -295,13 +304,18 @@ function applySceneStyle(bg) {
 
 function applyRotation(value) {
   state.autoRotate = value;
-  if (controls) controls.autoRotate = value;
+
+  if (controls) {
+    controls.autoRotate = value;
+  }
+
+  const rotateInput = document.getElementById("rotateInput");
+  if (rotateInput) rotateInput.checked = value;
 }
 
 /* ================= EXPORT ================= */
 
 function exportScene() {
-
   const url = state.modelUrl || urlInput.value.trim();
 
   const payload = {
@@ -313,16 +327,53 @@ function exportScene() {
   const encoded = btoa(JSON.stringify(payload));
   const link = `${location.origin}${location.pathname}?scene=${encoded}`;
 
+  lastGeneratedURL = link;
+
   linkBox.innerHTML = link;
 
-  // 🔥 show buttons ONLY after URL exists
-  document.getElementById("exportActions").style.display = "flex";
+  const actions = document.getElementById("exportActions");
+  if (actions) actions.style.display = "flex";
 }
 
-/* ================= URL LOAD (IMPORTANT FIX) ================= */
+/* ================= ACTIONS ================= */
+
+function openScene() {
+  if (!lastGeneratedURL) return;
+  window.open(lastGeneratedURL, "_blank", "noopener,noreferrer");
+}
+
+function copyURL() {
+  if (!lastGeneratedURL) return;
+
+  navigator.clipboard.writeText(lastGeneratedURL)
+    .then(() => alert("URL copied"))
+    .catch(() => {
+      const temp = document.createElement("textarea");
+      temp.value = lastGeneratedURL;
+      document.body.appendChild(temp);
+      temp.select();
+      document.execCommand("copy");
+      temp.remove();
+    });
+}
+
+function generateQR() {
+  if (!lastGeneratedURL) return;
+
+  const win = window.open("", "_blank");
+
+  win.document.write(`
+    <html>
+      <body style="display:flex;align-items:center;justify-content:center;height:100vh;margin:0;">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(lastGeneratedURL)}" />
+      </body>
+    </html>
+  `);
+}
+
+/* ================= URL LOAD (FIXED NO-FLASH VERSION) ================= */
 
 function checkURL() {
-
   const sceneParam = new URLSearchParams(location.search).get("scene");
   if (!sceneParam) return;
 
@@ -331,8 +382,9 @@ function checkURL() {
   try {
     const data = JSON.parse(atob(sceneParam));
 
-    // 🔥 hide UI immediately (before any frame render)
-    document.getElementById("ui").style.display = "none";
+    // hide UI instantly
+    const ui = document.getElementById("ui");
+    if (ui) ui.style.display = "none";
 
     if (data.modelUrl) {
       loadModel(data.modelUrl);
@@ -344,11 +396,13 @@ function checkURL() {
     const rotateInput = document.getElementById("rotateInput");
     if (rotateInput) rotateInput.checked = data.autoRotate ?? false;
 
+    lastGeneratedURL = window.location.href;
+
   } catch (e) {
     console.error(e);
   }
 
-  // allow first frame after state is ready
+  // release render lock after first paint
   requestAnimationFrame(() => {
     isLoadingFromURL = false;
   });
@@ -360,10 +414,10 @@ function animate() {
 
   requestAnimationFrame(animate);
 
-  if (!isLoadingFromURL) {
-    if (controls) controls.update();
-    renderer.render(scene, camera);
-  }
+  if (isLoadingFromURL) return;
+
+  if (controls) controls.update();
+  renderer.render(scene, camera);
 }
 
 /* ================= RESIZE ================= */
