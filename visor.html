@@ -5,19 +5,19 @@
 <title>3D Twins Lite</title>
 
 <style>
-    body.loading-scene #ui {
-    display: none !important;
-  }
+.loading-scene #ui {
+  display: none !important;
+}
 
-  body.loading-scene {
-    background: #000 !important;
-  }
+.loading-scene body {
+  background: #000 !important;
+}
   
   body {
     margin: 0;
     overflow: hidden;
     font-family: Inter, Arial, sans-serif;
-    background: #c2ceff;
+    background:#000;
   }
 
   canvas { display: block; }
@@ -112,6 +112,11 @@
     background: #4da3ff;
   }
 </style>
+    <script>
+if (new URLSearchParams(location.search).get("scene")) {
+  document.documentElement.classList.add("loading-scene");
+}
+</script>
 </head>
 
 <body>
@@ -198,26 +203,19 @@ let scene, camera, renderer, controls, model;
 
 let state = {
   modelUrl: null,
-  bg: "#c2ceff",
+  bg: "#000000",
   autoRotate: false
 };
 
-// 🔥 GLOBAL URL STATE
 let lastGeneratedURL = null;
 
-// 🔥 IMPORTANT FIX FLAG
 let isLoadingFromURL = false;
 
-/* 🔥 PREVENT INITIAL UI FLASH (MUST RUN BEFORE INIT) */
-if (new URLSearchParams(location.search).get("scene")) {
-  document.body.classList.add("loading-scene");
-}
 
 init();
 checkURL();
 animate();
 
-/* ================= INIT ================= */
 
 function init() {
   scene = new THREE.Scene();
