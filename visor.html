@@ -173,15 +173,13 @@ input:not(.heroInputBox input) {
   opacity: 0.9;
 }
 
-/* GIF pequeño tipo “mascota UI” */
-.titleGif {
-  width: 400px;
-  height: 400px;
-  display: block;
-  margin: 0 auto 14px auto;
-  opacity: 0.9;
-
- }
+.titleGif{
+  width:min(400px, 80vw);
+  height:auto;
+  display:block;
+  margin:0 auto 14px auto;
+  opacity:.9;
+}
 
 /* suave flotación */
 @keyframes titleFloat {
@@ -350,6 +348,205 @@ input:not(.heroInputBox input) {
 .stepDot.active {
   background: #4da3ff;
 }
+
+  #watermark{
+  position:fixed;
+  bottom:16px;
+  right:16px;
+
+  font-size:11px;
+  color:rgba(255,255,255,.45);
+
+  padding:8px 12px;
+
+  background:rgba(0,0,0,.25);
+  backdrop-filter:blur(10px);
+
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:999px;
+
+  z-index:5;
+
+  transition:.2s ease;
+}
+
+#watermark:hover{
+  color:white;
+  transform:translateY(-2px);
+}
+
+  /* ===================================================== */
+/* ================= RESPONSIVE TABLET ================= */
+/* ===================================================== */
+
+@media (max-width: 1024px) {
+
+  #ui:not(.ui-fullscreen){
+    width:300px;
+    top:16px;
+    left:16px;
+  }
+
+  .heroTitle{
+    font-size:30px;
+  }
+
+  .heroSubtitle{
+    max-width:480px;
+  }
+
+  .titleGif{
+    width:320px;
+    height:320px;
+  }
+
+}
+
+
+/* ===================================================== */
+/* =============== RESPONSIVE MOBILE LARGE ============= */
+/* ===================================================== */
+
+@media (max-width: 768px) {
+
+  #ui:not(.ui-fullscreen){
+    width:calc(100% - 32px);
+    left:16px;
+    top:16px;
+    padding:14px;
+  }
+
+  #ui.ui-fullscreen{
+    padding-left:20px;
+    padding-right:20px;
+  }
+
+  .step-hero{
+    max-width:100%;
+    gap:16px;
+  }
+
+  .heroTitle{
+    font-size:28px;
+    line-height:1.1;
+  }
+
+  .heroSubtitle{
+    font-size:13px;
+    max-width:100%;
+  }
+
+  .heroInputBox{
+    max-width:100%;
+    padding:16px;
+  }
+
+  .titleGif{
+    width:260px;
+    height:260px;
+  }
+
+  #colorPalette{
+    gap:8px;
+  }
+
+  .color-swatch{
+    width:24px;
+    height:24px;
+  }
+
+  .stepNav{
+    gap:6px;
+  }
+
+  #watermark{
+    right:12px;
+    bottom:12px;
+  }
+
+}
+
+
+/* ===================================================== */
+/* =============== RESPONSIVE MOBILE SMALL ============= */
+/* ===================================================== */
+
+@media (max-width: 480px) {
+
+  #ui:not(.ui-fullscreen){
+    width:calc(100% - 20px);
+    left:10px;
+    top:10px;
+    padding:12px;
+  }
+
+  #ui.ui-fullscreen{
+    padding-left:14px;
+    padding-right:14px;
+    padding-top:4vh;
+  }
+
+  .step-hero{
+    gap:14px;
+    margin-top:0;
+  }
+
+  .heroTitle{
+    font-size:24px;
+    line-height:1.1;
+  }
+
+  .heroSubtitle{
+    font-size:12px;
+    line-height:1.5;
+    max-width:100%;
+  }
+
+  .heroInputBox{
+    padding:14px;
+  }
+
+  .heroInputBox input{
+    font-size:12px;
+    padding:12px;
+  }
+
+  .titleGif{
+    width:180px;
+    height:180px;
+  }
+
+  .btn{
+    padding:11px;
+    font-size:13px;
+  }
+
+  .settingGroup{
+    padding:12px;
+  }
+
+  #colorPalette{
+    gap:6px;
+  }
+
+  .color-swatch{
+    width:22px;
+    height:22px;
+  }
+
+  #colorWheel{
+    width:26px;
+    height:26px;
+  }
+
+  #watermark{
+    font-size:10px;
+    padding:6px 10px;
+    right:8px;
+    bottom:8px;
+  }
+
+}
 </style>
     <script>
 if (new URLSearchParams(location.search).get("scene")) {
@@ -479,6 +676,12 @@ if (new URLSearchParams(location.search).get("scene")) {
 </div>
 
 <canvas id="c"></canvas>
+  
+  <a id="watermark"
+   href="https://tudominio.com/3dtwinslite"
+   target="_blank">
+   Made with 3D Twins Lite
+</a>
 
 <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/build/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/controls/OrbitControls.js"></script>
