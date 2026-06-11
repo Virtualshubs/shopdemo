@@ -41,6 +41,33 @@
     color: #fff;
   }
 
+
+  #ui.ui-fullscreen {
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  border-radius: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#ui.ui-fullscreen .stepNav,
+#ui.ui-fullscreen .stepDot {
+  display: none;
+}
+
+#ui.ui-fullscreen #step2,
+#ui.ui-fullscreen #step3 {
+  display: none;
+}
+
+#ui.ui-fullscreen #step1 {
+  width: 420px;
+}
+  
+
   #title {
     font-size: 14px;
     font-weight: 600;
@@ -335,14 +362,13 @@ let state = {
 };
 
 let lastGeneratedURL = null;
-
 let isLoadingFromURL = false;
-
 
 init();
 checkURL();
 animate();
 
+/* ================= INIT ================= */
 
 function init() {
   scene = new THREE.Scene();
@@ -371,7 +397,7 @@ function init() {
 
   window.addEventListener("resize", onResize);
 
-  // ================= UI EVENTS =================
+  /* ================= UI EVENTS ================= */
 
   const rotateInput = document.getElementById("rotateInput");
   if (rotateInput) {
@@ -381,28 +407,53 @@ function init() {
     });
   }
 
- const bgInput = document.getElementById("bgInput");
+  const bgInput = document.getElementById("bgInput");
 
-if (bgInput) {
-  bgInput.addEventListener("input", (e) => {
-    applySceneStyle(e.target.value);
+  if (bgInput) {
+    bgInput.addEventListener("input", (e) => {
+      const color = e.target.value;
+      applySceneStyle(color);
+
+      document
+        .querySelectorAll(".color-swatch")
+        .forEach(s => s.classList.remove("active"));
+
+      document
+        .querySelector(`.color-swatch[data-color="${color}"]`)
+        ?.classList.add("active");
+    });
+  }
+
+  document.querySelectorAll(".color-swatch").forEach((swatch) => {
+    swatch.addEventListener("click", () => {
+      const color = swatch.dataset.color;
+
+      bgInput.value = color;
+      applySceneStyle(color);
+
+      document
+        .querySelectorAll(".color-swatch")
+        .forEach(s => s.classList.remove("active"));
+
+      swatch.classList.add("active");
+    });
   });
-}
 
-const swatches = document.querySelectorAll(".color-swatch");
-
-swatches.forEach((swatch) => {
-  swatch.addEventListener("click", () => {
-    const color = swatch.dataset.color;
-
-    // sync input + scene
-    bgInput.value = color;
-    applySceneStyle(color);
+  document.getElementById("colorWheel")?.addEventListener("click", () => {
+    bgInput.click();
   });
-});
 
   const actions = document.getElementById("exportActions");
   if (actions) actions.style.display = "none";
+
+  /* ================= START MODE (FULLSCREEN STEP 1) ================= */
+  document.getElementById("ui")?.classList.add("ui-fullscreen");
+}
+
+/* ================= UI MODE SWITCH ================= */
+
+function setCompactUI() {
+  document.getElementById("ui")?.classList.remove("ui-fullscreen");
 }
 
 /* ================= MODEL ================= */
@@ -418,6 +469,12 @@ function loadModel(url) {
 
     const box = new THREE.Box3().setFromObject(model);
     model.position.sub(box.getCenter(new THREE.Vector3()));
+
+    /* 🔥 SWITCH UI MODE HERE */
+    setCompactUI();
+
+    /* opcional: avanzar paso */
+    goStep(2);
   });
 }
 
@@ -456,15 +513,6 @@ function applySceneStyle(bg) {
   document.body.style.background = bg;
 }
 
-  
-  const bgInput = document.getElementById("bgInput");
-
-if (bgInput) {
-  bgInput.addEventListener("input", (e) => {
-    applySceneStyle(e.target.value);
-  });
-}
-
 /* ================= ROTATION ================= */
 
 function applyRotation(value) {
@@ -477,7 +525,6 @@ function applyRotation(value) {
   const rotateInput = document.getElementById("rotateInput");
   if (rotateInput) rotateInput.checked = value;
 }
-
 
 /* ================= EXPORT ================= */
 
@@ -537,7 +584,7 @@ function generateQR() {
   `);
 }
 
-/* ================= URL LOAD (NO FLASH FINAL FIX) ================= */
+/* ================= URL LOAD ================= */
 
 function checkURL() {
   const sceneParam = new URLSearchParams(location.search).get("scene");
@@ -548,18 +595,12 @@ function checkURL() {
   try {
     const data = JSON.parse(atob(sceneParam));
 
-    const ui = document.getElementById("ui");
-    if (ui) ui.style.display = "none";
+    document.getElementById("ui").style.display = "none";
 
-    if (data.modelUrl) {
-      loadModel(data.modelUrl);
-    }
+    if (data.modelUrl) loadModel(data.modelUrl);
 
     applySceneStyle(data.bg || state.bg);
     applyRotation(data.autoRotate ?? false);
-
-    const rotateInput = document.getElementById("rotateInput");
-    if (rotateInput) rotateInput.checked = data.autoRotate ?? false;
 
     lastGeneratedURL = window.location.href;
 
@@ -575,7 +616,6 @@ function checkURL() {
 /* ================= LOOP ================= */
 
 function animate() {
-
   requestAnimationFrame(animate);
 
   if (isLoadingFromURL) return;
@@ -591,27 +631,6 @@ function onResize() {
   camera.updateProjectionMatrix();
   renderer.setSize(innerWidth, innerHeight);
 }
-
-
-  document.querySelectorAll(".color-swatch").forEach(swatch => {
-
-  swatch.addEventListener("click", () => {
-
-    document
-      .querySelectorAll(".color-swatch")
-      .forEach(s => s.classList.remove("active"));
-
-    swatch.classList.add("active");
-
-    const color = swatch.dataset.color;
-
-    bgInput.value = color;
-
-    applySceneStyle(color);
-
-  });
-
-});
 
 </script>
 
