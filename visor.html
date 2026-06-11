@@ -75,6 +75,31 @@
 
 /* ================= COLOR PICKER ================= */
 
+
+.settingGroup{
+  margin-top:14px;
+  padding:14px;
+
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.05);
+
+  border-radius: 12px;
+
+  backdrop-filter: blur(8px);
+}
+
+.settingGroup:first-child{
+  margin-top:0;
+}
+
+.settingGroup .label{
+  font-size:11px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  opacity:.55;
+  margin-bottom:10px;
+}
+  
 .color-section{
   margin-top:12px;
 }
@@ -217,41 +242,49 @@ if (new URLSearchParams(location.search).get("scene")) {
     </button>
   </div>
 
-  <!-- STEP 2 -->
-  <div id="step2" class="step">
-  
-<div class="label">Background color</div>
+<div id="step2" class="step">
 
-<div class="colorPickerRow">
+  <div class="settingGroup">
 
-  <div id="colorWheel" onclick="bgInput.click()"></div>
+    <div class="label">Background color</div>
 
-  <div id="colorPalette">
-    <div class="color-swatch" data-color="#0e0f13" style="background:#0e0f13"></div>
-    <div class="color-swatch" data-color="#c2ceff" style="background:#c2ceff"></div>
-    <div class="color-swatch" data-color="#ffffff" style="background:#ffffff"></div>
-    <div class="color-swatch" data-color="#1a1a1a" style="background:#1a1a1a"></div>
-    <div class="color-swatch" data-color="#4da3ff" style="background:#4da3ff"></div>
-    <div class="color-swatch" data-color="#ff6b6b" style="background:#ff6b6b"></div>
+    <div class="colorPickerRow">
+      <div id="colorWheel" onclick="bgInput.click()"></div>
+
+      <div id="colorPalette">
+        <div class="color-swatch" data-color="#0e0f13" style="background:#0e0f13"></div>
+        <div class="color-swatch" data-color="#c2ceff" style="background:#c2ceff"></div>
+        <div class="color-swatch" data-color="#ffffff" style="background:#ffffff"></div>
+        <div class="color-swatch" data-color="#1a1a1a" style="background:#1a1a1a"></div>
+        <div class="color-swatch" data-color="#4da3ff" style="background:#4da3ff"></div>
+        <div class="color-swatch" data-color="#ff6b6b" style="background:#ff6b6b"></div>
+      </div>
+    </div>
+
+    <input id="bgInput" type="color" style="display:none;" />
+
+  </div>
+
+  <div class="settingGroup">
+
+    <div class="label">Auto rotate</div>
+
+    <label style="display:flex;align-items:center;gap:8px;font-size:12px;">
+      <input id="rotateInput" type="checkbox">
+      Enable rotation
+    </label>
+
+  </div>
+
+  <div class="stepNav">
+    <button class="btn btn-secondary" onclick="goStep(1)">Back</button>
+    <button class="btn btn-secondary" onclick="goStep(3)">Continue</button>
   </div>
 
 </div>
 
-<input id="bgInput" type="color" style="display:none;">
-
-    <div class="label">Auto rotate</div>
-    <label style="display:flex;align-items:center;gap:8px;font-size:12px;">
-      <input id="rotateInput" type="checkbox"  />
-      Enable rotation
-    </label>
-
-    <div class="stepNav">
-      <button class="btn btn-secondary" onclick="goStep(1)">Back</button>
-      <button class="btn btn-secondary" onclick="goStep(3)">Continue</button>
-    </div>
-  </div>
-
-<div id="step3" class="step">
+  
+  <div id="step3" class="step">
 
   <button class="btn btn-primary" onclick="exportScene()">
     Publish Scene
