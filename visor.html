@@ -73,31 +73,52 @@
   .btn-primary { background: #4da3ff; color: #000; }
   .btn-secondary { background: rgba(255,255,255,0.06); color: #fff; }
 
-#colorPalette {
-  display: flex;
-  gap: 8px;
-  margin-top: 10px;
-  flex-wrap: wrap;
+/* ================= COLOR PICKER ================= */
+
+.color-section{
+  margin-top:12px;
 }
 
-.color-swatch {
-  width: 22px;
-  height: 22px;
-  border-radius: 6px;
-  cursor: pointer;
-  border: 2px solid rgba(255,255,255,0.15);
-  transition: transform 0.15s ease, border 0.15s ease;
+#colorPalette{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
 }
 
-.color-swatch:hover {
-  transform: scale(1.15);
-  border: 2px solid rgba(255,255,255,0.6);
+.color-swatch{
+  width:26px;
+  height:26px;
+  border-radius:50%;
+  cursor:pointer;
+
+  border:2px solid rgba(255,255,255,.15);
+
+  transition:
+  transform .15s ease,
+  border .15s ease,
+  box-shadow .15s ease;
 }
-  #colorWheel {
-  width: 54px;
-  height: 54px;
-  border-radius: 50%;
-  background: conic-gradient(
+
+.color-swatch:hover{
+  transform:scale(1.15);
+  border-color:rgba(255,255,255,.7);
+}
+
+.color-swatch.active{
+  border-color:white;
+  box-shadow:0 0 0 3px rgba(255,255,255,.15);
+}
+
+/* rueda personalizada */
+
+#colorWheel{
+  width:30px;
+  height:30px;
+  border-radius:50%;
+
+  background:
+  conic-gradient(
     red,
     yellow,
     lime,
@@ -107,8 +128,26 @@
     red
   );
 
-  cursor: pointer;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+  cursor:pointer;
+
+  border:2px solid rgba(255,255,255,.15);
+
+  transition:
+  transform .15s ease,
+  border .15s ease;
+}
+
+#colorWheel:hover{
+  transform:scale(1.15);
+  border-color:rgba(255,255,255,.7);
+}
+
+/* input oculto */
+
+#bgInput{
+  position:absolute;
+  opacity:0;
+  pointer-events:none;
 }
 
   #linkBox {
@@ -182,17 +221,23 @@ if (new URLSearchParams(location.search).get("scene")) {
   <div id="step2" class="step">
   
 <div class="label">Background color</div>
-<div id="colorWheel" onclick="bgInput.click()"></div>
-<input id="bgInput" type="color" style="display:none;" />
 
-<div id="colorPalette">
-  <div class="color-swatch" data-color="#0e0f13" style="background:#0e0f13"></div>
-  <div class="color-swatch" data-color="#c2ceff" style="background:#c2ceff"></div>
-  <div class="color-swatch" data-color="#ffffff" style="background:#ffffff"></div>
-  <div class="color-swatch" data-color="#1a1a1a" style="background:#1a1a1a"></div>
-  <div class="color-swatch" data-color="#4da3ff" style="background:#4da3ff"></div>
-  <div class="color-swatch" data-color="#ff6b6b" style="background:#ff6b6b"></div>
+<div class="colorPickerRow">
+
+  <div id="colorWheel" onclick="bgInput.click()"></div>
+
+  <div id="colorPalette">
+    <div class="color-swatch" data-color="#0e0f13" style="background:#0e0f13"></div>
+    <div class="color-swatch" data-color="#c2ceff" style="background:#c2ceff"></div>
+    <div class="color-swatch" data-color="#ffffff" style="background:#ffffff"></div>
+    <div class="color-swatch" data-color="#1a1a1a" style="background:#1a1a1a"></div>
+    <div class="color-swatch" data-color="#4da3ff" style="background:#4da3ff"></div>
+    <div class="color-swatch" data-color="#ff6b6b" style="background:#ff6b6b"></div>
+  </div>
+
 </div>
+
+<input id="bgInput" type="color" style="display:none;">
 
     <div class="label">Auto rotate</div>
     <label style="display:flex;align-items:center;gap:8px;font-size:12px;">
@@ -513,6 +558,27 @@ function onResize() {
   camera.updateProjectionMatrix();
   renderer.setSize(innerWidth, innerHeight);
 }
+
+
+  document.querySelectorAll(".color-swatch").forEach(swatch => {
+
+  swatch.addEventListener("click", () => {
+
+    document
+      .querySelectorAll(".color-swatch")
+      .forEach(s => s.classList.remove("active"));
+
+    swatch.classList.add("active");
+
+    const color = swatch.dataset.color;
+
+    bgInput.value = color;
+
+    applySceneStyle(color);
+
+  });
+
+});
 
 </script>
 
