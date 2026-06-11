@@ -360,7 +360,14 @@ if (new URLSearchParams(location.search).get("scene")) {
 
 <div id="step1" class="step active step-hero">
   
-  <div id="title">3D Twins Lite</div>
+<div id="title">
+  3D Twins Lite
+</div>
+
+<img class="titleGif" src="https://demo.3dtwins.eu/leopard3dtwinslittle.gif" alt="fun" />
+
+
+  
   <div class="heroTitle">
     Create your 3D scene
   </div>
@@ -371,7 +378,7 @@ if (new URLSearchParams(location.search).get("scene")) {
 
   <div class="heroInputBox">
 
-    <input id="urlInput" placeholder="https://demo.3dtwins.eu/leopard3dtwinslittle.gif" />
+    <input id="urlInput" placeholder="https://yoururl.com" />
 
     <button class="btn btn-primary" onclick="goStep(2)">
       Load model
