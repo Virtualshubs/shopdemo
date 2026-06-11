@@ -66,7 +66,52 @@
 #ui.ui-fullscreen #step1 {
   width: 420px;
 }
-  
+  .step-hero{
+  height: calc(100vh - 40px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  gap: 18px;
+  padding: 20px;
+}
+
+.heroTitle{
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.heroSubtitle{
+  font-size: 13px;
+  opacity: 0.65;
+  max-width: 320px;
+  line-height: 1.4;
+}
+
+.heroInputBox{
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.heroInputBox input{
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.05);
+  color: white;
+  font-size: 13px;
+  text-align: center;
+}
+
+.heroHint{
+  font-size: 11px;
+  opacity: 0.4;
+}
 
   #title {
     font-size: 14px;
@@ -260,14 +305,31 @@ if (new URLSearchParams(location.search).get("scene")) {
     <div class="stepDot" id="dot3"></div>
   </div>
 
-  <!-- STEP 1 -->
-  <div id="step1" class="step active">
-    <input id="urlInput" placeholder="Paste GLB URL..." />
+<div id="step1" class="step active step-hero">
 
-    <button class="btn btn-secondary" onclick="goStep(2)">
-      Load Model
-    </button>
+  <div class="heroTitle">
+    Create your 3D scene
   </div>
+
+  <div class="heroSubtitle">
+    Paste a GLB model URL to start building your interactive experience
+  </div>
+
+  <div class="heroInputBox">
+
+    <input id="urlInput" placeholder="https://your-model.glb" />
+
+    <button class="btn btn-primary" onclick="goStep(2)">
+      Load model
+    </button>
+
+  </div>
+
+  <div class="heroHint">
+    Supports GLB / GLTF files hosted online
+  </div>
+
+</div>
 
 <div id="step2" class="step">
 
