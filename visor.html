@@ -625,19 +625,20 @@ if (new URLSearchParams(location.search).get("scene")) {
     Paste a GLB model URL to start building your interactive experience
   </div>
 
-  <div class="heroInputBox">
+ <div class="heroInputBox">
 
-    <input id="urlInput" placeholder="https://demo.3dtwins.eu/Mantra.glb" />
-          
+  <input id="urlInput"
+         placeholder="Paste your model URL" />
+
   <div class="heroHint">
-    Supports GLB / GLTF files hosted online
+    If empty, a demo model will be loaded automatically
   </div>
-          
-    <button class="btn btn-primary" onclick="goStep(2)">
-      Load model
-    </button>
 
-  </div>
+  <button class="btn btn-primary" onclick="goStep(2)">
+    Load model
+  </button>
+
+</div>
 
 
 
@@ -875,14 +876,20 @@ function goStep(step) {
   );
   document.getElementById("dot" + step).classList.add("active");
 
+  // ================= STEP 2 =================
   if (step === 2) {
-    const url = urlInput.value.trim();
-    if (url && !state.modelUrl) {
-      state.modelUrl = url;
-      loadModel(url);
+
+    let url = urlInput.value.trim();
+
+    if (!url) {
+      url = "https://demo.3dtwins.eu/Mantra.glb";
     }
+
+    state.modelUrl = url;
+    loadModel(url);
   }
 
+  // ================= STEP 3 =================
   if (step === 3) {
     applyRotation(document.getElementById("rotateInput").checked);
   }
