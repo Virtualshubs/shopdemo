@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>3D Twins</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+
+:root{
+  --bg:#0B0F17;
+  --fg:#F5F7FA;
+  --muted:#AAB4C0;
+  --line:rgba(170,180,192,0.15);
+  --accent:#6FA8FF;
+}
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+body{
+  font-family: Inter, system-ui;
+ background:
+radial-gradient(
+  circle at 85% 50%,
+  rgba(93,229,255,0.9) 0%,
+  rgba(93,229,255,0.35) 20%,
+  rgba(93,229,255,0) 50%
+),
+linear-gradient(
+  90deg,
+  #060C3D 0%,
+  #0E1A5A 20%,
+  #1A2E7A 40%,
+  #2648A6 60%,
+  #3C7FE3 75%,
+  #5DE5FF 100%
+);
+  color: var(--fg);
+  line-height:1.6;
+  overflow-x:hidden;
+}
+
+/* BACKGROUND */
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(111,168,255,0.08), transparent 40%),
+    radial-gradient(circle at 80% 60%, rgba(255,255,255,0.03), transparent 45%);
+  pointer-events:none;
+}
+
+.grid-bg{
+  position:fixed;
+  inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size:80px 80px;
+  opacity:0.05;
+  pointer-events:none;
+}
+
+/* LANGUAGE */
+.lang-toggle{
+  position:fixed;
+  top:24px;
+  right:24px;
+  border:1px solid var(--line);
+  padding:10px 14px;
+  font-size:12px;
+  letter-spacing:0.15em;
+  cursor:pointer;
+  background:rgba(255,255,255,0.02);
+  color:var(--fg);
+  z-index:10;
+}
+
+/* HERO */
+.hero{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 10vw;
+}
+
+.hero h1{
+  font-size:72px;
+  font-weight:500;
+  letter-spacing:0.08em;
+}
+
+.hero p{
+  max-width:520px;
+  color:var(--muted);
+  margin-top:16px;
+}
+
+.orbital{
+  width:420px;
+  height:420px;
+  border-radius:50%;
+  background:
+    radial-gradient(circle at center,
+      rgba(111,168,255,0.25),
+      rgba(111,168,255,0.05),
+      transparent 70%);
+}
+
+/* SECTIONS */
+.section{
+  padding:140px 10vw;
+}
+
+.section h2{
+  font-size:12px;
+  letter-spacing:0.25em;
+  color:var(--muted);
+  margin-bottom:40px;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:24px;
+}
+
+.card{
+  padding:28px;
+  border:1px solid var(--line);
+  background:rgba(255,255,255,0.02);
+}
+
+.card p{
+  color:var(--muted);
+  margin-top:10px;
+}
+
+.text{
+  max-width:950px;
+  color:var(--muted);
+}
+
+/* LANGUAGE */
+[data-lang]{ display:none; }
+[data-lang].active{ display:block; }
+
+strong{
+  color:var(--fg);
+  font-weight:500;
+}
+
+/* ========================= */
+/* VERTICAL DEMO SYSTEM      */
+/* ========================= */
+
+.atlas-vertical{
+  display:flex;
+  flex-direction:column;
+  gap:32px;
+  margin-top:20px;
+}
+
+.v-item{
+  position:relative;
+  width:100%;
+  height:460px;
+  border:1px solid var(--line);
+  overflow:hidden;
+  background:rgba(255,255,255,0.02);
+  cursor:pointer;
+}
+
+.v-item img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  filter:grayscale(100%) contrast(1.1) brightness(0.85);
+  transition:0.5s ease;
+}
+
+.v-item:hover img{
+  filter:grayscale(0%);
+  transform:scale(1.03);
+}
+
+/* overlay */
+.v-info{
+  position:absolute;
+  inset:0;
+  background:linear-gradient(to top, rgba(11,15,23,0.95), transparent);
+  opacity:0;
+  transition:0.3s ease;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end;
+  padding:28px;
+}
+
+.v-item:hover .v-info{
+  opacity:1;
+}
+
+.v-title{
+  font-size:12px;
+  letter-spacing:0.18em;
+  color:var(--fg);
+  margin-bottom:10px;
+}
+
+.v-desc{
+  font-size:12px;
+  color:var(--muted);
+  max-width:800px;
+}
+
+/* FOOTER */
+footer{
+  padding:80px 10vw;
+  border-top:1px solid var(--line);
+  color:var(--muted);
+  font-size:12px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="grid-bg"></div>
+
+<div class="lang-toggle" onclick="toggleLang()">
+EN / ES
+</div>
+
+<!-- HERO -->
+<section class="hero">
+
+  <div>
+
+    <h1>3D TWINS</h1>
+
+    <div data-lang="en" class="active">
+
+      <p>Digital twin architectures for complex systems.</p>
+
+      <p>
+        We research how data, physical systems and informational structures
+        can be translated into interactive 3D environments for analysis,
+        simulation and knowledge representation.
+      </p>
+
+    </div>
+
+    <div data-lang="es">
+
+      <p>Arquitecturas de gemelos digitales para sistemas complejos.</p>
+
+      <p>
+        Investigamos cómo los datos, sistemas físicos y estructuras de información
+        pueden traducirse en entornos 3D interactivos para análisis, simulación y representación del conocimiento.
+      </p>
+
+    </div>
+
+  </div>
+
+  <div class="orbital"></div>
+
+</section>
+
+<!-- WHAT WE DO -->
+<section class="section">
+
+<h2>WHAT WE DO / QUÉ HACEMOS</h2>
+
+<div class="grid">
+
+  <div class="card">
+    Industrial Systems
+    <p data-lang="en" class="active">
+      Digital representation of products, assets and industrial environments.
+    </p>
+    <p data-lang="es">
+      Representación digital de productos, activos y entornos industriales.
+    </p>
+  </div>
+
+  <div class="card">
+    Scientific Simulation
+    <p data-lang="en" class="active">
+      Models for physical and computational systems.
+    </p>
+    <p data-lang="es">
+      Modelos para sistemas físicos y computacionales.
+    </p>
+  </div>
+
+  <div class="card">
+    Space & Knowledge Systems
+    <p data-lang="en" class="active">
+      Visualization of spatial data, missions and complex knowledge systems.
+    </p>
+    <p data-lang="es">
+      Visualización de datos espaciales, misiones y sistemas complejos de conocimiento.
+    </p>
+  </div>
+
+</div>
+
+</section>
+
+<!-- PRODUCT -->
+<section class="section">
+
+<h2>PRODUCT / PRODUCTO</h2>
+
+<div class="text">
+
+<div data-lang="en" class="active">
+
+<strong>3D Twins Configurator</strong>
+
+<br><br>
+
+System for creation, certification, integration and deployment of digital twins.
+
+<br><br>
+
+Transforms real-world or digital assets into structured interactive 3D representations enriched with data layers.
+
+</div>
+
+<br><br>
+
+<div data-lang="es">
+
+<strong>3D Twins Configurator</strong>
+
+<br><br>
+
+Sistema para creación, certificación, integración y despliegue de gemelos digitales.
+
+<br><br>
+
+Transforma activos físicos o digitales en representaciones 3D estructuradas con capas de datos e interacción.
+
+</div>
+
+</div>
+
+</section>
+
+<!-- TRAJECTORY -->
+<section class="section">
+
+<h2>TRAJECTORY / TRAYECTORIA</h2>
+
+<div class="text">
+
+<div data-lang="en" class="active">
+
+2024 — Sherpa FEDA program  
+<br><br>
+March 2025 — CEEI / INCIBE incubation (First Prize)  
+<br><br>
+July 2025 — Female Founders finalist  
+<br><br>
+September 2025 — Young Entrepreneur Award (Albacete)  
+<br><br>
+October 2025 — Establishment at CEEI  
+<br><br>
+2026 — 3D Twins Software launch
+
+</div>
+
+<br><br>
+
+<div data-lang="es">
+
+2024 — Sherpa FEDA  
+<br><br>
+Marzo 2025 — CEEI / INCIBE  
+<br><br>
+Julio 2025 — Female Founders  
+<br><br>
+Septiembre 2025 — Premio Joven Empresario  
+<br><br>
+Octubre 2025 — Instalación CEEI  
+<br><br>
+2026 — Lanzamiento 3D Twins Software
+
+</div>
+
+</div>
+
+</section>
+
+<!-- APPROACH -->
+<section class="section">
+
+<h2>APPROACH / ENFOQUE</h2>
+
+<div class="text">
+
+<div data-lang="en" class="active">
+
+We build digital twin systems through computational graphics and data integration.
+
+We approach the system as a research environment where experimentation leads to applied technological products.
+
+</div>
+
+<br><br>
+
+<div data-lang="es">
+
+Construimos sistemas de gemelos digitales mediante computación gráfica e integración de datos.
+
+El enfoque parte de la investigación experimental hacia productos tecnológicos aplicados.
+
+</div>
+
+</div>
+
+</section>
+
+<!-- SYSTEM AXES -->
+<section class="section">
+
+<h2>SYSTEM AXES / EJES DEL SISTEMA</h2>
+
+<div class="grid">
+
+  <div class="card">
+    Integration
+    <p data-lang="en" class="active">External systems and APIs.</p>
+    <p data-lang="es">Sistemas externos y APIs.</p>
+  </div>
+
+  <div class="card">
+    Low-Impact Tech
+    <p data-lang="en" class="active">Efficient computational design.</p>
+    <p data-lang="es">Diseño computacional eficiente.</p>
+  </div>
+
+  <div class="card">
+    Data-Driven
+    <p data-lang="en" class="active">Real-time structured systems.</p>
+    <p data-lang="es">Sistemas de datos en tiempo real.</p>
+  </div>
+
+  <div class="card">
+    Distribution
+    <p data-lang="en" class="active">Cross-platform execution.</p>
+    <p data-lang="es">Ejecución multiplataforma.</p>
+  </div>
+
+  <div class="card">
+    Minimal Dependencies
+    <p data-lang="en" class="active">Autonomous scalable architecture.</p>
+    <p data-lang="es">Arquitectura autónoma escalable.</p>
+  </div>
+
+</div>
+
+</section>
+
+<!-- VISUAL ATLAS / VERTICAL SYSTEM -->
+<section class="section">
+
+<h2>VISUAL ATLAS / DEMO SYSTEMS</h2>
+
+<div class="text">
+
+<div data-lang="en" class="active">
+A vertical research environment containing simulations, prototypes and digital twin systems.
+</div>
+
+<br>
+
+<div data-lang="es">
+Un entorno de investigación vertical con simulaciones, prototipos y sistemas de gemelos digitales.
+</div>
+
+</div>
+
+<br><br>
+
+<div class="atlas-vertical">
+
+  <div class="v-item">
+    <img src="https://images.unsplash.com/photo-1446776811953-b23d57bd21aa">
+    <div class="v-info">
+      <div class="v-title">SPACE SYSTEMS</div>
+      <div class="v-desc">Orbital computation & spatial architectures applied to space data visualization.</div>
+    </div>
+  </div>
+
+  <div class="v-item">
+    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5">
+    <div class="v-info">
+      <div class="v-title">DATA SIMULATION</div>
+      <div class="v-desc">Real-time distributed data systems and computational flows.</div>
+    </div>
+  </div>
+
+  <div class="v-item">
+    <img src="https://images.unsplash.com/photo-1581092160562-40aa08e78837">
+    <div class="v-info">
+      <div class="v-title">DIGITAL TWINS</div>
+      <div class="v-desc">Structured 3D representations with metadata and interaction layers.</div>
+    </div>
+  </div>
+
+  <div class="v-item">
+    <img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d">
+    <div class="v-info">
+      <div class="v-title">PHYSICAL SIMULATION</div>
+      <div class="v-desc">Computational modeling of complex physical systems.</div>
+    </div>
+  </div>
+
+</div>
+
+</section>
+
+<!-- LOCATION -->
+<section class="section">
+
+<h2>LOCATION / UBICACIÓN</h2>
+
+<div class="text">
+CEEI — Albacete, Spain
+</div>
+
+</section>
+
+<footer>
+Contact: hello@3dtwins.io
+</footer>
+
+<script>
+function toggleLang(){
+  document.querySelectorAll('[data-lang]').forEach(el=>{
+    el.classList.toggle('active');
+  });
+}
+</script>
+
+</body>
+</html>
