@@ -365,7 +365,51 @@ footer{
 .location-link:hover{
   border-bottom:1px solid var(--accent);
 }
-  
+  .timeline{
+  display:flex;
+  gap:24px;
+  overflow-x:auto;
+  padding:20px 0;
+  scroll-snap-type:x mandatory;
+}
+
+.t-item{
+  min-width:240px;
+  padding:20px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:rgba(255,255,255,0.02);
+  scroll-snap-align:start;
+  transition:0.3s ease;
+}
+
+.t-item:hover{
+  transform:translateY(-6px);
+  border-color:rgba(111,168,255,0.4);
+}
+
+.t-year{
+  font-size:11px;
+  letter-spacing:0.2em;
+  color:var(--accent);
+  margin-bottom:10px;
+}
+
+.t-title{
+  font-size:13px;
+  color:var(--fg);
+  margin-bottom:6px;
+}
+
+.t-sub{
+  font-size:12px;
+  color:var(--muted);
+}
+
+.highlight{
+  border-color:rgba(111,168,255,0.6);
+  background:rgba(111,168,255,0.05);
+}
 </style>
 </head>
 
@@ -498,103 +542,50 @@ El enfoque parte de la investigación experimental hacia productos tecnológicos
 
 
 
+<!-- SYSTEM AXES -->
 <section class="section">
 
-<h2>STARTUP TRAJECTORY / TRAYECTORIA</h2>
+<h2>SYSTEM AXES / EJES DEL SISTEMA</h2>
 
-<div class="timeline">
+<div class="grid">
 
-  <div class="t-item">
-    <div class="t-year">2024</div>
-
-    <p data-lang="en" class="active t-title">
-      Sherpa FEDA Program
-    </p>
-
-    <p data-lang="es" class="t-title">
-      Programa Sherpa FEDA
-    </p>
+  <div class="card">
+    Integration
+    <p data-lang="en" class="active">External systems and APIs.</p>
+    <p data-lang="es">Sistemas externos y APIs.</p>
   </div>
 
-  <div class="t-item">
-    <div class="t-year">2025</div>
-
-    <p data-lang="en" class="active t-title">
-      CEEI / INCIBE Incubation
-    </p>
-
-    <p data-lang="es" class="t-title">
-      Incubación CEEI / INCIBE
-    </p>
-
-    <p data-lang="en" class="t-sub">
-      First Prize
-    </p>
-
-    <p data-lang="es" class="t-sub">
-      Primer Premio
-    </p>
+  <div class="card">
+    Low-Impact Tech
+    <p data-lang="en" class="active">Efficient computational design.</p>
+    <p data-lang="es">Diseño computacional eficiente.</p>
   </div>
 
-  <div class="t-item">
-    <div class="t-year">2025</div>
-
-    <p data-lang="en" class="active t-title">
-      Female Founders Finalist
-    </p>
-
-    <p data-lang="es" class="t-title">
-      Finalista Female Founders
-    </p>
+  <div class="card">
+    Data-Driven
+    <p data-lang="en" class="active">Real-time structured systems.</p>
+    <p data-lang="es">Sistemas de datos en tiempo real.</p>
   </div>
 
-  <div class="t-item">
-    <div class="t-year">2025</div>
-
-    <p data-lang="en" class="active t-title">
-      Young Entrepreneur Award (Albacete)
-    </p>
-
-    <p data-lang="es" class="t-title">
-      Premio Joven Empresario (Albacete)
-    </p>
+  <div class="card">
+    Distribution
+    <p data-lang="en" class="active">Cross-platform execution.</p>
+    <p data-lang="es">Ejecución multiplataforma.</p>
   </div>
 
-  <div class="t-item">
-    <div class="t-year">2025</div>
-
-    <p data-lang="en" class="active t-title">
-      Establishment at CEEI
-    </p>
-
-    <p data-lang="es" class="t-title">
-      Instalación en CEEI
-    </p>
-  </div>
-
-  <div class="t-item highlight">
-    <div class="t-year">2026</div>
-
-    <p data-lang="en" class="active t-title">
-      3D Twins Software Launch
-    </p>
-
-    <p data-lang="es" class="t-title">
-      Lanzamiento del Software 3D Twins
-    </p>
-
-    <p data-lang="en" class="t-sub">
-      Current milestone
-    </p>
-
-    <p data-lang="es" class="t-sub">
-      Hito actual
-    </p>
+  <div class="card">
+    Minimal Dependencies
+    <p data-lang="en" class="active">Autonomous scalable architecture.</p>
+    <p data-lang="es">Arquitectura autónoma escalable.</p>
   </div>
 
 </div>
 
 </section>
+
+  
+
+
   
 
 <section class="section">
@@ -798,46 +789,99 @@ Un entorno de investigación vertical con simulaciones, prototipos y sistemas de
 
 </section>
 
-<!-- TRAJECTORY -->
 <section class="section">
 
-<h2>STARTUP TRAJECTORY / TRAYECTORIA </h2>
+<h2>STARTUP TRAJECTORY / TRAYECTORIA</h2>
 
-<div class="text">
+<div class="timeline">
 
-<div data-lang="en" class="active">
+  <div class="t-item">
+    <div class="t-year">2024</div>
 
-2024 — Sherpa FEDA program  
-<br><br>
-March 2025 — CEEI / INCIBE incubation (First Prize)  
-<br><br>
-July 2025 — Female Founders finalist  
-<br><br>
-September 2025 — Young Entrepreneur Award (Albacete)  
-<br><br>
-October 2025 — Establishment at CEEI  
-<br><br>
-2026 — 3D Twins Software launch 
+    <p data-lang="en" class="active t-title">
+      Sherpa FEDA Program
+    </p>
 
-</div>
+    <p data-lang="es" class="t-title">
+      Programa Sherpa FEDA
+    </p>
+  </div>
 
-<br><br>
+  <div class="t-item">
+    <div class="t-year">2025</div>
 
-<div data-lang="es">
+    <p data-lang="en" class="active t-title">
+      CEEI / INCIBE Incubation
+    </p>
 
-2024 — Sherpa FEDA  
-<br><br>
-Marzo 2025 — CEEI / INCIBE  
-<br><br>
-Julio 2025 — Female Founders  
-<br><br>
-Septiembre 2025 — Premio Joven Empresario  
-<br><br>
-Octubre 2025 — Instalación CEEI  
-<br><br>
-2026 — Lanzamiento 3D Twins Software
+    <p data-lang="es" class="t-title">
+      Incubación CEEI / INCIBE
+    </p>
 
-</div>
+    <p data-lang="en" class="t-sub">
+      First Prize
+    </p>
+
+    <p data-lang="es" class="t-sub">
+      Primer Premio
+    </p>
+  </div>
+
+  <div class="t-item">
+    <div class="t-year">2025</div>
+
+    <p data-lang="en" class="active t-title">
+      Female Founders Finalist
+    </p>
+
+    <p data-lang="es" class="t-title">
+      Finalista Female Founders
+    </p>
+  </div>
+
+  <div class="t-item">
+    <div class="t-year">2025</div>
+
+    <p data-lang="en" class="active t-title">
+      Young Entrepreneur Award (Albacete)
+    </p>
+
+    <p data-lang="es" class="t-title">
+      Premio Joven Empresario (Albacete)
+    </p>
+  </div>
+
+  <div class="t-item">
+    <div class="t-year">2025</div>
+
+    <p data-lang="en" class="active t-title">
+      Establishment at CEEI
+    </p>
+
+    <p data-lang="es" class="t-title">
+      Instalación en CEEI
+    </p>
+  </div>
+
+  <div class="t-item highlight">
+    <div class="t-year">2026</div>
+
+    <p data-lang="en" class="active t-title">
+      3D Twins Software Launch
+    </p>
+
+    <p data-lang="es" class="t-title">
+      Lanzamiento del Software 3D Twins
+    </p>
+
+    <p data-lang="en" class="t-sub">
+      Current milestone
+    </p>
+
+    <p data-lang="es" class="t-sub">
+      Hito actual
+    </p>
+  </div>
 
 </div>
 
