@@ -260,7 +260,60 @@ footer{
   color:var(--muted);
   font-size:12px;
 }
+.hero-media{
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+  align-items:center;
+}
 
+/* MAIN IMAGE */
+.main-image{
+  width:420px;
+  height:420px;
+  border-radius:18px;
+  overflow:hidden;
+  border:1px solid var(--line);
+  background:rgba(255,255,255,0.02);
+}
+
+.main-image img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center;
+  transition:0.4s ease;
+}
+
+/* THUMBS */
+.thumbs{
+  display:flex;
+  gap:10px;
+  width:420px;
+  overflow-x:auto;
+  padding-bottom:4px;
+}
+
+.thumb{
+  width:80px;
+  height:60px;
+  object-fit:cover;
+  border-radius:10px;
+  cursor:pointer;
+  opacity:0.5;
+  border:1px solid transparent;
+  transition:0.3s ease;
+}
+
+.thumb:hover{
+  opacity:1;
+  transform:scale(1.05);
+}
+
+.thumb.active{
+  opacity:1;
+  border:1px solid var(--accent);
+}
 </style>
 </head>
 
@@ -431,9 +484,36 @@ Es el primer sistema aplicado construido sobre nuestra arquitectura de investiga
 
 </div>
 
-<img src="https://demo.3dtwins.eu/clipditor.png"
-     style="width:100%; height:100%; object-fit:cover; object-position:center 30%; display:block;">
+<div class="hero-media">
 
+  <!-- IMAGEN PRINCIPAL -->
+  <div class="main-image">
+    <img id="heroMainImg"
+         src="https://demo.3dtwins.eu/clipditor.png">
+  </div>
+
+  <!-- CARRUSEL -->
+  <div class="thumbs">
+
+    <img class="thumb active"
+         src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5"
+         onclick="changeHero(this.src)">
+
+    <img class="thumb"
+         src="https://images.unsplash.com/photo-1581092160562-40aa08e78837"
+         onclick="changeHero(this.src)">
+
+    <img class="thumb"
+         src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d"
+         onclick="changeHero(this.src)">
+
+    <img class="thumb"
+         src="https://images.unsplash.com/photo-1527430253228-e93688616381"
+         onclick="changeHero(this.src)">
+
+  </div>
+
+</div>
 </section>
 
 <!-- TRAJECTORY -->
@@ -633,5 +713,21 @@ function toggleLang(){
 }
 </script>
 
+
+  <script>
+function changeHero(src){
+
+  const main = document.getElementById("heroMainImg");
+  main.src = src;
+
+  document.querySelectorAll(".thumb").forEach(t=>{
+    t.classList.remove("active");
+    if(t.src === src){
+      t.classList.add("active");
+    }
+  });
+
+}
+</script>
 </body>
 </html>
