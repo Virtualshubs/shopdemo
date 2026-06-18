@@ -70,6 +70,65 @@ body::before{
   pointer-events:none;
 }
 
+
+
+  .glass-nav{
+  position:fixed;
+  top:18px;
+  left:50%;
+  transform:translateX(-50%);
+  width:min(1100px, 92vw);
+  padding:12px 20px;
+
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+
+  border:1px solid rgba(255,255,255,0.12);
+  background:rgba(255,255,255,0.06);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+
+  border-radius:14px;
+
+  z-index:1000;
+}
+
+.nav-left span{
+  font-size:12px;
+  letter-spacing:0.2em;
+  color:var(--fg);
+  opacity:0.9;
+}
+
+.nav-right{
+  display:flex;
+  gap:18px;
+  align-items:center;
+}
+
+.nav-link{
+  font-size:12px;
+  letter-spacing:0.12em;
+  text-decoration:none;
+  color:var(--muted);
+  transition:0.3s ease;
+}
+
+.nav-link:hover{
+  color:var(--fg);
+}
+
+.nav-link.highlight{
+  color:var(--accent);
+  border-bottom:1px solid transparent;
+}
+
+.nav-link.highlight:hover{
+  border-bottom:1px solid var(--accent);
+}
+
+  
 .grid-bg{
   position:fixed;
   inset:0;
@@ -414,7 +473,27 @@ footer{
 </head>
 
 <body>
+<nav class="glass-nav">
 
+  <div class="nav-left">
+    <span>3D TWINS</span>
+  </div>
+
+  <div class="nav-right">
+
+    <a href="#hero" class="nav-link">Home</a>
+
+    <a href="#product" class="nav-link">Product</a>
+
+    <a href="#trajectory" class="nav-link">Trajectory</a>
+
+    <a href="https://3dtwins.io" target="_blank" class="nav-link highlight">
+      Visit Site ↗
+    </a>
+
+  </div>
+
+</nav>
 <div class="grid-bg"></div>
 
 <div class="lang-toggle" onclick="toggleLang()">
