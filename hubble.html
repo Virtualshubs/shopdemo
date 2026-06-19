@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Hubble Safe Base</title>
+
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
+
+    canvas {
+      display: block;
+    }
+
+    #btn {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 10;
+      padding: 10px;
+    }
+  </style>
+</head>
+
+<body>
+
+<button id="btn">Where is Hubble?</button>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/satellite.js/dist/satellite.min.js"></script>
+
+<script>
+
+let scene, camera, renderer;
+let earth, hubble;
+
+init();
+
+function init() {
+
+  scene = new THREE.Scene();
+
+  camera = new THREE.PerspectiveCamera(
+    75,
+    window.innerWidth / window.innerHeight,
+    0.1,
+    10000
+  );
+
+  camera.position.z = 300;
+
+  renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  document.body.appendChild(renderer.domElement);
+
+  // 🌍 Tierra
+  const earthGeo = new THREE.SphereGeometry(100, 32, 32);
+  const earthMat = new THREE.MeshBasicMaterial({
+    color: 0x2233ff,
+    wireframe: true
+  });
+
+  earth = new THREE.Mesh(earthGeo, earthMat);
+  scene.add(earth);
+
+  // 🛰️ Hubble
+  const hubbleGeo = new THREE.SphereGeometry(4, 16, 16);
+  const hubbleMat = new THREE.MeshBasicMaterial({
+    color: 0xff3333
+  });
+
+  hubble = new THREE.Mesh(hubbleGeo, hubbleMat);
+  scene.add(hubble);
+
+  animate();
+}
+
+function animate() {
+  requestAnimationFrame(animate);
+
+  earth.rotation.y += 0.001;
+
+  renderer.render(scene, camera);
+}
+
+// 🚀 BOTÓN
+document.getElementById("btn").onclick = async () => {
+
+  try {
+
+    const url = "https://celestrak.org/NORAD/elements/gp.php?CATNR=20580&FORMAT=TLE";
+
+    const res = await fetch(url);
+    const text = await res.text();
+
+    const lines = text.trim().split("\n");
+
+    const satrec = satellite.twoline2satrec(lines[1], lines[2]);
+
+    const now = new Date();
+    const pv = satellite.propagate(satrec, now);
+
+    if (!pv.position) {
+      alert("No position data");
+      return;
+    }
+
+    const pos = pv.position;
+
+    const SCALE = 0.02;
+
+    hubble.position.set(
+      pos.x * SCALE,
+      pos.y * SCALE,
+      pos.z * SCALE
+    );
+
+    console.log("Hubble OK:", pos);
+
+  } catch (e) {
+    console.error(e);
+    alert("Error cargando datos");
+  }
+};
+
+</script>
+
+</body>
+</html>
