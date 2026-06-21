@@ -191,13 +191,73 @@ function getClass(maxElev) {
 }
 
 // =========================
-// SAT INFO
+// SAT INFO + INSTRUMENTOS
 // =========================
 const SAT_INFO = {
-  "25544": { name: "ISS", type: "Ciencia", mission: "Microgravedad" },
-  "39634": { name: "Sentinel-1A", type: "Radar SAR", mission: "Copernicus" },
-  "42063": { name: "Sentinel-2B", type: "Óptico", mission: "Tierra" },
-  "25338": { name: "NOAA-15", type: "Meteorológico", mission: "Clima" }
+  "25544": {
+    name: "ISS",
+    type: "Estación espacial",
+    mission: "Microgravedad",
+    instruments: [
+      " Laboratorios científicos",
+      " Cámaras de observación terrestre",
+      " Experimentos biomédicos"
+    ],
+    capabilities: [
+      "Observación humana en órbita",
+      "Experimentos en microgravedad",
+      "Fotografía terrestre general"
+    ]
+  },
+
+  "39634": {
+    name: "Sentinel-1A",
+    type: "Radar SAR",
+    mission: "Copernicus",
+    instruments: [
+      " Radar de apertura sintética (SAR)",
+      " Banda C microwave imaging"
+    ],
+    capabilities: [
+      " Inundaciones",
+      " Deformación del terreno",
+      " Monitorización de desastres",
+      " Funciona de noche y con nubes"
+    ]
+  },
+
+  "42063": {
+    name: "Sentinel-2B",
+    type: "Óptico multispectral",
+    mission: "Tierra",
+    instruments: [
+      " Cámara multiespectral",
+      " 13 bandas espectrales"
+    ],
+    capabilities: [
+      " Agricultura",
+      " Vegetación",
+      " Urbanismo",
+      " Calidad del agua"
+    ]
+  },
+
+  "25338": {
+    name: "NOAA-15",
+    type: "Meteorológico",
+    mission: "Clima",
+    instruments: [
+      " Radiómetro AVHRR",
+      " Sensores atmosféricos",
+      " Sondas meteorológicas"
+    ],
+    capabilities: [
+      " Predicción del tiempo",
+      " Tormentas",
+      " Temperatura global",
+      " Cobertura de nubes"
+    ]
+  }
 };
 
 // =========================
@@ -206,19 +266,31 @@ const SAT_INFO = {
 function getContextInsight(satId, maxElev) {
 
   const city = window.currentCityName || "Ciudad";
+  const info = SAT_INFO[satId];
 
   let insights = [];
 
+  if (info) {
+    insights.push(`🛰 Tipo: ${info.type}`);
+    insights.push(`🎯 Misión: ${info.mission}`);
+
+    insights.push("🔧 Instrumentos:");
+    info.instruments.forEach(i => insights.push(i));
+
+    insights.push("📊 Capacidades:");
+    info.capabilities.forEach(c => insights.push(c));
+  }
+
   if (satId === "39634") {
-    insights.push(`🌍 ${city}: detección de inundaciones y deformaciones del terreno`);
+    insights.push(`🌍 ${city}: análisis SAR de superficie terrestre`);
   }
 
   if (satId === "42063") {
-    insights.push(`🌾 ${city}: análisis de vegetación, agricultura y urbanismo`);
+    insights.push(`🌾 ${city}: análisis agrícola y urbano multiespectral`);
   }
 
   if (satId === "25338") {
-    insights.push(`🌦 ${city}: análisis atmosférico y meteorológico`);
+    insights.push(`🌦 ${city}: análisis meteorológico atmosférico`);
   }
 
   if (satId === "25544") {
