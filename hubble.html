@@ -1,145 +1,219 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Hubble Safe Base</title>
+<meta charset="utf-8" />
+<title>Orbital Week Pass Engine (BEST PASS HIGHLIGHT)</title>
 
-  <style>
-    body { margin: 0; overflow: hidden; }
-    canvas { display: block; }
+<style>
+body {
+  margin: 0;
+  overflow: hidden;
+  font-family: Arial;
+  background: #000;
+  color: white;
+}
 
-    #btn {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      z-index: 10;
-      padding: 10px;
-    }
-  </style>
+canvas { display: block; }
+
+#ui {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 10;
+  background: rgba(0,0,0,0.8);
+  padding: 12px;
+  border-radius: 8px;
+  width: 420px;
+  max-height: 90vh;
+  overflow: auto;
+}
+
+button {
+  width: 100%;
+  padding: 10px;
+  margin-top: 8px;
+  cursor: pointer;
+}
+
+pre {
+  white-space: pre-wrap;
+  font-size: 12px;
+  margin-top: 10px;
+}
+
+.highlight {
+  border: 1px solid #00ff99;
+  padding: 8px;
+  margin-top: 10px;
+  background: rgba(0,255,150,0.08);
+}
+</style>
 </head>
 
 <body>
 
-<button id="btn">Where is Hubble?</button>
+<div id="ui">
+  <h3>🛰 Orbital Pass Engine</h3>
+  <div>📍 Madrid</div>
+  <button onclick="run()">Calcular semana</button>
+
+  <div id="best" class="highlight">Esperando mejor pase...</div>
+  <pre id="out">---</pre>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/build/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/loaders/GLTFLoader.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/satellite.js/dist/satellite.min.js"></script>
 
 <script>
 
 let scene, camera, renderer;
-let earth, hubble;
 
 init();
 
 function init() {
-
   scene = new THREE.Scene();
 
-  // 🧠 FIX 1: cámara más estable para escala orbital
-  camera = new THREE.PerspectiveCamera(
-    60,
-    window.innerWidth / window.innerHeight,
-    1,        // 🔴 antes 0.1 (esto causaba inestabilidad)
-    20000
-  );
-
-  camera.position.z = 600;
+  camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 1, 20000);
+  camera.position.set(0, 200, 600);
 
   renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
-
-  // 🧠 FIX 2: evita artefactos de precisión
-  renderer.logarithmicDepthBuffer = true;
-
   document.body.appendChild(renderer.domElement);
 
-  // 💡 luz estable
-  const ambient = new THREE.AmbientLight(0xffffff, 0.8);
-  scene.add(ambient);
-
-  const directional = new THREE.DirectionalLight(0xffffff, 1.0);
-  directional.position.set(300, 200, 200);
-  scene.add(directional);
-
-  // 🌍 TIERRA GLB
-  const loader = new THREE.GLTFLoader();
-
-  loader.load(
-    "https://demo.3dtwins.eu/tierra.glb",
-    (gltf) => {
-
-      earth = gltf.scene;
-
-      // 🧠 FIX 3: normalizar tamaño real del mundo
-      const box = new THREE.Box3().setFromObject(earth);
-      const size = box.getSize(new THREE.Vector3()).length();
-
-      const scale = 200 / size;
-
-      earth.scale.setScalar(scale);
-
-      // centrar
-      const center = box.getCenter(new THREE.Vector3());
-      earth.position.sub(center.multiplyScalar(scale));
-
-      scene.add(earth);
-
-      console.log("🌍 Earth loaded stable");
-    }
+  const earth = new THREE.Mesh(
+    new THREE.SphereGeometry(100, 32, 32),
+    new THREE.MeshBasicMaterial({ color: 0x2233ff, wireframe: true })
   );
 
-  // 🛰️ HUBBLE
-  const hubbleGeo = new THREE.SphereGeometry(6, 16, 16);
-  const hubbleMat = new THREE.MeshBasicMaterial({
-    color: 0xff3333
-  });
-
-  hubble = new THREE.Mesh(hubbleGeo, hubbleMat);
-  scene.add(hubble);
-
+  scene.add(earth);
   animate();
 }
 
 function animate() {
   requestAnimationFrame(animate);
-
-  if (earth) earth.rotation.y += 0.0005;
-
   renderer.render(scene, camera);
 }
 
-// 🚀 BOTÓN
-document.getElementById("btn").onclick = async () => {
+const observerGd = {
+  latitude: 40.4168,
+  longitude: -3.7038,
+  height: 0.3
+};
 
-  const url =
-    "https://celestrak.org/NORAD/elements/gp.php?CATNR=20580&FORMAT=TLE";
+function scorePass(maxElev, durationMin) {
+  // 🔥 SCORE ESTABLE (sin explosiones)
+  return (maxElev * maxElev) * (durationMin / 10);
+}
 
+function getPasses(satrec, startDate, hours = 168) {
+
+  const step = 20;
+  const passes = [];
+  let current = null;
+
+  for (let t = 0; t <= hours * 3600; t += step) {
+
+    const date = new Date(startDate.getTime() + t * 1000);
+    const pv = satellite.propagate(satrec, date);
+    if (!pv.position) continue;
+
+    const gmst = satellite.gstime(date);
+    const ecf = satellite.eciToEcf(pv.position, gmst);
+    const look = satellite.ecfToLookAngles(observerGd, ecf);
+
+    const elevDeg = look.elevation * 180 / Math.PI;
+    const isVisible = elevDeg > 0;
+
+    if (isVisible && !current) {
+      current = {
+        start: date,
+        maxElev: elevDeg,
+        duration: 0
+      };
+    }
+
+    if (current) {
+
+      current.duration += step;
+
+      if (elevDeg > current.maxElev) {
+        current.maxElev = elevDeg;
+      }
+
+      if (!isVisible) {
+
+        current.end = date;
+
+        const durMin = current.duration / 60;
+
+        if (current.maxElev < 5) {
+          current = null;
+          continue;
+        }
+
+        const score = scorePass(current.maxElev, durMin);
+
+        let klass = "🔴 NO OBSERVABLE";
+        if (current.maxElev > 60) klass = "🟢 EXCELENTE";
+        else if (current.maxElev > 30) klass = "🟡 BUENO";
+        else if (current.maxElev > 15) klass = "🟠 DÉBIL";
+
+        passes.push({
+          start: current.start,
+          end: current.end,
+          maxElev: current.maxElev,
+          duration: durMin,
+          score,
+          class: klass
+        });
+
+        current = null;
+      }
+    }
+  }
+
+  return passes;
+}
+
+async function run() {
+
+  const out = document.getElementById("out");
+  const best = document.getElementById("best");
+
+  out.innerText = "Cargando...";
+
+  const url = "https://celestrak.org/NORAD/elements/gp.php?CATNR=20580&FORMAT=TLE";
   const res = await fetch(url);
   const text = await res.text();
 
   const lines = text.trim().split("\n");
-
   const satrec = satellite.twoline2satrec(lines[1], lines[2]);
 
-  const now = new Date();
-  const pv = satellite.propagate(satrec, now);
+  const passes = getPasses(satrec, new Date(), 168);
 
-  if (!pv.position) return;
+  passes.sort((a,b) => b.score - a.score);
 
-  const pos = pv.position;
+  const top = passes[0];
 
-  // 🧠 FIX 4: escala coherente con mundo normalizado
-  const SCALE = 0.5;
+  // ⭐ HIGHLIGHT DEL MEJOR
+  best.innerHTML = `
+  🟢 MEJOR PASO DE LA SEMANA<br>
+  Elevación: <b>${top.maxElev.toFixed(1)}°</b><br>
+  Duración: <b>${top.duration.toFixed(1)} min</b><br>
+  Score: <b>${Math.round(top.score)}</b><br>
+  Inicio: ${top.start}
+  `;
 
-  hubble.position.set(
-    pos.x * SCALE,
-    pos.y * SCALE,
-    pos.z * SCALE
-  );
-
-  console.log("🛰️ Hubble OK", pos);
-};
+  out.innerText = passes.map((p, i) => `
+PASS ${i+1} ${p.class}
+──────────────────
+Inicio: ${p.start}
+Fin:    ${p.end}
+Elev max: ${p.maxElev.toFixed(1)}°
+Duración: ${p.duration.toFixed(1)} min
+Score:   ${Math.round(p.score)}
+`).join("\n");
+}
 
 </script>
 
