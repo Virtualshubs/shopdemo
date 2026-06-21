@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8" />
-<title>Orbital Week Pass Engine + Satellite Switch</title>
+<title>Orbital Week Pass Engine + City Ranking</title>
 
 <style>
 body {
@@ -28,11 +28,10 @@ canvas { display: block; }
   overflow: auto;
 }
 
-button, select {
+button, select, input {
   width: 100%;
   padding: 10px;
   margin-top: 8px;
-  cursor: pointer;
 }
 
 pre {
@@ -48,6 +47,14 @@ pre {
   background: rgba(0,255,150,0.08);
   border-radius: 6px;
 }
+
+.rankCard {
+  border: 1px solid #444;
+  padding: 6px;
+  margin-top: 6px;
+  font-size: 12px;
+  background: rgba(255,255,255,0.05);
+}
 </style>
 </head>
 
@@ -56,9 +63,7 @@ pre {
 <div id="ui">
   <h3>🛰 Orbital Pass Engine</h3>
 
-  <div>📍 Madrid</div>
-
-  <!-- 🛰 SELECTOR DE SATÉLITES -->
+  <!-- SAT -->
   <select id="satSelect" onchange="changeSatellite()">
     <option value="25544">ISS</option>
     <option value="39634">Sentinel-1A</option>
@@ -66,9 +71,25 @@ pre {
     <option value="25338">NOAA-15</option>
   </select>
 
+  <!-- CITY -->
+  <select id="citySelect" onchange="changeCity()">
+    <option value="40.4168,-3.7038">Madrid</option>
+    <option value="41.3874,2.1686">Barcelona</option>
+    <option value="39.4699,-0.3763">Valencia</option>
+    <option value="37.3891,-5.9845">Sevilla</option>
+    <option value="43.2630,-2.9350">Bilbao</option>
+    <option value="38.9943,-1.8585">Albacete</option>
+    <option value="custom">Custom coords</option>
+  </select>
+
+  <input id="lat" placeholder="Latitude" style="display:none">
+  <input id="lon" placeholder="Longitude" style="display:none">
+
   <button onclick="run()">Calcular semana</button>
 
-  <div id="best" class="highlight">Esperando satélite...</div>
+  <div id="best" class="highlight">Esperando datos...</div>
+
+  <div id="ranking"></div>
 
   <pre id="out">---</pre>
 </div>
@@ -79,9 +100,8 @@ pre {
 <script>
 
 // =========================
-// 🌍 THREE.JS SCENE
+// 🌍 SCENE
 // =========================
-
 let scene, camera, renderer;
 
 init();
@@ -90,13 +110,7 @@ function init() {
 
   scene = new THREE.Scene();
 
-  camera = new THREE.PerspectiveCamera(
-    60,
-    window.innerWidth / window.innerHeight,
-    1,
-    20000
-  );
-
+  camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 1, 20000);
   camera.position.set(0, 200, 600);
 
   renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -132,19 +146,19 @@ function animate() {
 }
 
 // =========================
-// 📍 OBSERVER
+// 📍 OBSERVER (DINÁMICO)
 // =========================
-
-const observerGd = {
-  latitude: 40.4168,
-  longitude: -3.7038,
-  height: 0.3
-};
+function getObserver() {
+  return {
+    latitude: window.lat || 40.4168,
+    longitude: window.lon || -3.7038,
+    height: 0.3
+  };
+}
 
 // =========================
 // 🛰 SAT POSITION
 // =========================
-
 function updateSatellitePosition(satrec, date) {
 
   const pv = satellite.propagate(satrec, date);
@@ -165,7 +179,6 @@ function updateSatellitePosition(satrec, date) {
 // =========================
 // 🧠 ENGINE
 // =========================
-
 function scorePass(maxElev, durationMin) {
   return (maxElev * maxElev) * (durationMin / 10);
 }
@@ -182,8 +195,9 @@ function getClass(maxElev) {
 // =========================
 // 🛰 PASSES
 // =========================
-
 function getPasses(satrec, startDate, hours = 168) {
+
+  const observerGd = getObserver();
 
   const step = 20;
   const passes = [];
@@ -222,8 +236,6 @@ function getPasses(satrec, startDate, hours = 168) {
 
       if (!isVisible) {
 
-        current.end = date;
-
         const durMin = current.duration / 60;
 
         if (current.maxElev < 5) {
@@ -235,7 +247,7 @@ function getPasses(satrec, startDate, hours = 168) {
 
         passes.push({
           start: current.start,
-          end: current.end,
+          end: date,
           maxElev: current.maxElev,
           duration: durMin,
           score,
@@ -251,9 +263,8 @@ function getPasses(satrec, startDate, hours = 168) {
 }
 
 // =========================
-// 🛰 SATELLITES MAP
+// 🛰 SAT + CITY STATE
 // =========================
-
 const SATS = {
   "25544": "ISS",
   "39634": "Sentinel-1A",
@@ -262,11 +273,41 @@ const SATS = {
 };
 
 window.currentCATNR = "25544";
+window.lat = 40.4168;
+window.lon = -3.7038;
 
 // =========================
-// 🔁 LOAD SATELLITE (CLAVE)
+// 🎛 SATELLITE SWITCH
 // =========================
+function changeSatellite() {
+  const catnr = document.getElementById("satSelect").value;
+  loadSatellite(catnr);
+}
 
+// =========================
+// 🌍 CITY SWITCH
+// =========================
+function changeCity() {
+
+  const val = document.getElementById("citySelect").value;
+
+  if (val === "custom") {
+    document.getElementById("lat").style.display = "block";
+    document.getElementById("lon").style.display = "block";
+    return;
+  }
+
+  document.getElementById("lat").style.display = "none";
+  document.getElementById("lon").style.display = "none";
+
+  const [lat, lon] = val.split(",");
+  window.lat = parseFloat(lat);
+  window.lon = parseFloat(lon);
+}
+
+// =========================
+// 🚀 LOAD SAT
+// =========================
 async function loadSatellite(catnr) {
 
   const url = `https://celestrak.org/NORAD/elements/gp.php?CATNR=${catnr}&FORMAT=TLE`;
@@ -284,51 +325,55 @@ async function loadSatellite(catnr) {
 }
 
 // =========================
-// 🎛 SELECTOR
-// =========================
-
-function changeSatellite() {
-  const catnr = document.getElementById("satSelect").value;
-  loadSatellite(catnr);
-}
-
-// =========================
 // 🚀 RUN
 // =========================
-
 async function run() {
 
   const out = document.getElementById("out");
   const best = document.getElementById("best");
+  const ranking = document.getElementById("ranking");
 
   if (!window.latestSatrec) {
-    best.innerHTML = "Selecciona un satélite...";
+    best.innerHTML = "Selecciona satélite";
     return;
   }
 
   const passes = getPasses(window.latestSatrec, new Date(), 168);
 
-  passes.sort((a, b) => b.score - a.score);
+  passes.sort((a,b) => b.score - a.score);
 
   const top = passes[0];
 
+  // BEST
   best.innerHTML = `
-  🟢 MEJOR PASO DE LA SEMANA<br>
+  🟢 MEJOR PASO<br>
   Satélite: <b>${SATS[window.currentCATNR]}</b><br>
   Elevación: <b>${top.maxElev.toFixed(1)}°</b><br>
-  Duración: <b>${top.duration.toFixed(1)} min</b><br>
   Score: <b>${Math.round(top.score)}</b><br>
   Inicio: ${top.start}
   `;
 
-  out.innerText = passes.map((p, i) => `
+  // RANKING TOP 5
+  ranking.innerHTML = "<b>🏆 TOP 5 PASOS</b>";
+  passes.slice(0,5).forEach((p,i)=>{
+    ranking.innerHTML += `
+      <div class="rankCard">
+      #${i+1} ${p.class}<br>
+      Elev: ${p.maxElev.toFixed(1)}°<br>
+      Score: ${Math.round(p.score)}
+      </div>
+    `;
+  });
+
+  // FULL LIST
+  out.innerText = passes.map((p,i)=>`
 PASS ${i+1} ${p.class}
 ──────────────────
 Inicio: ${p.start}
-Fin:    ${p.end}
+Fin: ${p.end}
 Elev max: ${p.maxElev.toFixed(1)}°
 Duración: ${p.duration.toFixed(1)} min
-Score:   ${Math.round(p.score)}
+Score: ${Math.round(p.score)}
 `).join("\n");
 }
 
