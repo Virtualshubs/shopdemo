@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8" />
-<title>Orbital Week Pass Engine (BEST PASS HIGHLIGHT)</title>
+<title>Orbital Week Pass Engine + Satellite View</title>
 
 <style>
 body {
@@ -20,7 +20,7 @@ canvas { display: block; }
   top: 10px;
   left: 10px;
   z-index: 10;
-  background: rgba(0,0,0,0.8);
+  background: rgba(0,0,0,0.85);
   padding: 12px;
   border-radius: 8px;
   width: 420px;
@@ -42,10 +42,11 @@ pre {
 }
 
 .highlight {
-  border: 1px solid #00ff99;
-  padding: 8px;
   margin-top: 10px;
+  padding: 10px;
+  border: 1px solid #00ff99;
   background: rgba(0,255,150,0.08);
+  border-radius: 6px;
 }
 </style>
 </head>
@@ -55,9 +56,11 @@ pre {
 <div id="ui">
   <h3>🛰 Orbital Pass Engine</h3>
   <div>📍 Madrid</div>
+
   <button onclick="run()">Calcular semana</button>
 
-  <div id="best" class="highlight">Esperando mejor pase...</div>
+  <div id="best" class="highlight">Esperando cálculo...</div>
+
   <pre id="out">---</pre>
 </div>
 
@@ -66,33 +69,67 @@ pre {
 
 <script>
 
+// =========================
+// 🌍 SCENE
+// =========================
+
 let scene, camera, renderer;
 
 init();
 
 function init() {
+
   scene = new THREE.Scene();
 
-  camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 1, 20000);
+  camera = new THREE.PerspectiveCamera(
+    60,
+    window.innerWidth / window.innerHeight,
+    1,
+    20000
+  );
+
   camera.position.set(0, 200, 600);
 
   renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
+  // 🌍 EARTH
   const earth = new THREE.Mesh(
     new THREE.SphereGeometry(100, 32, 32),
     new THREE.MeshBasicMaterial({ color: 0x2233ff, wireframe: true })
   );
-
   scene.add(earth);
+
+  // 🛰 SATELLITE
+  const satMesh = new THREE.Mesh(
+    new THREE.SphereGeometry(3, 12, 12),
+    new THREE.MeshBasicMaterial({ color: 0xff4444 })
+  );
+
+  scene.add(satMesh);
+  window.satMesh = satMesh;
+
   animate();
 }
 
+// =========================
+// 🔁 ANIMATION LOOP
+// =========================
+
 function animate() {
   requestAnimationFrame(animate);
+
+  if (window.latestSatrec) {
+    updateSatellitePosition(window.latestSatrec, new Date());
+  }
+
   renderer.render(scene, camera);
 }
+
+// =========================
+// 📍 OBSERVER
+// =========================
 
 const observerGd = {
   latitude: 40.4168,
@@ -100,10 +137,52 @@ const observerGd = {
   height: 0.3
 };
 
+// =========================
+// 🛰 SAT POSITION UPDATE
+// =========================
+
+function updateSatellitePosition(satrec, date) {
+
+  const pv = satellite.propagate(satrec, date);
+  if (!pv.position) return;
+
+  const gmst = satellite.gstime(date);
+  const ecf = satellite.eciToEcf(pv.position, gmst);
+
+  const scale = 0.05;
+
+  window.satMesh.position.set(
+    ecf.x * scale,
+    ecf.z * scale,
+    ecf.y * scale
+  );
+}
+
+// =========================
+// 🧠 SCORE (ESTABLE)
+// =========================
+
 function scorePass(maxElev, durationMin) {
-  // 🔥 SCORE ESTABLE (sin explosiones)
   return (maxElev * maxElev) * (durationMin / 10);
 }
+
+// =========================
+// 🧭 CLASSIFICATION (MEJORADA)
+// =========================
+
+function getClass(maxElev) {
+
+  if (maxElev >= 75) return "🟢 PERFECTO";
+  if (maxElev >= 60) return "🟢 EXCELENTE";
+  if (maxElev >= 45) return "🟡 MUY BUENO";
+  if (maxElev >= 30) return "🟡 BUENO";
+  if (maxElev >= 15) return "🟠 DÉBIL";
+  return "🔴 MUY BAJO";
+}
+
+// =========================
+// 🛰 PASS ENGINE
+// =========================
 
 function getPasses(satrec, startDate, hours = 168) {
 
@@ -114,11 +193,13 @@ function getPasses(satrec, startDate, hours = 168) {
   for (let t = 0; t <= hours * 3600; t += step) {
 
     const date = new Date(startDate.getTime() + t * 1000);
+
     const pv = satellite.propagate(satrec, date);
     if (!pv.position) continue;
 
     const gmst = satellite.gstime(date);
     const ecf = satellite.eciToEcf(pv.position, gmst);
+
     const look = satellite.ecfToLookAngles(observerGd, ecf);
 
     const elevDeg = look.elevation * 180 / Math.PI;
@@ -153,18 +234,13 @@ function getPasses(satrec, startDate, hours = 168) {
 
         const score = scorePass(current.maxElev, durMin);
 
-        let klass = "🔴 NO OBSERVABLE";
-        if (current.maxElev > 60) klass = "🟢 EXCELENTE";
-        else if (current.maxElev > 30) klass = "🟡 BUENO";
-        else if (current.maxElev > 15) klass = "🟠 DÉBIL";
-
         passes.push({
           start: current.start,
           end: current.end,
           maxElev: current.maxElev,
           duration: durMin,
           score,
-          class: klass
+          class: getClass(current.maxElev)
         });
 
         current = null;
@@ -175,29 +251,36 @@ function getPasses(satrec, startDate, hours = 168) {
   return passes;
 }
 
+// =========================
+// 🚀 RUN
+// =========================
+
 async function run() {
 
   const out = document.getElementById("out");
   const best = document.getElementById("best");
 
-  out.innerText = "Cargando...";
+  out.innerText = "Cargando TLE...";
 
   const url = "https://celestrak.org/NORAD/elements/gp.php?CATNR=20580&FORMAT=TLE";
+
   const res = await fetch(url);
   const text = await res.text();
 
   const lines = text.trim().split("\n");
   const satrec = satellite.twoline2satrec(lines[1], lines[2]);
 
+  window.latestSatrec = satrec;
+
   const passes = getPasses(satrec, new Date(), 168);
 
-  passes.sort((a,b) => b.score - a.score);
+  passes.sort((a, b) => b.score - a.score);
 
   const top = passes[0];
 
-  // ⭐ HIGHLIGHT DEL MEJOR
   best.innerHTML = `
   🟢 MEJOR PASO DE LA SEMANA<br>
+  Clase: <b>${top.class}</b><br>
   Elevación: <b>${top.maxElev.toFixed(1)}°</b><br>
   Duración: <b>${top.duration.toFixed(1)} min</b><br>
   Score: <b>${Math.round(top.score)}</b><br>
