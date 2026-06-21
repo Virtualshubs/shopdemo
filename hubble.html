@@ -27,7 +27,8 @@
 
 <button id="btn">Where is Hubble?</button>
 
-<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.134.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/loaders/GLTFLoader.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/satellite.js/dist/satellite.min.js"></script>
 
 <script>
@@ -54,17 +55,49 @@ function init() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  // 🌍 Tierra
-  const earthGeo = new THREE.SphereGeometry(100, 32, 32);
-  const earthMat = new THREE.MeshBasicMaterial({
-    color: 0x2233ff,
-    wireframe: true
-  });
+  // 💡 LUCES (CLAVE PARA VER EL GLB)
+  const ambient = new THREE.AmbientLight(0xffffff, 1);
+  scene.add(ambient);
 
-  earth = new THREE.Mesh(earthGeo, earthMat);
-  scene.add(earth);
+  const directional = new THREE.DirectionalLight(0xffffff, 1);
+  directional.position.set(200, 200, 200);
+  scene.add(directional);
 
-  // 🛰️ Hubble
+  // 🌍 TIERRA GLB
+  const loader = new THREE.GLTFLoader();
+
+  loader.load(
+    "https://demo.3dtwins.eu/tierra.glb",
+    (gltf) => {
+
+      earth = gltf.scene;
+
+      // 🔧 centrar modelo (MUY IMPORTANTE)
+      const box = new THREE.Box3().setFromObject(earth);
+      const center = box.getCenter(new THREE.Vector3());
+      earth.position.sub(center);
+
+      // 🔧 escala coherente con tu sistema actual
+      earth.scale.set(50, 50, 50);
+
+      // 🔧 asegurar visibilidad del material
+      earth.traverse((child) => {
+        if (child.isMesh) {
+          child.material.side = THREE.DoubleSide;
+        }
+      });
+
+      scene.add(earth);
+
+      console.log("🌍 Tierra cargada OK");
+    },
+    undefined,
+    (err) => {
+      console.error("Error cargando Tierra GLB", err);
+    }
+  );
+
+  // 🛰️ HUBBLE
   const hubbleGeo = new THREE.SphereGeometry(4, 16, 16);
   const hubbleMat = new THREE.MeshBasicMaterial({
     color: 0xff3333
@@ -79,17 +112,18 @@ function init() {
 function animate() {
   requestAnimationFrame(animate);
 
-  earth.rotation.y += 0.001;
+  if (earth) earth.rotation.y += 0.001;
 
   renderer.render(scene, camera);
 }
 
-// 🚀 BOTÓN
+// 🚀 BOTÓN ORBITAL
 document.getElementById("btn").onclick = async () => {
 
   try {
 
-    const url = "https://celestrak.org/NORAD/elements/gp.php?CATNR=20580&FORMAT=TLE";
+    const url =
+      "https://celestrak.org/NORAD/elements/gp.php?CATNR=20580&FORMAT=TLE";
 
     const res = await fetch(url);
     const text = await res.text();
@@ -116,7 +150,7 @@ document.getElementById("btn").onclick = async () => {
       pos.z * SCALE
     );
 
-    console.log("Hubble OK:", pos);
+    console.log("🛰️ Hubble OK:", pos);
 
   } catch (e) {
     console.error(e);
