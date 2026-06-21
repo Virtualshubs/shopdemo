@@ -4,14 +4,8 @@
   <title>Hubble Safe Base</title>
 
   <style>
-    body {
-      margin: 0;
-      overflow: hidden;
-    }
-
-    canvas {
-      display: block;
-    }
+    body { margin: 0; overflow: hidden; }
+    canvas { display: block; }
 
     #btn {
       position: absolute;
@@ -42,25 +36,30 @@ function init() {
 
   scene = new THREE.Scene();
 
+  // 🧠 FIX 1: cámara más estable para escala orbital
   camera = new THREE.PerspectiveCamera(
-    75,
+    60,
     window.innerWidth / window.innerHeight,
-    0.1,
-    10000
+    1,        // 🔴 antes 0.1 (esto causaba inestabilidad)
+    20000
   );
 
-  camera.position.z = 300;
+  camera.position.z = 600;
 
   renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
+
+  // 🧠 FIX 2: evita artefactos de precisión
+  renderer.logarithmicDepthBuffer = true;
+
   document.body.appendChild(renderer.domElement);
 
-  // 💡 LUCES (CLAVE PARA VER EL GLB)
-  const ambient = new THREE.AmbientLight(0xffffff, 1);
+  // 💡 luz estable
+  const ambient = new THREE.AmbientLight(0xffffff, 0.8);
   scene.add(ambient);
 
-  const directional = new THREE.DirectionalLight(0xffffff, 1);
-  directional.position.set(200, 200, 200);
+  const directional = new THREE.DirectionalLight(0xffffff, 1.0);
+  directional.position.set(300, 200, 200);
   scene.add(directional);
 
   // 🌍 TIERRA GLB
@@ -72,33 +71,26 @@ function init() {
 
       earth = gltf.scene;
 
-      // 🔧 centrar modelo (MUY IMPORTANTE)
+      // 🧠 FIX 3: normalizar tamaño real del mundo
       const box = new THREE.Box3().setFromObject(earth);
+      const size = box.getSize(new THREE.Vector3()).length();
+
+      const scale = 200 / size;
+
+      earth.scale.setScalar(scale);
+
+      // centrar
       const center = box.getCenter(new THREE.Vector3());
-      earth.position.sub(center);
-
-      // 🔧 escala coherente con tu sistema actual
-      earth.scale.set(50, 50, 50);
-
-      // 🔧 asegurar visibilidad del material
-      earth.traverse((child) => {
-        if (child.isMesh) {
-          child.material.side = THREE.DoubleSide;
-        }
-      });
+      earth.position.sub(center.multiplyScalar(scale));
 
       scene.add(earth);
 
-      console.log("🌍 Tierra cargada OK");
-    },
-    undefined,
-    (err) => {
-      console.error("Error cargando Tierra GLB", err);
+      console.log("🌍 Earth loaded stable");
     }
   );
 
   // 🛰️ HUBBLE
-  const hubbleGeo = new THREE.SphereGeometry(4, 16, 16);
+  const hubbleGeo = new THREE.SphereGeometry(6, 16, 16);
   const hubbleMat = new THREE.MeshBasicMaterial({
     color: 0xff3333
   });
@@ -112,50 +104,41 @@ function init() {
 function animate() {
   requestAnimationFrame(animate);
 
-  if (earth) earth.rotation.y += 0.001;
+  if (earth) earth.rotation.y += 0.0005;
 
   renderer.render(scene, camera);
 }
 
-// 🚀 BOTÓN ORBITAL
+// 🚀 BOTÓN
 document.getElementById("btn").onclick = async () => {
 
-  try {
+  const url =
+    "https://celestrak.org/NORAD/elements/gp.php?CATNR=20580&FORMAT=TLE";
 
-    const url =
-      "https://celestrak.org/NORAD/elements/gp.php?CATNR=20580&FORMAT=TLE";
+  const res = await fetch(url);
+  const text = await res.text();
 
-    const res = await fetch(url);
-    const text = await res.text();
+  const lines = text.trim().split("\n");
 
-    const lines = text.trim().split("\n");
+  const satrec = satellite.twoline2satrec(lines[1], lines[2]);
 
-    const satrec = satellite.twoline2satrec(lines[1], lines[2]);
+  const now = new Date();
+  const pv = satellite.propagate(satrec, now);
 
-    const now = new Date();
-    const pv = satellite.propagate(satrec, now);
+  if (!pv.position) return;
 
-    if (!pv.position) {
-      alert("No position data");
-      return;
-    }
+  const pos = pv.position;
 
-    const pos = pv.position;
+  // 🧠 FIX 4: escala coherente con mundo normalizado
+  const SCALE = 0.5;
 
-    const SCALE = 0.02;
+  hubble.position.set(
+    pos.x * SCALE,
+    pos.y * SCALE,
+    pos.z * SCALE
+  );
 
-    hubble.position.set(
-      pos.x * SCALE,
-      pos.y * SCALE,
-      pos.z * SCALE
-    );
-
-    console.log("🛰️ Hubble OK:", pos);
-
-  } catch (e) {
-    console.error(e);
-    alert("Error cargando datos");
-  }
+  console.log("🛰️ Hubble OK", pos);
 };
 
 </script>
