@@ -55,6 +55,41 @@ pre {
   font-size: 12px;
   background: rgba(255,255,255,0.05);
 }
+
+/* ========================= */
+/* MODAL */
+/* ========================= */
+
+#modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.7);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+#modalContent {
+  background: #111;
+  padding: 20px;
+  border-radius: 10px;
+  width: 420px;
+  border: 1px solid #00ff99;
+}
+
+#modalClose {
+  margin-top: 10px;
+  background: #00ff99;
+  border: none;
+  cursor: pointer;
+  padding: 10px;
+  width: 100%;
+  font-weight: bold;
+}
 </style>
 </head>
 
@@ -63,7 +98,6 @@ pre {
 <div id="ui">
   <h3>🛰 Orbital Pass Engine</h3>
 
-  <!-- SAT -->
   <select id="satSelect" onchange="changeSatellite()">
     <option value="25544">ISS</option>
     <option value="39634">Sentinel-1A</option>
@@ -71,7 +105,8 @@ pre {
     <option value="25338">NOAA-15</option>
   </select>
 
-  <!-- CITY -->
+  <button onclick="openSatInfo()">ℹ️ Info del satélite</button>
+
   <select id="citySelect" onchange="changeCity()">
     <option value="40.4168,-3.7038">Madrid</option>
     <option value="41.3874,2.1686">Barcelona</option>
@@ -88,10 +123,17 @@ pre {
   <button onclick="run()">Calcular semana</button>
 
   <div id="best" class="highlight">Esperando datos...</div>
-
   <div id="ranking"></div>
-
   <pre id="out">---</pre>
+</div>
+
+<!-- MODAL -->
+<div id="modal">
+  <div id="modalContent">
+    <h3 id="satName"></h3>
+    <div id="satInfo"></div>
+    <button id="modalClose" onclick="closeModal()">Cerrar</button>
+  </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/build/three.min.js"></script>
@@ -146,7 +188,7 @@ function animate() {
 }
 
 // =========================
-// 📍 OBSERVER (DINÁMICO)
+// OBSERVER
 // =========================
 function getObserver() {
   return {
@@ -157,7 +199,7 @@ function getObserver() {
 }
 
 // =========================
-// 🛰 SAT POSITION
+// SAT POSITION
 // =========================
 function updateSatellitePosition(satrec, date) {
 
@@ -177,7 +219,7 @@ function updateSatellitePosition(satrec, date) {
 }
 
 // =========================
-// 🧠 ENGINE
+// ENGINE
 // =========================
 function scorePass(maxElev, durationMin) {
   return (maxElev * maxElev) * (durationMin / 10);
@@ -193,7 +235,80 @@ function getClass(maxElev) {
 }
 
 // =========================
-// 🛰 PASSES
+// SAT INFO (ENRIQUECIDO)
+// =========================
+const SAT_INFO = {
+  "25544": {
+    name: "ISS",
+    type: "Laboratorio orbital tripulado",
+    mission: "Ciencia en microgravedad",
+    tags: [
+      { icon: "🧠", label: "Ciencia" },
+      { icon: "🌍", label: "Observación terrestre" },
+      { icon: "🔬", label: "Investigación" }
+    ],
+    data: [
+      "Imágenes HD de la Tierra",
+      "Experimentos biomédicos",
+      "Sensores ambientales",
+      "Telemetría orbital"
+    ]
+  },
+
+  "39634": {
+    name: "Sentinel-1A",
+    type: "Radar SAR",
+    mission: "Copernicus",
+    tags: [
+      { icon: "🚨", label: "Emergencias" },
+      { icon: "🌧", label: "Clima extremo" },
+      { icon: "🌍", label: "Superficie terrestre" }
+    ],
+    data: [
+      "Radar SAR",
+      "Inundaciones",
+      "Deformación del terreno",
+      "Hielo y océanos"
+    ]
+  },
+
+  "42063": {
+    name: "Sentinel-2B",
+    type: "Multispectral",
+    mission: "Observación ambiental",
+    tags: [
+      { icon: "🌾", label: "Agricultura" },
+      { icon: "🌿", label: "Vegetación" },
+      { icon: "🏙", label: "Urbanismo" }
+    ],
+    data: [
+      "NDVI",
+      "Cobertura vegetal",
+      "Uso del suelo",
+      "Cambio territorial"
+    ]
+  },
+
+  "25338": {
+    name: "NOAA-15",
+    type: "Meteorológico",
+    mission: "Clima global",
+    tags: [
+      { icon: "🌦", label: "Meteorología" },
+      { icon: "🌡", label: "Temperatura" },
+      { icon: "🌪", label: "Tormentas" }
+    ],
+    data: [
+      "Nubosidad",
+      "Temperatura atmósfera",
+      "Humedad",
+      "Predicción del tiempo"
+    ]
+  }
+};
+
+// =========================
+// PASSES
 // =========================
 function getPasses(satrec, startDate, hours = 168) {
 
@@ -219,20 +334,13 @@ function getPasses(satrec, startDate, hours = 168) {
     const isVisible = elevDeg > 0;
 
     if (isVisible && !current) {
-      current = {
-        start: date,
-        maxElev: elevDeg,
-        duration: 0
-      };
+      current = { start: date, maxElev: elevDeg, duration: 0 };
     }
 
     if (current) {
-
       current.duration += step;
 
-      if (elevDeg > current.maxElev) {
-        current.maxElev = elevDeg;
-      }
+      if (elevDeg > current.maxElev) current.maxElev = elevDeg;
 
       if (!isVisible) {
 
@@ -263,7 +371,7 @@ function getPasses(satrec, startDate, hours = 168) {
 }
 
 // =========================
-// 🛰 SAT + CITY STATE
+// STATE
 // =========================
 const SATS = {
   "25544": "ISS",
@@ -277,18 +385,14 @@ window.lat = 40.4168;
 window.lon = -3.7038;
 
 // =========================
-// 🎛 SATELLITE SWITCH
+// SAT + CITY
 // =========================
 function changeSatellite() {
   const catnr = document.getElementById("satSelect").value;
   loadSatellite(catnr);
 }
 
-// =========================
-// 🌍 CITY SWITCH
-// =========================
 function changeCity() {
-
   const val = document.getElementById("citySelect").value;
 
   if (val === "custom") {
@@ -297,16 +401,13 @@ function changeCity() {
     return;
   }
 
-  document.getElementById("lat").style.display = "none";
-  document.getElementById("lon").style.display = "none";
-
   const [lat, lon] = val.split(",");
   window.lat = parseFloat(lat);
   window.lon = parseFloat(lon);
 }
 
 // =========================
-// 🚀 LOAD SAT
+// LOAD SAT
 // =========================
 async function loadSatellite(catnr) {
 
@@ -325,7 +426,41 @@ async function loadSatellite(catnr) {
 }
 
 // =========================
-// 🚀 RUN
+// MODAL
+// =========================
+function openSatInfo() {
+
+  const id = window.currentCATNR;
+  const info = SAT_INFO[id];
+
+  let tags = "";
+  info.tags.forEach(t => {
+    tags += `<span style="margin:3px;padding:4px 8px;border:1px solid #00ff99;border-radius:20px;display:inline-block;font-size:12px">${t.icon} ${t.label}</span>`;
+  });
+
+  let data = "";
+  info.data.forEach(d => {
+    data += `<li>${d}</li>`;
+  });
+
+  document.getElementById("satName").innerText = info.name;
+
+  document.getElementById("satInfo").innerHTML = `
+    <b>Tipo:</b> ${info.type}<br>
+    <b>Misión:</b> ${info.mission}<br><br>
+    <b>Usabilidad:</b><br>${tags}<br><br>
+    <b>📊 Datos:</b><ul>${data}</ul>
+  `;
+
+  document.getElementById("modal").style.display = "flex";
+}
+
+function closeModal() {
+  document.getElementById("modal").style.display = "none";
+}
+
+// =========================
+// RUN
 // =========================
 async function run() {
 
@@ -344,7 +479,6 @@ async function run() {
 
   const top = passes[0];
 
-  // BEST
   best.innerHTML = `
   🟢 MEJOR PASO<br>
   Satélite: <b>${SATS[window.currentCATNR]}</b><br>
@@ -353,8 +487,7 @@ async function run() {
   Inicio: ${top.start}
   `;
 
-  // RANKING TOP 5
-  ranking.innerHTML = "<b>🏆 TOP 5 PASOS</b>";
+  ranking.innerHTML = "";
   passes.slice(0,5).forEach((p,i)=>{
     ranking.innerHTML += `
       <div class="rankCard">
@@ -365,7 +498,6 @@ async function run() {
     `;
   });
 
-  // FULL LIST
   out.innerText = passes.map((p,i)=>`
 PASS ${i+1} ${p.class}
 ──────────────────
