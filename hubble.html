@@ -327,7 +327,9 @@ function init() {
 
   animate();
 
-  // 🔥 FIX: inicialización coherente (Madrid + satélite + estado)
+  // =========================
+  // 🔥 INIT STATE COHERENTE
+  // =========================
   window.lat = 40.4168;
   window.lon = -3.7038;
   window.currentCATNR = "25544";
@@ -338,7 +340,9 @@ function init() {
   const citySelect = document.getElementById("citySelect");
   if (citySelect) citySelect.value = "40.4168,-3.7038";
 
-  // 🔥 FIX: carga automática del satélite inicial
+  window.currentCityName = "Madrid";
+
+  // 🔥 carga automática inicial
   loadSatellite("25544");
 }
 
@@ -400,7 +404,7 @@ function getClass(maxElev) {
 }
 
 // =========================
-// SAT INFO + INSTRUMENTOS
+// SAT INFO
 // =========================
 const SAT_INFO = {
   "25544": {
@@ -474,79 +478,29 @@ const SAT_INFO = {
 // =========================
 function getContextInsight(satId, maxElev) {
 
-  const city = window.currentCityName || "Ciudad";
   const info = SAT_INFO[satId];
 
   let insights = [];
 
   if (info) {
-
-    insights.push({
-      title: "MISIÓN",
-      items: [info.mission]
-    });
-
-    insights.push({
-      title: "TIPO DE SISTEMA",
-      items: [info.type]
-    });
-
-    insights.push({
-      title: "INSTRUMENTOS",
-      items: info.instruments
-    });
-
-    insights.push({
-      title: "CAPACIDADES",
-      items: info.capabilities
-    });
+    insights.push({ title: "MISIÓN", items: [info.mission] });
+    insights.push({ title: "TIPO", items: [info.type] });
+    insights.push({ title: "INSTRUMENTOS", items: info.instruments });
+    insights.push({ title: "CAPACIDADES", items: info.capabilities });
   }
 
   let cityUse = [];
 
-  if (satId === "39634") {
-    cityUse = [
-      "Detección de inundaciones urbanas",
-      "Análisis de deformación del terreno",
-      "Monitorización de infraestructura crítica"
-    ];
-  }
+  if (satId === "39634") cityUse = ["Inundaciones", "Deformación del terreno", "Infraestructura"];
+  if (satId === "42063") cityUse = ["Agricultura", "Vegetación", "Uso del suelo"];
+  if (satId === "25338") cityUse = ["Clima", "Tormentas", "Nubosidad"];
+  if (satId === "25544") cityUse = ["Observación orbital", "Investigación"];
 
-  if (satId === "42063") {
-    cityUse = [
-      "Análisis de expansión urbana",
-      "Salud de vegetación en parques y zonas verdes",
-      "Evaluación de uso del suelo"
-    ];
-  }
+  insights.push({ title: "USO", items: cityUse });
 
-  if (satId === "25338") {
-    cityUse = [
-      "Predicción meteorológica urbana",
-      "Seguimiento de tormentas",
-      "Análisis de nubosidad sobre la ciudad"
-    ];
-  }
-
-  if (satId === "25544") {
-    cityUse = [
-      "Observación general de superficie urbana",
-      "Apoyo a investigación científica en órbita"
-    ];
-  }
-
-  insights.push({
-    title: "USO EN CIUDAD",
-    items: cityUse
-  });
-
-  if (maxElev > 70) {
-    insights.push({ title: "CALIDAD DEL PASO", items: ["MUY ALTA 🔥"] });
-  } else if (maxElev > 45) {
-    insights.push({ title: "CALIDAD DEL PASO", items: ["MEDIA 🟡"] });
-  } else {
-    insights.push({ title: "CALIDAD DEL PASO", items: ["BAJA 🟠"] });
-  }
+  if (maxElev > 70) insights.push({ title: "CALIDAD", items: ["MUY ALTA 🔥"] });
+  else if (maxElev > 45) insights.push({ title: "CALIDAD", items: ["MEDIA 🟡"] });
+  else insights.push({ title: "CALIDAD", items: ["BAJA 🟠"] });
 
   return insights;
 }
@@ -574,19 +528,18 @@ function getPasses(satrec, startDate, hours = 168) {
 
     const look = satellite.ecfToLookAngles(observerGd, ecf);
 
-    const elevDeg = look.elevation * 180 / Math.PI;
-    const isVisible = elevDeg > 0;
+    const elev = look.elevation * 180 / Math.PI;
+    const visible = elev > 0;
 
-    if (isVisible && !current) {
-      current = { start: date, maxElev: elevDeg, duration: 0 };
+    if (visible && !current) {
+      current = { start: date, maxElev: elev, duration: 0 };
     }
 
     if (current) {
       current.duration += step;
+      if (elev > current.maxElev) current.maxElev = elev;
 
-      if (elevDeg > current.maxElev) current.maxElev = elevDeg;
-
-      if (!isVisible) {
+      if (!visible) {
 
         const durMin = current.duration / 60;
 
@@ -633,11 +586,7 @@ function changeCity() {
 
   const val = document.getElementById("citySelect").value;
 
-  if (val === "custom") {
-    document.getElementById("lat").style.display = "block";
-    document.getElementById("lon").style.display = "block";
-    return;
-  }
+  if (val === "custom") return;
 
   const [lat, lon] = val.split(",");
   window.lat = parseFloat(lat);
@@ -677,15 +626,27 @@ async function loadSatellite(catnr) {
 // =========================
 async function run() {
 
-  if (!window.latestSatrec) return; // 🔥 FIX: evita estado roto
-
   const best = document.getElementById("best");
   const ranking = document.getElementById("ranking");
   const out = document.getElementById("out");
 
+  if (!window.latestSatrec) return;
+
   const passes = getPasses(window.latestSatrec, new Date(), 168);
 
   passes.sort((a,b) => b.score - a.score);
+
+  if (!passes.length || passes[0].maxElev < 5) {
+
+    best.innerHTML = `
+      🔴 SIN PASOS VISIBLES<br>
+      El satélite <b>${SATS[window.currentCATNR]}</b> no cruza este punto.
+    `;
+
+    ranking.innerHTML = "";
+    out.innerText = "";
+    return;
+  }
 
   const top = passes[0];
 
