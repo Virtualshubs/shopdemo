@@ -326,6 +326,20 @@ function init() {
   window.satMesh = satMesh;
 
   animate();
+
+  // 🔥 FIX: inicialización coherente (Madrid + satélite + estado)
+  window.lat = 40.4168;
+  window.lon = -3.7038;
+  window.currentCATNR = "25544";
+
+  const satSelect = document.getElementById("satSelect");
+  if (satSelect) satSelect.value = "25544";
+
+  const citySelect = document.getElementById("citySelect");
+  if (citySelect) citySelect.value = "40.4168,-3.7038";
+
+  // 🔥 FIX: carga automática del satélite inicial
+  loadSatellite("25544");
 }
 
 function animate() {
@@ -663,14 +677,11 @@ async function loadSatellite(catnr) {
 // =========================
 async function run() {
 
+  if (!window.latestSatrec) return; // 🔥 FIX: evita estado roto
+
   const best = document.getElementById("best");
   const ranking = document.getElementById("ranking");
   const out = document.getElementById("out");
-
-  if (!window.latestSatrec) {
-    best.innerHTML = "Selecciona satélite";
-    return;
-  }
 
   const passes = getPasses(window.latestSatrec, new Date(), 168);
 
