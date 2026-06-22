@@ -16,7 +16,7 @@ body {
 canvas { display: block; }
 
 /* ========================= */
-/* MAIN PANEL (NASA STYLE) */
+/* MAIN PANEL (MISSION CONTROL STYLE) */
 /* ========================= */
 
 #ui {
@@ -30,7 +30,7 @@ canvas { display: block; }
   backdrop-filter: blur(10px);
 
   padding: 14px;
-  border-radius: 12px;
+  border-radius: 14px;
   width: 440px;
   max-height: 92vh;
   overflow: auto;
@@ -57,12 +57,15 @@ button, select, input {
   border: 1px solid rgba(120, 180, 255, 0.12);
   color: #E6F1FF;
 
-  border-radius: 8px;
+  border-radius: 10px;
   outline: none;
+
+  font-size: 12px;
 }
 
 button:hover {
   border-color: rgba(120, 180, 255, 0.35);
+  cursor: pointer;
 }
 
 /* ========================= */
@@ -73,7 +76,7 @@ button:hover {
   margin-top: 12px;
   padding: 14px;
 
-  border-radius: 12px;
+  border-radius: 14px;
 
   background: linear-gradient(
     180deg,
@@ -84,37 +87,37 @@ button:hover {
   border: 1px solid rgba(0, 255, 150, 0.18);
 
   font-size: 13px;
-  line-height: 1.4;
+  line-height: 1.5;
 }
 
 /* ========================= */
-/* INSIGHT BLOCKS (KEY IMPROVEMENT) */
+/* INSIGHT SYSTEM (MISSION MODULES) */
 /* ========================= */
 
 .insightBlock {
   margin-top: 10px;
   padding: 10px 12px;
 
-  border-radius: 10px;
+  border-radius: 12px;
 
   background: rgba(255,255,255,0.03);
   border: 1px solid rgba(120, 180, 255, 0.10);
-
-  font-size: 12px;
-  line-height: 1.35;
 }
 
 .insightTitle {
-  font-size: 11px;
-  letter-spacing: 0.12em;
+  font-size: 10px;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   color: #7FB3FF;
   margin-bottom: 6px;
 }
 
 .insightItem {
-  margin-left: 8px;
-  opacity: 0.9;
+  font-size: 12px;
+  opacity: 0.92;
+  margin: 2px 0;
+  padding-left: 6px;
+  border-left: 2px solid rgba(120, 180, 255, 0.25);
 }
 
 /* ========================= */
@@ -127,13 +130,14 @@ button:hover {
   margin-top: 8px;
 
   font-size: 12px;
-  border-radius: 10px;
+  border-radius: 12px;
 
   background: rgba(255,255,255,0.03);
 }
 
 .rankCard:hover {
   border-color: rgba(120, 180, 255, 0.25);
+  background: rgba(120, 180, 255, 0.04);
 }
 
 /* PRE OUTPUT */
@@ -141,7 +145,7 @@ pre {
   white-space: pre-wrap;
   font-size: 11px;
   margin-top: 10px;
-  opacity: 0.75;
+  opacity: 0.7;
 }
 </style>
 </head>
@@ -151,6 +155,7 @@ pre {
 <div id="ui">
   <h3>🛰 Orbital Pass Engine</h3>
 
+  <!-- SAT -->
   <select id="satSelect" onchange="changeSatellite()">
     <option value="25544">ISS</option>
     <option value="39634">Sentinel-1A</option>
@@ -158,6 +163,7 @@ pre {
     <option value="25338">NOAA-15</option>
   </select>
 
+  <!-- CITY -->
   <select id="citySelect" onchange="changeCity()">
     <option value="40.4168,-3.7038">Madrid</option>
     <option value="41.3874,2.1686">Barcelona</option>
@@ -285,9 +291,9 @@ const SAT_INFO = {
     type: "Estación espacial",
     mission: "Microgravedad",
     instruments: [
-      " Laboratorios científicos",
-      " Cámaras de observación terrestre",
-      " Experimentos biomédicos"
+      "Laboratorios científicos",
+      "Cámaras de observación terrestre",
+      "Experimentos biomédicos"
     ],
     capabilities: [
       "Observación humana en órbita",
@@ -299,55 +305,55 @@ const SAT_INFO = {
   "39634": {
     name: "Sentinel-1A",
     type: "Radar SAR",
-    mission: "Copernicus",
+    mission: "Copernicus (observación radar de la Tierra)",
     instruments: [
-      " Radar de apertura sintética (SAR)",
-      " Banda C microwave imaging"
+      "Radar de apertura sintética (SAR)",
+      "Imagen de microondas banda C"
     ],
     capabilities: [
-      " Inundaciones",
-      " Deformación del terreno",
-      " Monitorización de desastres",
-      " Funciona de noche y con nubes"
+      "Detección de inundaciones",
+      "Deformación del terreno",
+      "Monitorización de desastres",
+      "Funciona de noche y con nubes"
     ]
   },
 
   "42063": {
     name: "Sentinel-2B",
     type: "Óptico multispectral",
-    mission: "Tierra",
+    mission: "Copernicus (observación óptica de la Tierra)",
     instruments: [
-      " Cámara multiespectral",
-      " 13 bandas espectrales"
+      "Cámara multiespectral",
+      "13 bandas espectrales"
     ],
     capabilities: [
-      " Agricultura",
-      " Vegetación",
-      " Urbanismo",
-      " Calidad del agua"
+      "Análisis agrícola",
+      "Vegetación y salud de cultivos",
+      "Urbanismo y crecimiento urbano",
+      "Calidad del agua"
     ]
   },
 
   "25338": {
     name: "NOAA-15",
     type: "Meteorológico",
-    mission: "Clima",
+    mission: "Clima global y predicción meteorológica",
     instruments: [
-      " Radiómetro AVHRR",
-      " Sensores atmosféricos",
-      " Sondas meteorológicas"
+      "Radiómetro AVHRR",
+      "Sensores atmosféricos",
+      "Sondas meteorológicas"
     ],
     capabilities: [
-      " Predicción del tiempo",
-      " Tormentas",
-      " Temperatura global",
-      " Cobertura de nubes"
+      "Predicción del tiempo",
+      "Seguimiento de tormentas",
+      "Temperatura global",
+      "Cobertura de nubes"
     ]
   }
 };
 
 // =========================
-// CONTEXT INTELLIGENCE (MEJORADO)
+// CONTEXT INTELLIGENCE
 // =========================
 function getContextInsight(satId, maxElev) {
 
@@ -358,65 +364,78 @@ function getContextInsight(satId, maxElev) {
 
   if (info) {
 
-    insights.push(`🛰 Tipo de plataforma: ${info.type}`);
+    insights.push({
+      title: "MISIÓN",
+      items: [info.mission]
+    });
 
-    if (satId === "25544") {
-      insights.push(`🎯 Misión: Microgravedad / investigación humana en órbita`);
-    }
+    insights.push({
+      title: "TIPO DE SISTEMA",
+      items: [info.type]
+    });
 
-    if (satId === "39634") {
-      insights.push(`🎯 Misión: Copernicus (observación radar de la Tierra)`);
-    }
+    insights.push({
+      title: "INSTRUMENTOS",
+      items: info.instruments
+    });
 
-    if (satId === "42063") {
-      insights.push(`🎯 Misión: Copernicus Tierra (observación óptica multiespectral)`);
-    }
-
-    if (satId === "25338") {
-      insights.push(`🎯 Misión: NOAA (monitorización meteorológica global)`);
-    }
-
-    insights.push("🔧 Instrumentos a bordo:");
-    info.instruments.forEach(i => insights.push(i));
-
-    insights.push("📊 Capacidades del satélite:");
-    info.capabilities.forEach(c => insights.push(c));
-
-    insights.push(`🏙 Uso en ${city}:`);
-
-    if (satId === "39634") {
-      insights.push(`• Monitorización de superficie terrestre en ciudad`);
-      insights.push(`• Detección de deformaciones estructurales`);
-      insights.push(`• Análisis de inundaciones incluso con nubes`);
-    }
-
-    if (satId === "42063") {
-      insights.push(`• Análisis urbano multiespectral`);
-      insights.push(`• Vegetación urbana y zonas verdes`);
-      insights.push(`• Clasificación de uso del suelo`);
-    }
-
-    if (satId === "25338") {
-      insights.push(`• Predicción meteorológica local`);
-      insights.push(`• Seguimiento de tormentas`);
-      insights.push(`• Análisis atmosférico sobre la ciudad`);
-    }
-
-    if (satId === "25544") {
-      insights.push(`• Observación general de la superficie terrestre`);
-      insights.push(`• Fotografía orbital de contexto urbano`);
-    }
+    insights.push({
+      title: "CAPACIDADES",
+      items: info.capabilities
+    });
   }
 
-  if (maxElev > 70) insights.push("🔥 Calidad del pase: MUY ALTA");
-  else if (maxElev > 45) insights.push("🟡 Calidad del pase: MEDIA");
-  else insights.push("🟠 Calidad del pase: BAJA");
+  let cityUse = [];
+
+  if (satId === "39634") {
+    cityUse = [
+      "Detección de inundaciones urbanas",
+      "Análisis de deformación del terreno",
+      "Monitorización de infraestructura crítica"
+    ];
+  }
+
+  if (satId === "42063") {
+    cityUse = [
+      "Análisis de expansión urbana",
+      "Salud de vegetación en parques y zonas verdes",
+      "Evaluación de uso del suelo"
+    ];
+  }
+
+  if (satId === "25338") {
+    cityUse = [
+      "Predicción meteorológica urbana",
+      "Seguimiento de tormentas",
+      "Análisis de nubosidad sobre la ciudad"
+    ];
+  }
+
+  if (satId === "25544") {
+    cityUse = [
+      "Observación general de superficie urbana",
+      "Apoyo a investigación científica en órbita"
+    ];
+  }
+
+  insights.push({
+    title: "USO EN CIUDAD",
+    items: cityUse
+  });
+
+  if (maxElev > 70) {
+    insights.push({ title: "CALIDAD DEL PASO", items: ["MUY ALTA 🔥"] });
+  } else if (maxElev > 45) {
+    insights.push({ title: "CALIDAD DEL PASO", items: ["MEDIA 🟡"] });
+  } else {
+    insights.push({ title: "CALIDAD DEL PASO", items: ["BAJA 🟠"] });
+  }
 
   return insights;
 }
 
 // =========================
-// PASSES (SIN CAMBIOS)
+// PASSES
 // =========================
 function getPasses(satrec, startDate, hours = 168) {
 
@@ -446,7 +465,6 @@ function getPasses(satrec, startDate, hours = 168) {
     }
 
     if (current) {
-
       current.duration += step;
 
       if (elevDeg > current.maxElev) current.maxElev = elevDeg;
@@ -557,17 +575,27 @@ async function run() {
 
   const top = passes[0];
 
+  const insights = getContextInsight(window.currentCATNR, top.maxElev);
+
+  let insightHTML = "";
+
+  insights.forEach(block => {
+    insightHTML += `
+      <div class="insightBlock">
+        <div class="insightTitle">${block.title}</div>
+        ${block.items.map(i => `<div class="insightItem">• ${i}</div>`).join("")}
+      </div>
+    `;
+  });
+
   best.innerHTML = `
   🟢 MEJOR PASO<br>
   Satélite: <b>${SATS[window.currentCATNR]}</b><br>
   Elevación: <b>${top.maxElev.toFixed(1)}°</b><br>
   Score: <b>${Math.round(top.score)}</b><br>
-  Inicio: ${top.start}<br><br>
+  Inicio: ${top.start}<br>
 
-  📡 Insight:<br>
-  ${getContextInsight(window.currentCATNR, top.maxElev)
-    .map(x => "• " + x)
-    .join("<br>")}
+  ${insightHTML}
   `;
 
   ranking.innerHTML = "<b>🏆 TOP 5 PASOS</b>";
@@ -578,7 +606,6 @@ async function run() {
         #${i+1} ${p.class}<br>
         Elev: ${p.maxElev.toFixed(1)}°<br>
         Score: ${Math.round(p.score)}<br>
-        📡 ${getContextInsight(window.currentCATNR, p.maxElev)[0]}
       </div>
     `;
   });
