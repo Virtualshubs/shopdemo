@@ -296,7 +296,6 @@ pre {
 // 🌍 SCENE
 // =========================
 let scene, camera, renderer;
-let earth;
 
 init();
 
@@ -311,22 +310,13 @@ function init() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  // =========================
-  // 🌍 EARTH (added properly)
-  // =========================
-  earth = new THREE.Mesh(
+  const earth = new THREE.Mesh(
     new THREE.SphereGeometry(100, 32, 32),
-    new THREE.MeshBasicMaterial({
-      color: 0x2233ff,
-      wireframe: true
-    })
+    new THREE.MeshBasicMaterial({ color: 0x2233ff, wireframe: true })
   );
 
   scene.add(earth);
 
-  // =========================
-  // 🛰 SATELLITE
-  // =========================
   const satMesh = new THREE.Mesh(
     new THREE.SphereGeometry(3, 12, 12),
     new THREE.MeshBasicMaterial({ color: 0xff4444 })
@@ -341,21 +331,8 @@ function init() {
 function animate() {
   requestAnimationFrame(animate);
 
-  const now = new Date();
-
-  // =========================
-  // 🌍 EARTH ROTATION (GMST)
-  // =========================
-  if (earth) {
-    const gmst = satellite.gstime(now);
-    earth.rotation.y = -gmst;
-  }
-
-  // =========================
-  // 🛰 SATELLITE UPDATE
-  // =========================
   if (window.latestSatrec) {
-    updateSatellitePosition(window.latestSatrec, now);
+    updateSatellitePosition(window.latestSatrec, new Date());
   }
 
   renderer.render(scene, camera);
@@ -561,7 +538,7 @@ function getContextInsight(satId, maxElev) {
 }
 
 // =========================
-// PASSES (UNCHANGED)
+// PASSES
 // =========================
 function getPasses(satrec, startDate, hours = 168) {
 
