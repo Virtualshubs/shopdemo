@@ -8,52 +8,140 @@
 body {
   margin: 0;
   overflow: hidden;
-  font-family: Arial;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
   background: #000;
-  color: white;
+  color: #E6F1FF;
 }
 
 canvas { display: block; }
+
+/* ========================= */
+/* MAIN PANEL (NASA STYLE) */
+/* ========================= */
 
 #ui {
   position: absolute;
   top: 10px;
   left: 10px;
   z-index: 10;
-  background: rgba(0,0,0,0.85);
-  padding: 12px;
-  border-radius: 8px;
-  width: 420px;
-  max-height: 90vh;
+
+  background: rgba(10, 14, 20, 0.92);
+  border: 1px solid rgba(120, 180, 255, 0.15);
+  backdrop-filter: blur(10px);
+
+  padding: 14px;
+  border-radius: 12px;
+  width: 440px;
+  max-height: 92vh;
   overflow: auto;
+
+  box-shadow: 0 0 40px rgba(80, 140, 255, 0.08);
 }
 
+/* TITLE */
+#ui h3 {
+  margin: 0 0 10px 0;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  font-size: 14px;
+  color: #9CCBFF;
+}
+
+/* CONTROLS */
 button, select, input {
   width: 100%;
   padding: 10px;
   margin-top: 8px;
+
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(120, 180, 255, 0.12);
+  color: #E6F1FF;
+
+  border-radius: 8px;
+  outline: none;
 }
 
-pre {
-  white-space: pre-wrap;
-  font-size: 12px;
-  margin-top: 10px;
+button:hover {
+  border-color: rgba(120, 180, 255, 0.35);
 }
+
+/* ========================= */
+/* MAIN RESULT CARD */
+/* ========================= */
 
 .highlight {
-  border: 1px solid #00ff99;
-  padding: 10px;
-  margin-top: 10px;
-  background: rgba(0,255,150,0.08);
-  border-radius: 6px;
+  margin-top: 12px;
+  padding: 14px;
+
+  border-radius: 12px;
+
+  background: linear-gradient(
+    180deg,
+    rgba(0, 255, 150, 0.08),
+    rgba(0, 120, 255, 0.05)
+  );
+
+  border: 1px solid rgba(0, 255, 150, 0.18);
+
+  font-size: 13px;
+  line-height: 1.4;
 }
 
-.rankCard {
-  border: 1px solid #444;
-  padding: 8px;
-  margin-top: 6px;
+/* ========================= */
+/* INSIGHT BLOCKS (KEY IMPROVEMENT) */
+/* ========================= */
+
+.insightBlock {
+  margin-top: 10px;
+  padding: 10px 12px;
+
+  border-radius: 10px;
+
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(120, 180, 255, 0.10);
+
   font-size: 12px;
-  background: rgba(255,255,255,0.05);
+  line-height: 1.35;
+}
+
+.insightTitle {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #7FB3FF;
+  margin-bottom: 6px;
+}
+
+.insightItem {
+  margin-left: 8px;
+  opacity: 0.9;
+}
+
+/* ========================= */
+/* RANKING CARDS */
+/* ========================= */
+
+.rankCard {
+  border: 1px solid rgba(255,255,255,0.08);
+  padding: 10px;
+  margin-top: 8px;
+
+  font-size: 12px;
+  border-radius: 10px;
+
+  background: rgba(255,255,255,0.03);
+}
+
+.rankCard:hover {
+  border-color: rgba(120, 180, 255, 0.25);
+}
+
+/* PRE OUTPUT */
+pre {
+  white-space: pre-wrap;
+  font-size: 11px;
+  margin-top: 10px;
+  opacity: 0.75;
 }
 </style>
 </head>
@@ -63,7 +151,6 @@ pre {
 <div id="ui">
   <h3>🛰 Orbital Pass Engine</h3>
 
-  <!-- SAT -->
   <select id="satSelect" onchange="changeSatellite()">
     <option value="25544">ISS</option>
     <option value="39634">Sentinel-1A</option>
@@ -71,7 +158,6 @@ pre {
     <option value="25338">NOAA-15</option>
   </select>
 
-  <!-- CITY -->
   <select id="citySelect" onchange="changeCity()">
     <option value="40.4168,-3.7038">Madrid</option>
     <option value="41.3874,2.1686">Barcelona</option>
@@ -261,7 +347,7 @@ const SAT_INFO = {
 };
 
 // =========================
-// CONTEXT INTELLIGENCE
+// CONTEXT INTELLIGENCE (MEJORADO)
 // =========================
 function getContextInsight(satId, maxElev) {
 
@@ -271,30 +357,55 @@ function getContextInsight(satId, maxElev) {
   let insights = [];
 
   if (info) {
-    insights.push(`🛰 Tipo: ${info.type}`);
-    insights.push(`🎯 Misión: ${info.mission}`);
 
-    insights.push("🔧 Instrumentos:");
+    insights.push(`🛰 Tipo de plataforma: ${info.type}`);
+
+    if (satId === "25544") {
+      insights.push(`🎯 Misión: Microgravedad / investigación humana en órbita`);
+    }
+
+    if (satId === "39634") {
+      insights.push(`🎯 Misión: Copernicus (observación radar de la Tierra)`);
+    }
+
+    if (satId === "42063") {
+      insights.push(`🎯 Misión: Copernicus Tierra (observación óptica multiespectral)`);
+    }
+
+    if (satId === "25338") {
+      insights.push(`🎯 Misión: NOAA (monitorización meteorológica global)`);
+    }
+
+    insights.push("🔧 Instrumentos a bordo:");
     info.instruments.forEach(i => insights.push(i));
 
-    insights.push("📊 Capacidades:");
+    insights.push("📊 Capacidades del satélite:");
     info.capabilities.forEach(c => insights.push(c));
-  }
 
-  if (satId === "39634") {
-    insights.push(`🌍 ${city}: análisis SAR de superficie terrestre`);
-  }
+    insights.push(`🏙 Uso en ${city}:`);
 
-  if (satId === "42063") {
-    insights.push(`🌾 ${city}: análisis agrícola y urbano multiespectral`);
-  }
+    if (satId === "39634") {
+      insights.push(`• Monitorización de superficie terrestre en ciudad`);
+      insights.push(`• Detección de deformaciones estructurales`);
+      insights.push(`• Análisis de inundaciones incluso con nubes`);
+    }
 
-  if (satId === "25338") {
-    insights.push(`🌦 ${city}: análisis meteorológico atmosférico`);
-  }
+    if (satId === "42063") {
+      insights.push(`• Análisis urbano multiespectral`);
+      insights.push(`• Vegetación urbana y zonas verdes`);
+      insights.push(`• Clasificación de uso del suelo`);
+    }
 
-  if (satId === "25544") {
-    insights.push(`🧠 ${city}: observación general de superficie terrestre`);
+    if (satId === "25338") {
+      insights.push(`• Predicción meteorológica local`);
+      insights.push(`• Seguimiento de tormentas`);
+      insights.push(`• Análisis atmosférico sobre la ciudad`);
+    }
+
+    if (satId === "25544") {
+      insights.push(`• Observación general de la superficie terrestre`);
+      insights.push(`• Fotografía orbital de contexto urbano`);
+    }
   }
 
   if (maxElev > 70) insights.push("🔥 Calidad del pase: MUY ALTA");
@@ -305,7 +416,7 @@ function getContextInsight(satId, maxElev) {
 }
 
 // =========================
-// PASSES
+// PASSES (SIN CAMBIOS)
 // =========================
 function getPasses(satrec, startDate, hours = 168) {
 
