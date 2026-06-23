@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>3DOPE</title>
+  <title>Landing</title>
 
   <style>
     html, body {
@@ -25,18 +25,23 @@
     }
 
     .logo {
-      width: 220px;
-      height: 220px;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.1);
+      width: 260px;
+      height: 260px;
       display: flex;
       align-items: center;
       justify-content: center;
       border-radius: 20px;
       backdrop-filter: blur(10px);
-      font-size: 14px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 20px;
+    }
+
+    .logo img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      display: block;
     }
 
     .hint {
@@ -51,7 +56,8 @@
 
   <div class="hero">
     <div class="logo">
-      ORBITAL PASS ENGINE
+    
+      <img src="https://demo.3dtwins.eu/ope.png" alt="Logo Orbital Pass Engine" />
     </div>
     <div class="hint">Scroll para continuar</div>
   </div>
