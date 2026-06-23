@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>3DOPE</title>
+
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 200vh; /* forzamos scroll */
+      background: #0b0f1a;
+      font-family: Arial, sans-serif;
+      overflow-x: hidden;
+    }
+
+    .hero {
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      color: white;
+    }
+
+    .logo {
+      width: 220px;
+      height: 220px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+      font-size: 14px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .hint {
+      margin-top: 20px;
+      opacity: 0.6;
+      font-size: 14px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="hero">
+    <div class="logo">
+      ORBITAL PASS ENGINE
+    </div>
+    <div class="hint">Scroll para continuar</div>
+  </div>
+
+  <script>
+    let redirected = false;
+
+    window.addEventListener("scroll", () => {
+      if (redirected) return;
+
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+
+      if (scrollTop > 50) {
+        redirected = true;
+        window.location.href = "https://demo.3dtwins.eu/hubble.html";
+      }
+    });
+  </script>
+
+</body>
+</html>
