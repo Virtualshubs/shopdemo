@@ -9,10 +9,23 @@
     html, body {
       margin: 0;
       padding: 0;
-      height: 200vh; /* forzamos scroll */
-      background: #0b0f1a;
-      font-family: Arial, sans-serif;
+      height: 200vh;
       overflow-x: hidden;
+      font-family: Arial, sans-serif;
+      background: radial-gradient(ellipse at center, #0b1020 0%, #05070d 60%, #000000 100%);
+      color: white;
+    }
+
+    /* GRID SUTIL TIPO AEROESPACIAL */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image: linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+      background-size: 80px 80px;
+      opacity: 0.12;
+      pointer-events: none;
     }
 
     .hero {
@@ -21,45 +34,77 @@
       align-items: center;
       justify-content: center;
       flex-direction: column;
-      color: white;
-    }
-
-    .logo {
-      width: 260px;
-      height: 260px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 20px;
-      backdrop-filter: blur(10px);
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.1);
+      text-align: center;
+      position: relative;
+      transition: opacity 0.8s ease, transform 0.8s ease;
       padding: 20px;
     }
 
+    /* LOGO RESPONSIVE Y MÁS EQUILIBRADO */
+    .logo {
+      width: clamp(180px, 35vw, 360px);
+      height: auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
     .logo img {
-      max-width: 100%;
-      max-height: 100%;
+      width: 100%;
+      height: auto;
       object-fit: contain;
-      display: block;
+      filter: drop-shadow(0 0 18px rgba(255,255,255,0.08));
     }
 
     .hint {
-      margin-top: 20px;
-      opacity: 0.6;
-      font-size: 14px;
+      position: absolute;
+      bottom: 40px;
+      font-size: 11px;
+      letter-spacing: 0.3em;
+      opacity: 0.45;
+      text-transform: uppercase;
+    }
+
+    /* fade-out */
+    .fade-out {
+      opacity: 0;
+      transform: scale(0.98);
+    }
+
+    /* RESPONSIVE MOBILE */
+    @media (max-width: 768px) {
+      .hero {
+        padding: 30px;
+      }
+
+      .hint {
+        bottom: 25px;
+        font-size: 10px;
+        letter-spacing: 0.25em;
+      }
+
+      body::before {
+        background-size: 60px 60px;
+        opacity: 0.08;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .logo {
+        width: clamp(160px, 60vw, 260px);
+      }
     }
   </style>
 </head>
 
 <body>
 
-  <div class="hero">
+  <div class="hero" id="hero">
     <div class="logo">
-    
       <img src="https://demo.3dtwins.eu/ope.png" alt="Logo Orbital Pass Engine" />
     </div>
-    <div class="hint">Scroll para continuar</div>
+
+    <div class="hint">Scroll to enter</div>
   </div>
 
   <script>
@@ -68,11 +113,15 @@
     window.addEventListener("scroll", () => {
       if (redirected) return;
 
-      const scrollTop = window.scrollY || document.documentElement.scrollTop;
-
-      if (scrollTop > 50) {
+      if (window.scrollY > 60) {
         redirected = true;
-        window.location.href = "https://demo.3dtwins.eu/hubble.html";
+
+        const hero = document.getElementById("hero");
+        hero.classList.add("fade-out");
+
+        setTimeout(() => {
+          window.location.href = "https://demo.3dtwins.eu/hubble.html";
+        }, 700);
       }
     });
   </script>
