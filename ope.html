@@ -16,7 +16,7 @@
       color: white;
     }
 
-    /* GRID SUTIL TIPO AEROESPACIAL */
+    /* subtle aerospace grid */
     body::before {
       content: "";
       position: fixed;
@@ -24,7 +24,7 @@
       background-image: linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
                         linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
       background-size: 80px 80px;
-      opacity: 0.12;
+      opacity: 0.15;
       pointer-events: none;
     }
 
@@ -37,13 +37,11 @@
       text-align: center;
       position: relative;
       transition: opacity 0.8s ease, transform 0.8s ease;
-      padding: 20px;
     }
 
-    /* LOGO RESPONSIVE Y MÁS EQUILIBRADO */
     .logo {
-      width: clamp(180px, 35vw, 360px);
-      height: auto;
+      width: min(520px, 80vw);
+      height: min(520px, 80vw);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -51,9 +49,9 @@
 
     .logo img {
       width: 100%;
-      height: auto;
+      height: 100%;
       object-fit: contain;
-      filter: drop-shadow(0 0 18px rgba(255,255,255,0.08));
+      filter: drop-shadow(0 0 20px rgba(255,255,255,0.08));
     }
 
     .hint {
@@ -65,34 +63,10 @@
       text-transform: uppercase;
     }
 
-    /* fade-out */
+    /* fade-out on redirect */
     .fade-out {
       opacity: 0;
       transform: scale(0.98);
-    }
-
-    /* RESPONSIVE MOBILE */
-    @media (max-width: 768px) {
-      .hero {
-        padding: 30px;
-      }
-
-      .hint {
-        bottom: 25px;
-        font-size: 10px;
-        letter-spacing: 0.25em;
-      }
-
-      body::before {
-        background-size: 60px 60px;
-        opacity: 0.08;
-      }
-    }
-
-    @media (max-width: 420px) {
-      .logo {
-        width: clamp(160px, 60vw, 260px);
-      }
     }
   </style>
 </head>
