@@ -232,6 +232,114 @@ pre {
 #ui::-webkit-scrollbar-track {
   background: transparent;
 }
+
+
+  #satInfoPanel {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+
+  width: 340px;
+  max-height: 92vh;
+  overflow: auto;
+
+  padding: 16px;
+  border-radius: 16px;
+
+  z-index: 20;
+
+  /* ORION / MISSION CONTROL STYLE */
+  background: rgba(8, 12, 20, 0.78);
+  backdrop-filter: blur(14px);
+
+  border: 1px solid rgba(120, 180, 255, 0.18);
+
+  box-shadow:
+    0 0 40px rgba(70, 120, 255, 0.12),
+    inset 0 0 20px rgba(255,255,255,0.02);
+
+  color: #E6F1FF;
+
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+}
+
+  .satPanelTitle {
+  font-size: 14px;
+  font-weight: 600;
+
+  margin-bottom: 12px;
+
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+
+  color: #9CCBFF;
+}
+
+  .satBlock {
+  margin-top: 10px;
+  padding: 10px 12px;
+
+  border-radius: 12px;
+
+  background: rgba(255,255,255,0.03);
+
+  border: 1px solid rgba(120, 180, 255, 0.10);
+
+  position: relative;
+}
+
+  .satBlock::before {
+  content: "";
+  position: absolute;
+
+  left: 0;
+  top: 10px;
+  bottom: 10px;
+
+  width: 2px;
+
+  background: rgba(120, 180, 255, 0.35);
+  border-radius: 2px;
+}
+  .satBlockTitle {
+  font-size: 10px;
+
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+
+  color: #7FB3FF;
+
+  margin-bottom: 6px;
+
+  opacity: 0.85;
+}
+
+  .satItem {
+  font-size: 12px;
+
+  margin: 3px 0;
+
+  opacity: 0.92;
+
+  padding-left: 6px;
+
+  border-left: 1px solid rgba(120, 180, 255, 0.25);
+}
+
+  #satInfoPanel {
+  animation: satFadeIn 0.25s ease-out;
+}
+
+@keyframes satFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 </style>
 </head>
 
@@ -371,6 +479,8 @@ pre {
   <div id="ranking"></div>
   <pre id="out">---</pre>
 </div>
+
+  <div id="satInfoPanel"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/build/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/satellite.js/dist/satellite.min.js"></script>
@@ -638,6 +748,40 @@ function getContextInsight(satId, maxElev) {
   return insights;
 }
 
+
+
+  // =========================
+// infopanel
+// =========================
+
+  function renderSatInfoPanel(catnr, maxElev) {
+
+  const panel = document.getElementById("satInfoPanel");
+  if (!panel) return;
+
+  const info = SAT_INFO[catnr];
+  if (!info) return;
+
+  const insights = getContextInsight(catnr, maxElev);
+
+  let html = `
+    <div class="satPanelTitle">🛰 ${info.name}</div>
+  `;
+
+  insights.forEach(block => {
+    html += `
+      <div class="satBlock">
+        <div class="satBlockTitle">${block.title}</div>
+        ${block.items.map(i => `
+          <div class="satItem">• ${i}</div>
+        `).join("")}
+      </div>
+    `;
+  });
+
+  panel.innerHTML = html;
+}
+
 // =========================
 // PASSES
 // =========================
@@ -783,18 +927,11 @@ async function run() {
 
   const top = passes[0];
 
+  renderSatInfoPanel(window.currentCATNR, top.maxElev);
+
   const insights = getContextInsight(window.currentCATNR, top.maxElev);
 
-  let insightHTML = "";
 
-  insights.forEach(block => {
-    insightHTML += `
-      <div class="insightBlock">
-        <div class="insightTitle">${block.title}</div>
-        ${block.items.map(i => `<div class="insightItem">• ${i}</div>`).join("")}
-      </div>
-    `;
-  });
 
   best.innerHTML = `
   🟢 MEJOR PASO<br>
@@ -803,7 +940,6 @@ async function run() {
   Score: <b>${Math.round(top.score)}</b><br>
   Inicio: ${top.start}<br>
 
-  ${insightHTML}
   `;
 
   ranking.innerHTML = "<b>🏆 TOP 5 PASOS</b>";
