@@ -290,10 +290,20 @@ pre {
 <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/build/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/satellite.js/dist/satellite.min.js"></script>
 
+<script src="https://cdn.jsdelivr.net/npm/three@0.134.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/satellite.js/dist/satellite.min.js"></script>
+
 <script>
 
+// =========================
+// 🌍 SCENE
+// =========================
 let scene, camera, renderer;
 let earth;
+
+// 🔥 ZOOM SYSTEM
+let zoom = 320;
+let targetZoom = 320;
 
 init();
 
@@ -301,24 +311,36 @@ function init() {
 
   scene = new THREE.Scene();
 
-  camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 1, 20000);
-camera.position.set(0, 180, 480);
-camera.lookAt(0, 0, 0);
+  camera = new THREE.PerspectiveCamera(
+    60,
+    window.innerWidth / window.innerHeight,
+    1,
+    20000
+  );
+
+  camera.position.set(0, 140, zoom);
+  camera.lookAt(0, 0, 0);
 
   renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
-  
-earth = new THREE.Mesh(
-  new THREE.SphereGeometry(100, 32, 32),
-  new THREE.MeshBasicMaterial({
-    color: 0x2233ff,
-    wireframe: true
-  })
-);
 
-scene.add(earth);
+  // =========================
+  // 🌍 EARTH
+  // =========================
+  earth = new THREE.Mesh(
+    new THREE.SphereGeometry(100, 32, 32),
+    new THREE.MeshBasicMaterial({
+      color: 0x2233ff,
+      wireframe: true
+    })
+  );
 
+  scene.add(earth);
+
+  // =========================
+  // 🛰 SAT
+  // =========================
   const satMesh = new THREE.Mesh(
     new THREE.SphereGeometry(3, 12, 12),
     new THREE.MeshBasicMaterial({ color: 0xff4444 })
@@ -327,8 +349,22 @@ scene.add(earth);
   scene.add(satMesh);
   window.satMesh = satMesh;
 
+  // =========================
+  // 🖱 ZOOM CONTROL
+  // =========================
+  window.addEventListener("wheel", (e) => {
+
+    targetZoom += e.deltaY * 0.2;
+
+    // límites de zoom
+    targetZoom = Math.max(180, Math.min(800, targetZoom));
+  });
+
   animate();
 
+  // =========================
+  // 🔥 INIT STATE
+  // =========================
   window.lat = 40.4168;
   window.lon = -3.7038;
   window.currentCATNR = "25544";
@@ -350,25 +386,35 @@ function animate() {
 
   const now = new Date();
 
-
+  // =========================
+  // 🌍 ROTACIÓN TIERRA REAL
+  // =========================
   if (earth) {
-
     const gmst = satellite.gstime(now);
-
     earth.rotation.y = -gmst;
   }
 
-
+  // =========================
+  // 🛰 SATÉLITE
+  // =========================
   if (window.latestSatrec) {
-    updateSatellitePosition(
-      window.latestSatrec,
-      now
-    );
+    updateSatellitePosition(window.latestSatrec, now);
   }
+
+  // =========================
+  // 🎥 ZOOM SMOOTH
+  // =========================
+  zoom += (targetZoom - zoom) * 0.1;
+
+  camera.position.set(0, 140, zoom);
+  camera.lookAt(0, 0, 0);
 
   renderer.render(scene, camera);
 }
 
+// =========================
+// OBSERVER
+// =========================
 function getObserver() {
   return {
     latitude: window.lat || 40.4168,
@@ -377,6 +423,9 @@ function getObserver() {
   };
 }
 
+// =========================
+// SAT POSITION
+// =========================
 function updateSatellitePosition(satrec, date) {
 
   const pv = satellite.propagate(satrec, date);
@@ -394,6 +443,9 @@ function updateSatellitePosition(satrec, date) {
   );
 }
 
+// =========================
+// ENGINE
+// =========================
 function scorePass(maxElev, durationMin) {
   return (maxElev * maxElev) * (durationMin / 10);
 }
