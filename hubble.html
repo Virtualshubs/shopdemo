@@ -296,6 +296,7 @@ pre {
 // 🌍 SCENE
 // =========================
 let scene, camera, renderer;
+let earth;
 
 init();
 
@@ -309,13 +310,16 @@ function init() {
   renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
+  
+earth = new THREE.Mesh(
+  new THREE.SphereGeometry(100, 32, 32),
+  new THREE.MeshBasicMaterial({
+    color: 0x2233ff,
+    wireframe: true
+  })
+);
 
-  const earth = new THREE.Mesh(
-    new THREE.SphereGeometry(100, 32, 32),
-    new THREE.MeshBasicMaterial({ color: 0x2233ff, wireframe: true })
-  );
-
-  scene.add(earth);
+scene.add(earth);
 
   const satMesh = new THREE.Mesh(
     new THREE.SphereGeometry(3, 12, 12),
@@ -347,10 +351,31 @@ function init() {
 }
 
 function animate() {
+
   requestAnimationFrame(animate);
 
+  const now = new Date();
+
+  // =========================
+  // 🌍 ROTACIÓN REAL TIERRA
+  // =========================
+
+  if (earth) {
+
+    const gmst = satellite.gstime(now);
+
+    earth.rotation.y = -gmst;
+  }
+
+  // =========================
+  // 🛰 SATÉLITE EN TIEMPO REAL
+  // =========================
+
   if (window.latestSatrec) {
-    updateSatellitePosition(window.latestSatrec, new Date());
+    updateSatellitePosition(
+      window.latestSatrec,
+      now
+    );
   }
 
   renderer.render(scene, camera);
