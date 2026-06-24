@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8" />
-<title>Orbital Week Pass Engine + City Intelligence Layer</title>
+<title>Orbital Pass Engine</title>
 
 <style>
 body {
@@ -348,12 +348,6 @@ function init() {
   window.satMesh = satMesh;
 
   // =========================
-  // 🧠 CALENDAR STATE (NUEVO)
-  // =========================
-  window.selectedPasses = [];
-  window.allPasses = [];
-
-  // =========================
   // 🖱 ZOOM CONTROL
   // =========================
   window.addEventListener("wheel", (e) => {
@@ -609,7 +603,6 @@ function getPasses(satrec, startDate, hours = 168) {
         }
 
         passes.push({
-          id: satrec.satnum + "_" + current.start.getTime(),
           start: current.start,
           end: date,
           maxElev: current.maxElev,
@@ -683,57 +676,6 @@ async function loadSatellite(catnr) {
 }
 
 // =========================
-// 📅 CALENDAR SYSTEM (NUEVO)
-// =========================
-window.selectedPasses = [];
-window.allPasses = [];
-
-function togglePass(id) {
-
-  const index = window.selectedPasses.findIndex(p => p.id === id);
-
-  if (index >= 0) {
-    window.selectedPasses.splice(index, 1);
-  } else {
-    const pass = window.allPasses.find(p => p.id === id);
-    if (pass) window.selectedPasses.push(pass);
-  }
-
-  renderCalendar();
-}
-
-function renderCalendar() {
-
-  const out = document.getElementById("out");
-
-  if (!window.selectedPasses.length) {
-    out.innerText = "📭 No hay pases seleccionados";
-    return;
-  }
-
-  const sorted = [...window.selectedPasses]
-    .sort((a,b) => new Date(a.start) - new Date(b.start));
-
-  let html = "📅 ROADMAP DE OBSERVACIÓN\n\n";
-
-  sorted.forEach((p,i) => {
-
-    html += `
-PASS ${i+1}
-──────────────
-🛰 ${p.class}
-📅 Inicio: ${new Date(p.start).toLocaleString()}
-📅 Fin: ${new Date(p.end).toLocaleString()}
-📈 Elevación: ${p.maxElev.toFixed(1)}°
-⭐ Score: ${Math.round(p.score)}
-
-`;
-  });
-
-  out.innerText = html;
-}
-
-// =========================
 // RUN
 // =========================
 async function run() {
@@ -745,8 +687,6 @@ async function run() {
   if (!window.latestSatrec) return;
 
   const passes = getPasses(window.latestSatrec, new Date(), 168);
-
-  window.allPasses = passes;
 
   passes.sort((a,b) => b.score - a.score);
 
@@ -787,15 +727,11 @@ async function run() {
   ${insightHTML}
   `;
 
-  ranking.innerHTML = "<b>🏆 TOP 5 PASOS (selecciona para calendario)</b><br><br>";
+  ranking.innerHTML = "<b>🏆 TOP 5 PASOS</b>";
 
   passes.slice(0,5).forEach((p,i)=>{
-
-    const checked = window.selectedPasses.find(x => x.id === p.id) ? "checked" : "";
-
     ranking.innerHTML += `
       <div class="rankCard">
-        <input type="checkbox" onchange="togglePass('${p.id}')" ${checked}/>
         #${i+1} ${p.class}<br>
         Elev: ${p.maxElev.toFixed(1)}°<br>
         Score: ${Math.round(p.score)}<br>
@@ -803,7 +739,15 @@ async function run() {
     `;
   });
 
-  renderCalendar();
+  out.innerText = passes.map((p,i)=>`
+PASS ${i+1} ${p.class}
+──────────────────
+Inicio: ${p.start}
+Fin: ${p.end}
+Elev max: ${p.maxElev.toFixed(1)}°
+Duración: ${p.duration.toFixed(1)} min
+Score: ${Math.round(p.score)}
+`).join("\n");
 }
 
 </script>
