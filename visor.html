@@ -733,6 +733,8 @@ if (new URLSearchParams(location.search).get("scene")) {
 <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/build/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/controls/OrbitControls.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/loaders/GLTFLoader.js"></script>
+        
+<script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/loaders/DRACOLoader.js"></script>
 
 <script>
 
@@ -841,26 +843,40 @@ function setCompactUI() {
 
 /* ================= MODEL ================= */
 
+
 function loadModel(url) {
   const loader = new THREE.GLTFLoader();
+  const dracoLoader = new THREE.DRACOLoader();
+
+  dracoLoader.setDecoderPath(
+    "https://www.gstatic.com/draco/versioned/decoders/1.5.7/"
+  );
+
+  loader.setDRACOLoader(dracoLoader);
 
   if (model) scene.remove(model);
 
-  loader.load(url, (gltf) => {
-    model = gltf.scene;
-    scene.add(model);
+  loader.load(
+    url,
+    (gltf) => {
+      model = gltf.scene;
+      scene.add(model);
 
-    const box = new THREE.Box3().setFromObject(model);
-    model.position.sub(box.getCenter(new THREE.Vector3()));
+      const box = new THREE.Box3().setFromObject(model);
+      model.position.sub(box.getCenter(new THREE.Vector3()));
 
-    /* 🔥 SWITCH UI MODE HERE */
-    setCompactUI();
+      setCompactUI();
+      goStep(2);
 
-    /* opcional: avanzar paso */
-    goStep(2);
-  });
+      dracoLoader.dispose();
+    },
+    undefined,
+    (error) => {
+      console.error("Error loading model:", error);
+      dracoLoader.dispose();
+    }
+  );
 }
-
 /* ================= STEPS ================= */
 
 function goStep(step) {
